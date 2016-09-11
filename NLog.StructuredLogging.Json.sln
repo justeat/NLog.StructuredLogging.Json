@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NLog.StructuredLogging.Json", "src\NLog.StructuredLogging.Json\NLog.StructuredLogging.Json.csproj", "{E0357801-F86A-4F85-8246-1E06472C57B2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NLog.StructuredLogging.Json.Tests", "src\NLog.StructuredLogging.Json.Tests\NLog.StructuredLogging.Json.Tests.csproj", "{EE3EAA37-A6A8-45A3-9E15-31E42FF42959}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E0357801-F86A-4F85-8246-1E06472C57B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0357801-F86A-4F85-8246-1E06472C57B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0357801-F86A-4F85-8246-1E06472C57B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0357801-F86A-4F85-8246-1E06472C57B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE3EAA37-A6A8-45A3-9E15-31E42FF42959}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE3EAA37-A6A8-45A3-9E15-31E42FF42959}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE3EAA37-A6A8-45A3-9E15-31E42FF42959}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE3EAA37-A6A8-45A3-9E15-31E42FF42959}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

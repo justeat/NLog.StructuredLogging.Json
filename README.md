@@ -1,6 +1,8 @@
 NLog.StructuredLogging.Json
 =======================
 
+[![Join the chat at https://gitter.im/justeat/NLog.StructuredLogging.Json](https://badges.gitter.im/justeat/NLog.StructuredLogging.Json.svg)](https://gitter.im/justeat/NLog.StructuredLogging.Json?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 For use with [NLog](http://nlog-project.org/), [NXLog](http://nxlog.org/) and [Kibana](https://www.elastic.co/products/kibana).
 
 Render one JSON object per line and parameters as properties for each `LogEventInfo` message.

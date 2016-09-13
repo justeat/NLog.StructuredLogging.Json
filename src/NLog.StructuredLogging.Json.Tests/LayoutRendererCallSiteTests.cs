@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 
@@ -32,11 +33,13 @@ namespace NLog.StructuredLogging.Json.Tests
             Result = Renderer.Render(LogEvent);
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         private void ThisNameWillAppearInTheCallSite(LogEventInfo logEvt)
         {
             ThisNameWillNotApppearinTheCallSite(logEvt);
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         private void ThisNameWillNotApppearinTheCallSite(LogEventInfo logEvt)
         {
             logEvt.SetStackTrace(new StackTrace(1), 0);

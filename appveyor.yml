@@ -1,0 +1,41 @@
+version: 1.0.1.{build}
+configuration: Release
+assembly_info:
+  patch: true
+  file: '**\*AssemblyInfo.*'
+  assembly_version: '{version}'
+  assembly_file_version: '{version}'
+  assembly_informational_version: '{version}'
+before_build:
+- nuget restore
+build:
+  project: NLog.StructuredLogging.Json.sln
+  parallel: true
+  publish_nuget: true
+  publish_nuget_symbols: true
+  include_nuget_references: true
+  verbosity: normal
+test:
+  assemblies: '**\*.Tests.dll'
+artifacts:
+- path: 'NLog.StructuredLogging.Json.{version}*.nupkg'
+notifications:
+- provider: HipChat
+  room: 'Eng :: Open Source'
+  auth_token:
+    secure: eJWABMRPoyfEF9iLzFaTcUEqTc7/64v0FtS1qQe4yhs=
+  on_build_success: false
+  on_build_failure: false
+  on_build_status_changed: false
+- provider: Webhook
+  url: https://webhooks.gitter.im/e/e2742400ecaac9b69b3a
+  on_build_success: true
+  on_build_failure: true
+  on_build_status_changed: true
+deploy:
+- provider: NuGet
+  api_key:
+    secure: 6MzbzEs4YdJKS67Gio5gEO8mNKmwfC4UHTCmECZ1KOutI6ndm4vAECazmVNB6an7
+  artifact: /.*nupkg/
+  on:
+    APPVEYOR_REPO_TAG: true

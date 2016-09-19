@@ -5,6 +5,8 @@ NLog.StructuredLogging.Json
 
 [![Build status](https://ci.appveyor.com/api/projects/status/kvpbuiiljr1hdhv8?svg=true)](https://ci.appveyor.com/project/justeattech/nlog-structuredlogging-json)
 
+[Get the package on NuGet](https://www.nuget.org/packages/NLog.StructuredLogging.Json/)
+
 For use with [NLog](http://nlog-project.org/), [NXLog](http://nxlog.org/) and [Kibana](https://www.elastic.co/products/kibana).
 
 Render one JSON object per line and parameters as properties for each `LogEventInfo` message.

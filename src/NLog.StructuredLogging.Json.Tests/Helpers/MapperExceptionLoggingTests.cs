@@ -41,7 +41,7 @@ namespace NLog.StructuredLogging.Json.Tests.Helpers
 
             var result = Mapper.ToDictionary(logEventInfo);
 
-            Assert.That(result["Exception"], Is.StringStarting("System.InvalidOperationException: A test exception with a stack trace"));
+            Assert.That(result["Exception"], Does.StartWith("System.InvalidOperationException: A test exception with a stack trace"));
             Assert.That(result["ExceptionType"], Is.EqualTo("InvalidOperationException"));
             Assert.That(result["ExceptionMessage"], Is.EqualTo("A test exception with a stack trace"));
             Assert.That(result["ExceptionStackTrace"], Is.Not.Empty);
@@ -58,7 +58,7 @@ namespace NLog.StructuredLogging.Json.Tests.Helpers
             var result = Mapper.ToDictionary(logEventInfo);
 
             Assert.That(result.ContainsKey("ExceptionStackTrace"), Is.True);
-            Assert.That(result["ExceptionStackTrace"], Is.StringStarting("   at NLog.StructuredLogging.Json.Tests.Helpers.MapperExceptionLoggingTests.GenerateExceptionWithStackTrace()"));
+            Assert.That(result["ExceptionStackTrace"], Does.StartWith("   at NLog.StructuredLogging.Json.Tests.Helpers.MapperExceptionLoggingTests.GenerateExceptionWithStackTrace()"));
         }
 
         [Test]

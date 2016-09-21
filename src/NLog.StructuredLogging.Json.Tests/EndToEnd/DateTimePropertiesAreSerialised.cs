@@ -25,10 +25,10 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
         [Test]
         public void OutputHasExpectedIso8601Dates()
         {
-            Assert.That(_output, Is.StringContaining("\"DateTimeInLocal\":\"2014-01-02T03:04:05.0000000+00:00\""));
-            Assert.That(_output, Is.StringContaining("\"DateTimeInUtc\":\"2014-01-02T03:04:05.0000000Z\""));
-            Assert.That(_output, Is.StringContaining("\"DateTimeOffsetInUtc\":\"2014-01-02T03:04:05.0000000Z\""));
-            Assert.That(_output, Is.StringContaining("\"DateTimeOffsetWithOffset\":\"2014-01-02T03:04:05.0000000+04:00\""));
+            Assert.That(_output, Does.Contain("\"DateTimeInLocal\":\"2014-01-02T03:04:05.0000000+00:00\""));
+            Assert.That(_output, Does.Contain("\"DateTimeInUtc\":\"2014-01-02T03:04:05.0000000Z\""));
+            Assert.That(_output, Does.Contain("\"DateTimeOffsetInUtc\":\"2014-01-02T03:04:05.0000000Z\""));
+            Assert.That(_output, Does.Contain("\"DateTimeOffsetWithOffset\":\"2014-01-02T03:04:05.0000000+04:00\""));
         }
     }
 }

@@ -112,9 +112,6 @@
     <Compile Include="Helpers\ConvertToUtcIso8601Tests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\push-notification.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <Content Include="nlog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>

@@ -2,12 +2,13 @@ NLog.StructuredLogging.Json
 =======================
 
 [![Join the chat at https://gitter.im/justeat/NLog.StructuredLogging.Json](https://badges.gitter.im/justeat/NLog.StructuredLogging.Json.svg)](https://gitter.im/justeat/NLog.StructuredLogging.Json?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
 [![Build status](https://ci.appveyor.com/api/projects/status/kvpbuiiljr1hdhv8?svg=true)](https://ci.appveyor.com/project/justeattech/nlog-structuredlogging-json)
-
 [Get the package on NuGet](https://www.nuget.org/packages/NLog.StructuredLogging.Json/)
 
-For use with [NLog](http://nlog-project.org/), [NXLog](http://nxlog.org/) and [Kibana](https://www.elastic.co/products/kibana).
+## what
+
+Structured logging with [NLog](http://nlog-project.org/), to send to [Kibana](https://www.elastic.co/products/kibana) via [NXLog](http://nxlog.org/).
+
 
 Render one JSON object per line and parameters as properties for each `LogEventInfo` message.
 
@@ -24,9 +25,20 @@ Message: Order 1234 resent to Partner 4567
 ```
 
 When we want to query Kibana for all occurrences of this log message, we have to do partial string matching as the message is slightly different each time.
-When we want to query kibana for all messages related to this order, we also have to do partial string matching on the message as the orderId is embedded in the message.
+When we want to query Kibana for all messages related to this order, we also have to do partial string matching on the message as the orderId is embedded in the message.
 
 When logging with StructuredLogging.Json, the data can be structured:
+
+The log line written by NLog is something like this:
+````json
+{"TimeStamp":"2016-09-21T08:11:23.483Z","Level":"Info","LoggerName":"Acme.WebApp.OrderController",
+"Message":"Order has been resent","CallSite":"Acme.WebApp.OrderController.ResendOrder",
+"OrderId":"1234","PartnerId":"4567","NewState":"Sent","SendDate":"2016-09-21T08:11:23.456Z"}
+````
+
+Which is well formatted for sending to Kibana.
+
+In Kibana you get:
 
 ```
 @LogType: nlog
@@ -36,7 +48,8 @@ OrderId: 1234
 PartnerId: 4567
 ```
 
-This makes it much easier to search Kibana for this exact message text and see all the times that this log statement was fired, across time.
+
+This makes it much easier to search Kibana for the exact message text and see all the times that this log statement was fired, across time.
 We can also very easily search for all the different log messages related to a particular orderId, partnerId, or any other fields that can be logged.
 
 ### Simpler, more flexible logging configuration

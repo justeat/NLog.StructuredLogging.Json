@@ -28,7 +28,7 @@ Message: Order 1234 resent to Partner 4567
 When we want to query Kibana for all occurrences of this log message, we have to do partial string matching as the message is slightly different each time.
 When we want to query Kibana for all messages related to this order, we also have to do partial string matching on the message as the orderId is embedded in the message.
 
-When logging with StructuredLogging.Json, the data can be structured as json with extra fields, so that the log line written by NLog is something like this:
+When logging with StructuredLogging.Json, the data is written as Json with extra fields containing any data that you add to the log entry. So the log line written by NLog might be e.g.:
 ````json
 {"TimeStamp":"2016-09-21T08:11:23.483Z","Level":"Info","LoggerName":"Acme.WebApp.OrderController",
 "Message":"Order resent to partner","CallSite":"Acme.WebApp.OrderController.ResendOrder",
@@ -36,7 +36,7 @@ When logging with StructuredLogging.Json, the data can be structured as json wit
 "NewState":"Sent","SendDate":"2016-09-21T08:11:23.456Z"}
 ````
 
-Which is well formatted for sending to Kibana.
+This is well formatted for sending to Kibana.
 
 In Kibana you get:
 

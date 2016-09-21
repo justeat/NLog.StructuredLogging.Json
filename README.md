@@ -3,11 +3,12 @@ NLog.StructuredLogging.Json
 
 [![Join the chat at https://gitter.im/justeat/NLog.StructuredLogging.Json](https://badges.gitter.im/justeat/NLog.StructuredLogging.Json.svg)](https://gitter.im/justeat/NLog.StructuredLogging.Json?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build status](https://ci.appveyor.com/api/projects/status/kvpbuiiljr1hdhv8?svg=true)](https://ci.appveyor.com/project/justeattech/nlog-structuredlogging-json)
+
 [Get the package on NuGet](https://www.nuget.org/packages/NLog.StructuredLogging.Json/)
 
-## what
+## What
 
-Structured logging with [NLog](http://nlog-project.org/), to send to [Kibana](https://www.elastic.co/products/kibana) via [NXLog](http://nxlog.org/).
+Structured logging with [NLog](http://nlog-project.org/), to send log entries to [Kibana](https://www.elastic.co/products/kibana) via [NXLog](http://nxlog.org/).
 
 
 Render one JSON object per line and parameters as properties for each `LogEventInfo` message.
@@ -27,13 +28,12 @@ Message: Order 1234 resent to Partner 4567
 When we want to query Kibana for all occurrences of this log message, we have to do partial string matching as the message is slightly different each time.
 When we want to query Kibana for all messages related to this order, we also have to do partial string matching on the message as the orderId is embedded in the message.
 
-When logging with StructuredLogging.Json, the data can be structured:
-
-The log line written by NLog is something like this:
+When logging with StructuredLogging.Json, the data can be structured as json with extra fields, so that the log line written by NLog is something like this:
 ````json
 {"TimeStamp":"2016-09-21T08:11:23.483Z","Level":"Info","LoggerName":"Acme.WebApp.OrderController",
-"Message":"Order has been resent","CallSite":"Acme.WebApp.OrderController.ResendOrder",
-"OrderId":"1234","PartnerId":"4567","NewState":"Sent","SendDate":"2016-09-21T08:11:23.456Z"}
+"Message":"Order resent to partner","CallSite":"Acme.WebApp.OrderController.ResendOrder",
+"OrderId":"1234","PartnerId":"4567",
+"NewState":"Sent","SendDate":"2016-09-21T08:11:23.456Z"}
 ````
 
 Which is well formatted for sending to Kibana.
@@ -43,9 +43,10 @@ In Kibana you get:
 ```
 @LogType: nlog
 Level: Warn
-Message: Order resent to Partner
+Message: Order resent to partner
 OrderId: 1234
 PartnerId: 4567
+NewState: Sent
 ```
 
 

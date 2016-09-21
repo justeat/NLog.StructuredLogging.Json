@@ -11,7 +11,7 @@ namespace NLog.StructuredLogging.Json.Tests
         public void LogEntryIsValidJson()
         {
             string body;
-            using (var sr = new StreamReader(@".\data\push-notification.json"))
+            using (var sr = new StreamReader(@".\Data\push-notification.json"))
             {
                 body = sr.ReadLine();
             }

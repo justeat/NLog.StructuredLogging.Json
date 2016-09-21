@@ -9,7 +9,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
 {
     /// <summary>
     /// Log lots of messages with the same keys and differing values
-    /// The test is that on any message logged, the guids should all be the same. 
+    /// The test is that on any message logged, the guids should all be the same.
     /// If we observe a log entry where the guids differ, then it has come from a different log entry.
     /// </summary>
     public abstract class MultiThreadedUniqueValuesTests : EndToEndTests
@@ -103,7 +103,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
 
             var theLogMessageGuid = uniqueValues[0];
 
-            Assert.That(message, Is.StringContaining(theLogMessageGuid));
+            Assert.That(message, Does.Contain(theLogMessageGuid));
         }
     }
 }

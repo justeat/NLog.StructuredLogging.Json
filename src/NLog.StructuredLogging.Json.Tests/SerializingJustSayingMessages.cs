@@ -15,16 +15,16 @@ namespace NLog.StructuredLogging.Json.Tests
             var logProperties = new FulfilmentStatusChangedNotificationRequested("some-order-id", "delivering", "thai-rice", "", "07839474638", 123, 234, 345);
 
             var log = new LogEventInfo(LogLevel.Info, "TheLoggerName", "Received message");
-            
+
             var propertyDictionary = logProperties.GetType().GetProperties().ToDictionary(x => x.Name, x => x.GetValue(logProperties, null));
             foreach (var element in propertyDictionary)
             {
                 log.Properties.Add(element.Key, element.Value);
             }
-            
-            string result = layoutRenderer.Render(log);
 
-            Assert.IsNotNullOrEmpty(result);
+            var result = layoutRenderer.Render(log);
+
+            Assert.That(result, Is.Not.Empty);
         }
 
         public class FulfilmentStatusChangedNotificationRequested : Message

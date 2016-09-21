@@ -15,7 +15,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
         protected string LoggerName;
         protected FakeTimeSource TimeSourceForTest;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void BeforeEverything()
         {
             Given();

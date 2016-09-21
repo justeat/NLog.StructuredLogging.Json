@@ -72,7 +72,7 @@ With lots of possibly bad things in it";
         [Test]
         public void WhenConverted_TheResultIsNotEmpty()
         {
-            Assert.IsNotNullOrEmpty(Result);
+            Assert.That(Result, Is.Not.Empty);
         }
 
         [Test]

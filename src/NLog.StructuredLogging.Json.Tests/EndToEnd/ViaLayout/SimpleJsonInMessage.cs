@@ -17,7 +17,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
         private Logger _sut;
         private int _iterations;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void BeforeEverything()
         {
             Given();

@@ -48,7 +48,7 @@ namespace NLog.StructuredLogging.Json.Tests
         [Test]
         public void WhenConverted_TheResultIsNotEmpty()
         {
-            Assert.IsNotNullOrEmpty(Result);
+            Assert.That(Result, Is.Not.Empty);
         }
 
         [Test]
@@ -66,7 +66,7 @@ namespace NLog.StructuredLogging.Json.Tests
                 "\"ExceptionFingerprint\":\"b75c4fb74c46040a6c31534425178ba90541c17f\"," +
                 "\"CallSite\":\"NLog.StructuredLogging.Json.Tests.LayoutRendererCallSiteTests.ThisNameWillAppearInTheCallSite";
 
-            Assert.That(Result, Is.StringStarting(expectedPrefix));
+            Assert.That(Result, Does.StartWith(expectedPrefix));
         }
     }
 }

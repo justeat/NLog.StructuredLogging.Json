@@ -8,10 +8,10 @@ NLog.StructuredLogging.Json
 
 ## What
 
-Structured logging with [NLog](http://nlog-project.org/), to send log entries to [Kibana](https://www.elastic.co/products/kibana) via [NXLog](http://nxlog.org/).
+Structured logging with [NLog](http://nlog-project.org/). Generates log entries as JSON.
+These can .e.g. be sent to [Kibana](https://www.elastic.co/products/kibana) over [NXLog](http://nxlog.org/). 
 
-
-Render one JSON object per line and parameters as properties for each `LogEventInfo` message.
+for each `LogEventInfo` message, render one JSON object with any parameters as properties.
 
 ##What problems does this solve?
 

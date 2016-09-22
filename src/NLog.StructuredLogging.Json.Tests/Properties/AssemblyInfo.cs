@@ -5,10 +5,10 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("NLog.StructuredLogging.Json.Tests")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Tests on Structured logging as JSON with NLog")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("JUST EAT plc")]
-[assembly: AssemblyProduct("NLog.StructuredLogging.Json.Tests")]
+[assembly: AssemblyProduct("NLog.StructuredLogging.Json")]
 [assembly: AssemblyCopyright("Copyright © JUST EAT plc 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

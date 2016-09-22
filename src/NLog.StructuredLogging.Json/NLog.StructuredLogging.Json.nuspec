@@ -2,12 +2,13 @@
 <package>
   <metadata>
     <id>NLog.StructuredLogging.Json</id>
-    <version>1.0.0</version>
-    <authors>alexander.williamson</authors>
+    <version>$version$</version>
+    <authors>JUST EAT Tech team</authors>
     <owners>JustEat UK Plc</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Structured logging with NLog with LogInfoEvent properties as JSON properties</description>
-    <copyright>Copyright 2016</copyright>
+    <description>Structured logging with NLog. Generates log entries as JSON.</description>
+    <copyright>Copyright © JUST EAT plc 2016</copyright>
     <tags>nlog json properties logeventinfo structured-logs structured-logging</tags>
+	<projectUrl>http://github.com/justeat/NLog.StructuredLogging.Json</projectUrl>
   </metadata>
 </package>

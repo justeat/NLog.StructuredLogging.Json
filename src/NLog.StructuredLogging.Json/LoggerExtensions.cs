@@ -7,6 +7,11 @@ namespace NLog.StructuredLogging.Json
 {
     public static class LoggerExtensions
     {
+        public static void ExtendedDebug(this ILogger logger, string message, object logProperties)
+        {
+            Extended(logger, LogLevel.Debug, message, logProperties, null);
+        }
+
         public static void ExtendedInfo(this ILogger logger, string message, object logProperties)
         {
             Extended(logger, LogLevel.Info, message, logProperties, null);

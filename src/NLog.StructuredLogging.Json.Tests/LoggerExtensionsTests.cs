@@ -21,6 +21,43 @@ namespace NLog.StructuredLogging.Json.Tests
         }
 
         [Test]
+        public void ExtendedDebug_NoProperties_NoPropertiesSet()
+        {
+            _logger.ExtendedDebug("hello world", null);
+
+            var parameters = (LogEventInfo)Arguments[0];
+            Assert.AreEqual(LogLevel.Debug, parameters.Level);
+            Assert.IsEmpty(parameters.Properties);
+        }
+
+        [Test]
+        public void ExtendedDebug_WithProperties_PublicPropertiesAreInjected()
+        {
+            _logger.ExtendedDebug("hello world", new { Key1 = "Value One", key2 = "Value Two" });
+
+            var parameters = (LogEventInfo)Arguments[0];
+            Assert.AreEqual(LogLevel.Debug, parameters.Level);
+            Assert.IsNotEmpty(parameters.Properties);
+            Assert.AreEqual(1, parameters.Properties.Count(x => x.Key.Equals("Key1")));
+            Assert.AreEqual("Value One", parameters.Properties["Key1"]);
+            Assert.AreEqual(1, parameters.Properties.Count(x => x.Key.Equals("key2")));
+            Assert.AreEqual("Value Two", parameters.Properties["key2"]);
+            A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
+        }
+
+        [Test]
+        public void ExtendedDebug_WithIndexerProperties_DoesNotThrow()
+        {
+            var badData = new PropertiesWithIndexer
+            {
+                Foo = "test",
+                Bar = 42
+            };
+            _logger.ExtendedDebug("hello world", badData);
+            Assert.Pass("This checks that the method overloads are able to cope with a object with an indexer property being passed to the logger");
+        }
+
+        [Test]
         public void ExtendedInfo_NoProperties_NoPropertiesSet()
         {
             _logger.ExtendedInfo("hello world", null);

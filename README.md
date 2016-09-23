@@ -240,10 +240,13 @@ _logger.ExtendedInfo("Order saved", new { OrderDetails = orderDetails });
 The `orderDetails` object will be serialised with `ToString()`. Unless this method is overridden in the OrderDetails type declaration, it will not produce any useful output. And if it is overridden, we only get one key-value pair, when instead the various values such as `OrderId` are better logged in separate fields.
 
 
-#### No debug log level
+#### Only some log levels are supported
 
 
-There is no `logger.ExtendedDebug()` method. It could be added if need be, but there's not much point: use `logger.ExtendedInfo` instead. When all messages of every level get sent to kibana for later filtering, there's no need for fine-grained log levels.
+
+We support `ExtendedException` which uses `LogLevel.Error`, `ExtendedError`, `ExtendedWarn`, `ExtendedInfo` and `ExtendedDebug`. Other log levels could be added if need be, but we don't believe that fine-grained log levels add a lot of value.  
+
+ The model where log messages are discarded immediately based on configuration, chiefly based on log level, is one that we can leave behind. All messages of every level are sent to kibana for later processing. Filtering is best done after the fact when investigating an error. Log level is a field that can be searched or filtered on, but is far from the only important one. 
 
 ## Contributors
 

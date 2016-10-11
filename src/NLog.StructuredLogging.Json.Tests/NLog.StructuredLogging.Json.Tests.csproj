@@ -93,6 +93,7 @@
     <Compile Include="EndToEnd\ViaLayout\SimpleJsonInMessage.cs" />
     <Compile Include="EndToEnd\ViaLayout\UnfortunatelyComplexFlattenedJsonLayoutTests.cs" />
     <Compile Include="FakeTimeSource.cs" />
+    <Compile Include="Helpers\MapperBadDataTests.cs" />
     <Compile Include="LayoutRendererCallSiteTests.cs" />
     <Compile Include="LayoutRendererTests.cs" />
     <Compile Include="Helpers\MapperExceptionDataTests.cs" />

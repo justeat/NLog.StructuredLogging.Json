@@ -15,7 +15,7 @@ namespace NLog.StructuredLogging.Json.Helpers
                 {"TimeStamp", timestampUtcIso8601 },
                 {"Level", source.Level.ToString()},
                 {"LoggerName", source.LoggerName},
-                {"Message", source.FormattedMessage},
+                {"Message", source.FormattedMessage}
             };
 
             if (source.Exception != null)
@@ -29,7 +29,7 @@ namespace NLog.StructuredLogging.Json.Helpers
 
             if (source.Parameters != null)
             {
-                result.Add("Parameters", string.Join(",", source.Parameters.Select(x => x.ToString())));
+                result.Add("Parameters", string.Join(",", source.Parameters.Select(Convert.ValueAsString)));
             }
 
             if (source.StackTrace != null)

@@ -61,6 +61,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
 
         protected virtual void ProgrammaticallyRegisterExtensions()
         {
+            ConfigurationItemFactory.Default.Layouts.RegisterDefinition("jsonwithproperties", typeof (JsonWithPropertiesLayout));
             ConfigurationItemFactory.Default.Layouts.RegisterDefinition("flattenedjsonlayout", typeof(FlattenedJsonLayout));
             ConfigurationItemFactory.Default.LayoutRenderers.RegisterDefinition("structuredlogging.json", typeof(StructuredLoggingLayoutRenderer));
             ConfigurationItemFactory.Default.LayoutRenderers.RegisterDefinition("hasher", typeof(HasherLayoutRenderer));

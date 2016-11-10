@@ -19,3 +19,8 @@ packages/
 _NCrunch_*
 .*crunch*.local.xml
 nCrunchTemp_*
+*.ncrunchproject
+*.ncrunchsolution
+
+#Resharper
+*.csproj.Dotsettings

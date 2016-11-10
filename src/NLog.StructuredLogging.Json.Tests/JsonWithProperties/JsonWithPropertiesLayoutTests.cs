@@ -31,7 +31,8 @@ namespace NLog.StructuredLogging.Json.Tests.JsonWithProperties
             layout.Properties.Add(new StructuredLoggingProperty("Two", new SimpleLayout(TestProperties.Two.ToString())));
             layout.Properties.Add(new StructuredLoggingProperty("Three", new SimpleLayout(TestProperties.Three.ToString())));
 
-            var target = new MemoryTarget {
+            var target = new MemoryTarget
+            {
                 Name = targetName,
                 Layout = layout
             };
@@ -68,12 +69,11 @@ namespace NLog.StructuredLogging.Json.Tests.JsonWithProperties
                 var layout = new JsonWithPropertiesLayout();
                 layout.Properties.Add(new StructuredLoggingProperty("Level", new SimpleLayout(TestProperties.One)));
 
-                Action action = () =>layout.Render(logEvent);
+                Action action = () => layout.Render(logEvent);
 
                 action.ShouldThrow<NLogConfigurationException>()
                     .Message.ShouldContain("There is already an entry for 'Level'");
             }
-
         }
     }
 }

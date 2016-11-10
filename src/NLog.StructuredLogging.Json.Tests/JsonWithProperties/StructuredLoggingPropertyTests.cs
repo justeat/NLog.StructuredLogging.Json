@@ -14,7 +14,7 @@ namespace NLog.StructuredLogging.Json.Tests.JsonWithProperties
             [TestCase("  ")]
             public void DoesNotAllowEmptyName(object name)
             {
-                Action action = () => new StructuredLoggingProperty(name as string,"some-layout-value");
+                Action action = () => new StructuredLoggingProperty(name as string, "some-layout-value");
                 action.ShouldThrow<ArgumentException>();
             }
 
@@ -24,8 +24,6 @@ namespace NLog.StructuredLogging.Json.Tests.JsonWithProperties
                 Action action = () => new StructuredLoggingProperty("some-name", null);
                 action.ShouldThrow<ArgumentNullException>();
             }
-
         }
-
     }
 }

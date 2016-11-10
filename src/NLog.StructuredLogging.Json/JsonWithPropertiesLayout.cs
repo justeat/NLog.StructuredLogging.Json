@@ -25,9 +25,8 @@ namespace NLog.StructuredLogging.Json
     ///   </target>
     /// </example>
     [Layout("jsonwithproperties")]
-    public class JsonWithPropertiesLayout: Layout
+    public class JsonWithPropertiesLayout : Layout
     {
-
         [ArrayParameter(typeof(StructuredLoggingProperty), "property")]
         public IList<StructuredLoggingProperty> Properties { get; private set; }
 
@@ -39,14 +38,19 @@ namespace NLog.StructuredLogging.Json
         protected override string GetFormattedMessage(LogEventInfo logEvent)
         {
             var dictionary = Mapper.ToDictionary(logEvent);
+
             foreach (var property in Properties)
             {
-                if (dictionary.ContainsKey(property.Name)) {
+                if (dictionary.ContainsKey(property.Name))
+                {
                     throw new NLogConfigurationException("There is already an entry for '{0}'. It is probably a property of the LogEventInfo object and you can't override this. Try giving your property a different name ", property.Name);
                 }
+
                 dictionary.Add(property.Name, property.Layout.Render(logEvent));
             }
+
             var json = ConvertJson.Serialize(dictionary);
+
             return json;
         }
     }

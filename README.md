@@ -116,7 +116,7 @@ logger.ExtendedException(ex, "Error sending order to Restaurant", new { OrderId 
 
 ```
 
-The last parameter is an anonymous tuple, and is used as a bag of named values.  The property names and values on this tuple become field names and corresponding values.
+The last parameter can be an anonymous tuple or a dictionary, and will be used as a bag of named values.  If an anonymous type is passed the property names and values on this tuple become field names and corresponding values.
 
 
 ### Logging data from exceptions

@@ -121,7 +121,7 @@ The last parameter can be an anonymous object which will be used as a bag of nam
 The last parameter can be a dictionary of keys name and values.
 
 ```c#
-	var logProperties = new Dictionary<object, object>
+	var logProperties = new Dictionary<string, object>
 	{
 		{"orderId", 1234 },
 		{"customerId", 3456 }

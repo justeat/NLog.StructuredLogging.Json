@@ -1,5 +1,7 @@
 ﻿﻿using System;
-using System.Diagnostics;
+ using System.Collections;
+ using System.Collections.Generic;
+ using System.Diagnostics;
 ﻿using System.Linq;
 ﻿using NLog.StructuredLogging.Json.Helpers;
 
@@ -91,11 +93,27 @@ namespace NLog.StructuredLogging.Json
                 return;
             }
 
-            logProperties.GetType()
-                .GetProperties()
-                .Where(p => p.GetIndexParameters().Length == 0)
-                .ToList()
-                .ForEach(x => log.Properties.Add(x.Name, x.GetValue(logProperties)));
+            if (IsDictionary(logProperties))
+            {                
+                foreach (var logProperty in (IDictionary<object, object>) logProperties)
+                {
+                    log.Properties.Add(logProperty.Key, logProperty.Value);
+                };
+            }
+            else
+            {
+                logProperties.GetType()
+                    .GetProperties()
+                    .Where(p => p.GetIndexParameters().Length == 0)
+                    .ToList()
+                    .ForEach(x => log.Properties.Add(x.Name, x.GetValue(logProperties)));
+            }
+        }
+
+        private static bool IsDictionary(object logProperties)
+        {
+            var type = logProperties.GetType();
+            return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>);
         }
     }
 }

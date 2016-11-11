@@ -121,7 +121,6 @@ The last parameter can be an anonymous object which will be used as a bag of nam
 The last parameter can be a dictionary of keys name and values.
 
 ```c#
-
 	var logProperties = new Dictionary<object, object>
 	{
 		{"orderId", 1234 },
@@ -134,7 +133,7 @@ The last parameter can be a dictionary of keys name and values.
 	}
 
 	logger.ExtendedInfo("Order received", logProperties);
-``
+```
 
 ### Logging data from exceptions
 

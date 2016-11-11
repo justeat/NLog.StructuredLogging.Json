@@ -116,9 +116,10 @@ logger.ExtendedException(ex, "Error sending order to Restaurant", new { OrderId 
 
 ```
 
-The last parameter can be an anonymous object which will be used as a bag of named values. The property names and values on this tuple become field names and corresponding values.
+The last parameter can be a Dictionary of names and values, or an anonymous object. 
+If an anonymous object is supplied, the property names and values on this object become field names and corresponding values as shown above. 
 
-The last parameter can be a dictionary of keys name and values.
+Example of using a dictionary:
 
 ```c#
 	var logProperties = new Dictionary<string, object>

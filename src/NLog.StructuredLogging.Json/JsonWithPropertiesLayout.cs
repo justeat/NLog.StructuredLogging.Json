@@ -34,7 +34,7 @@ namespace NLog.StructuredLogging.Json
 
         public JsonWithPropertiesLayout()
         {
-            this.Properties = new List<StructuredLoggingProperty>();
+            Properties = new List<StructuredLoggingProperty>();
         }
 
         protected override string GetFormattedMessage(LogEventInfo logEvent)
@@ -54,7 +54,6 @@ namespace NLog.StructuredLogging.Json
             }
 
             var json = ConvertJson.Serialize(dictionary);
-
             return json;
         }
     }

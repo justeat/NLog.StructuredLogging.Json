@@ -94,19 +94,24 @@ namespace NLog.StructuredLogging.Json
             }
 
             if (IsDictionary(logProperties))
-            {                
-                foreach (var logProperty in (IDictionary<object, object>) logProperties)
+            {
+                var dict = (IDictionary)logProperties;
+
+                foreach (var key in dict.Keys)
                 {
-                    log.Properties.Add(logProperty.Key, logProperty.Value);
-                };
+                    log.Properties.Add(key, dict[key]);
+                }
             }
             else
             {
-                logProperties.GetType()
+                var props = logProperties.GetType()
                     .GetProperties()
-                    .Where(p => p.GetIndexParameters().Length == 0)
-                    .ToList()
-                    .ForEach(x => log.Properties.Add(x.Name, x.GetValue(logProperties)));
+                    .Where(p => p.GetIndexParameters().Length == 0);
+
+                foreach (var prop in props)
+                {
+                    log.Properties.Add(prop.Name, prop.GetValue(logProperties));
+                }
             }
         }
 

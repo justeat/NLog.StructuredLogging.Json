@@ -84,6 +84,27 @@ namespace NLog.StructuredLogging.Json.Tests
         }
 
         [Test]
+        public void ExtendedInfo_WithDictionary_ValuesAreInjected()
+        {
+            var props = new Dictionary<string, object>
+                {
+                    { "Key1", "Value One" },
+                    { "key2", "Value Two" }
+                };
+
+            _logger.ExtendedInfo("hello world", props);
+
+            var parameters = (LogEventInfo)Arguments[0];
+            Assert.AreEqual(LogLevel.Info, parameters.Level);
+            Assert.IsNotEmpty(parameters.Properties);
+            Assert.AreEqual(1, parameters.Properties.Count(x => x.Key.Equals("Key1")));
+            Assert.AreEqual("Value One", parameters.Properties["Key1"]);
+            Assert.AreEqual(1, parameters.Properties.Count(x => x.Key.Equals("key2")));
+            Assert.AreEqual("Value Two", parameters.Properties["key2"]);
+            A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
+        }
+
+        [Test]
         public void ExtendedInfo_WithIndexerProperties_DoesNotThrow()
         {
             var badData = new PropertiesWithIndexer
@@ -225,10 +246,10 @@ namespace NLog.StructuredLogging.Json.Tests
         [Test]
         public void ExtendedException_WithDictionaryProperties()
         {
-            Dictionary<object, object> logProperties = new Dictionary<object, object>()
+            var logProperties = new Dictionary<object, object>
             {
                 {"Key1", "Value One"},
-                {"key2", 2},
+                {"key2", 2}
             };
 
             _logger.ExtendedException(new Exception("example exception"), "hello world", logProperties);

@@ -1,5 +1,4 @@
-﻿using System;
-using NLog.Config;
+﻿using NLog.Config;
 using NLog.Layouts;
 using NLog.Targets;
 using NLog.Time;
@@ -42,13 +41,14 @@ namespace NLog.StructuredLogging.Json.Tests.JsonWithProperties
             TimeSource.Current = new FakeTimeSource();
             var logger = LogManager.GetCurrentClassLogger();
 
-            var expectedOutput = "{\"TimeStamp\":\"" + TimeSource.Current.Time.ToString("yyyy-MM-ddTHH\\:mm\\:ss.fffZ") + "\"," +
-                                 "\"Level\":\"Trace\"," +
-                                 "\"LoggerName\":\"" + LoggerName +
-                                 "\",\"Message\":\"" + TestMessage + "\"" +
-                                 ",\"One\":\"" + TestProperties.One + "\"" +
-                                 ",\"Two\":\"" + TestProperties.Two + "\"" +
-                                 ",\"Three\":\"" + TestProperties.Three + "\"}";
+            var expectedOutput =
+                "{\"TimeStamp\":\"" + TimeSource.Current.Time.ToString("yyyy-MM-ddTHH\\:mm\\:ss.fffZ") + "\"," +
+                "\"Level\":\"Trace\"," +
+                "\"LoggerName\":\"" + LoggerName +
+                "\",\"Message\":\"" + TestMessage + "\"" +
+                ",\"One\":\"" + TestProperties.One + "\"" +
+                ",\"Two\":\"" + TestProperties.Two + "\"" +
+                ",\"Three\":\"" + TestProperties.Three + "\"}";
 
             var logEvent = new LogEventInfo(LogLevel.Trace, LoggerName, TestMessage);
             logger.Log(logEvent);
@@ -76,11 +76,12 @@ namespace NLog.StructuredLogging.Json.Tests.JsonWithProperties
 
                 var expectedPropertyName = JsonWithPropertiesLayout.PropertyNamePrefix + existingPropertyName;
 
-                var expectedOutput = "{\"TimeStamp\":\"" + TimeSource.Current.Time.ToString("yyyy-MM-ddTHH\\:mm\\:ss.fffZ") +
-                                     "\",\"Level\":\"Trace" +
-                                     "\",\"LoggerName\":\"" + LoggerName +
-                                     "\",\"Message\":\"" + TestMessage +
-                                     "\",\"" + expectedPropertyName + "\":\"" + TestProperties.One + "\"}";
+                var expectedOutput =
+                    "{\"TimeStamp\":\"" + TimeSource.Current.Time.ToString("yyyy-MM-ddTHH\\:mm\\:ss.fffZ") +
+                    "\",\"Level\":\"Trace" +
+                    "\",\"LoggerName\":\"" + LoggerName +
+                    "\",\"Message\":\"" + TestMessage +
+                    "\",\"" + expectedPropertyName + "\":\"" + TestProperties.One + "\"}";
 
                 result.ShouldBe(expectedOutput, result);
             }

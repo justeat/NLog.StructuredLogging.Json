@@ -122,18 +122,18 @@ If an anonymous object is supplied, the property names and values on this object
 Example of using a dictionary:
 
 ```c#
-	var logProperties = new Dictionary<string, object>
-	{
-		{"orderId", 1234 },
-		{"customerId", 3456 }
-	};
-	
-	if (partner != null)
-	{
-	   logProperties.Add("partnerId", partner.Id)
-	}
+var logProperties = new Dictionary<string, object>
+{
+	{"orderId", 1234 },
+	{"customerId", 3456 }
+};
 
-	logger.ExtendedInfo("Order received", logProperties);
+if (partner != null)
+{
+   logProperties.Add("partnerId", partner.Id)
+}
+
+logger.ExtendedInfo("Order received", logProperties);
 ```
 
 ### Logging data from exceptions

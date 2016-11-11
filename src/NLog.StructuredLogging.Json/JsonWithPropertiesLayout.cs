@@ -30,6 +30,8 @@ namespace NLog.StructuredLogging.Json
         [ArrayParameter(typeof(StructuredLoggingProperty), "property")]
         public IList<StructuredLoggingProperty> Properties { get; private set; }
 
+        public const string PropertyNamePrefix = "properties_";
+
         public JsonWithPropertiesLayout()
         {
             this.Properties = new List<StructuredLoggingProperty>();
@@ -43,10 +45,12 @@ namespace NLog.StructuredLogging.Json
             {
                 if (dictionary.ContainsKey(property.Name))
                 {
-                    throw new NLogConfigurationException("There is already an entry for '{0}'. It is probably a property of the LogEventInfo object and you can't override this. Try giving your property a different name ", property.Name);
+                    dictionary.Add(PropertyNamePrefix + property.Name, property.Layout.Render(logEvent));
                 }
-
-                dictionary.Add(property.Name, property.Layout.Render(logEvent));
+                else
+                {
+                    dictionary.Add(property.Name, property.Layout.Render(logEvent));
+                }
             }
 
             var json = ConvertJson.Serialize(dictionary);

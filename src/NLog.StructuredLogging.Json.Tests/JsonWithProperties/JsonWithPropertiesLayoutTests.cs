@@ -62,17 +62,27 @@ namespace NLog.StructuredLogging.Json.Tests.JsonWithProperties
         public class GetFormattedMessage
         {
             [Test]
-            public void ThrowsExceptionIfPropertyNameIsTheSameAsALogEventPropertyName()
+            public void AddsPropertyNamePrefixIfPropertyNameIsTheSameAsALogEventPropertyName()
             {
-                LogEventInfo logEvent = new LogEventInfo(LogLevel.Trace, LoggerName, LoggerName);
+                const string existingPropertyName = "Level";
+
+                TimeSource.Current = new FakeTimeSource();
+                var logEvent = new LogEventInfo(LogLevel.Trace, LoggerName, TestMessage);
 
                 var layout = new JsonWithPropertiesLayout();
-                layout.Properties.Add(new StructuredLoggingProperty("Level", new SimpleLayout(TestProperties.One)));
+                layout.Properties.Add(new StructuredLoggingProperty(existingPropertyName, new SimpleLayout(TestProperties.One)));
 
-                Action action = () => layout.Render(logEvent);
+                var result = layout.Render(logEvent);
 
-                action.ShouldThrow<NLogConfigurationException>()
-                    .Message.ShouldContain("There is already an entry for 'Level'");
+                var expectedPropertyName = JsonWithPropertiesLayout.PropertyNamePrefix + existingPropertyName;
+
+                var expectedOutput = "{\"TimeStamp\":\"" + TimeSource.Current.Time.ToString("yyyy-MM-ddTHH\\:mm\\:ss.fffZ") +
+                                     "\",\"Level\":\"Trace" +
+                                     "\",\"LoggerName\":\"" + LoggerName +
+                                     "\",\"Message\":\"" + TestMessage +
+                                     "\",\"" + expectedPropertyName + "\":\"" + TestProperties.One + "\"}";
+
+                result.ShouldBe(expectedOutput, result);
             }
         }
     }

@@ -94,6 +94,7 @@
     <Compile Include="EndToEnd\ViaLayout\UnfortunatelyComplexFlattenedJsonLayoutTests.cs" />
     <Compile Include="FakeTimeSource.cs" />
     <Compile Include="Helpers\MapperParametersTests.cs" />
+    <Compile Include="JsonWithProperties\JsonWithPropertiesLayoutTests.cs" />
     <Compile Include="LayoutRendererCallSiteTests.cs" />
     <Compile Include="LayoutRendererTests.cs" />
     <Compile Include="Helpers\MapperExceptionDataTests.cs" />
@@ -105,6 +106,7 @@
     <Compile Include="SerializingJustSayingMessages.cs" />
     <Compile Include="LoggerExtensionsTests.cs" />
     <Compile Include="Helpers\ConvertToUtcIso8601Tests.cs" />
+    <Compile Include="JsonWithProperties\StructuredLoggingPropertyTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="nlog.config">

@@ -200,6 +200,41 @@ ExceptionCount: 3
 ExceptionTag: "6fc5d910-3335-4eba-89fd-f9229e4a29b3"
 ````
 
+### Logging additional json properties
+
+You can add context to your log events by using the `JsonWithProperties` layout instead of the `structuredlogging.json` layout renderer.
+The example below shows how you can log the machine name and component version with each log event. 
+
+````xml
+<target name="MyTarget"
+       xsi:type="file"
+       fileName="MyFilePath"
+       encoding="utf-8">
+  <layout xsi:type="JsonWithProperties">    
+    <property name="MachineName" layout="${machinename}" />
+    <property name="ComponentVersion" layout="1.0.0.0" />
+  </layout>
+</target>
+````
+
+A log entry created using code similar to:
+
+````csharp
+logger.ExtendedInfo("Order sent to partner", new { OrderId = 1234, RestaurantId = 4567 } );
+````
+
+might result in output similar to:
+
+
+````json
+{"TimeStamp":"2016-09-21T08:11:23.483Z","Level":"Info","LoggerName":"Acme.WebApp.OrderController",
+"Message":"Order sent to partner","CallSite":"Acme.WebApp.OrderController.ResendOrder",
+"OrderId":"1234","PartnerId":"4567",
+"NewState":"Sent","SendDate":"2016-09-21T08:11:23.456Z",
+"MachineName":"MyMachineName","ComponentVersion":"1.0.0.0"}
+````
+
+where we can see that the properties specified in the layout are appended to the properties that come from the log event.
 
 ### Best practices
 

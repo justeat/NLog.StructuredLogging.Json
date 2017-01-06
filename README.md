@@ -295,10 +295,14 @@ The `orderDetails` object will be serialised with `ToString()`. Unless this meth
 #### Only some log levels are supported
 
 
-
 We support `ExtendedException` which uses `LogLevel.Error`, `ExtendedError`, `ExtendedWarn`, `ExtendedInfo` and `ExtendedDebug`. Other log levels could be added if need be, but we don't believe that fine-grained log levels add a lot of value.  
 
  The model where log messages are discarded immediately based on configuration, chiefly based on log level, is one that we can leave behind. All messages of every level are sent to kibana for later processing. Filtering is best done after the fact when investigating an error. Log level is a field that can be searched or filtered on, but is far from the only important one. 
+
+#### Field naming and special characters
+
+When sending logs to the ELK stack, the field names are parsed, and some characters such as '.' have special meaning. So don't use them unless you know how they will be interpreted by the back end. 
+
 
 ## Contributors
 

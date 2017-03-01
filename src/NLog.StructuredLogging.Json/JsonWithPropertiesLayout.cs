@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using NLog.Config;
 using NLog.Layouts;
 using NLog.StructuredLogging.Json.Helpers;
@@ -43,14 +44,24 @@ namespace NLog.StructuredLogging.Json
 
             foreach (var property in Properties)
             {
-                if (dictionary.ContainsKey(property.Name))
+                var name = property.Name;
+
+                if (dictionary.ContainsKey(name))
                 {
-                    dictionary.Add(PropertyNamePrefix + property.Name, property.Layout.Render(logEvent));
+                    name = PropertyNamePrefix + property.Name;
                 }
-                else
+
+                string value;
+                try
                 {
-                    dictionary.Add(property.Name, property.Layout.Render(logEvent));
+                    value = property.Layout.Render(logEvent);
                 }
+                catch (Exception ex)
+                {
+                    value = $"Property render failed: {ex.GetType().Name} {ex.Message}";
+                }
+
+                dictionary.Add(name, value);
             }
 
             var json = ConvertJson.Serialize(dictionary);

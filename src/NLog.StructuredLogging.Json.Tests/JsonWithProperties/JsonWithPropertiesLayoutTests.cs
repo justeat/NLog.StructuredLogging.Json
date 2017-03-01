@@ -1,4 +1,5 @@
-﻿using NLog.Config;
+﻿using System;
+using NLog.Config;
 using NLog.Layouts;
 using NLog.Targets;
 using NLog.Time;
@@ -7,6 +8,14 @@ using Shouldly;
 
 namespace NLog.StructuredLogging.Json.Tests.JsonWithProperties
 {
+    public class FailingLayout : Layout
+    {
+        protected override string GetFormattedMessage(LogEventInfo logEvent)
+        {
+            throw new ApplicationException("Test render fail");
+        }
+    }
+
     [TestFixture]
     public class JsonWithPropertiesLayoutTests
     {
@@ -58,6 +67,45 @@ namespace NLog.StructuredLogging.Json.Tests.JsonWithProperties
             var output = target.Logs[0];
             output.ShouldBe(expectedOutput);
         }
+
+        [Test]
+        public void PropertyRenderFailure()
+        {
+            const string targetName = "0255b1aa-8d55-4163-878c-e003431a4796";
+
+            var layout = new JsonWithPropertiesLayout();
+            layout.Properties.Add(new StructuredLoggingProperty("One", new FailingLayout()));
+            layout.Properties.Add(new StructuredLoggingProperty("Two", new SimpleLayout(TestProperties.Two.ToString())));
+
+            var target = new MemoryTarget
+            {
+                Name = targetName,
+                Layout = layout
+            };
+
+            SimpleConfigurator.ConfigureForTargetLogging(target, LogLevel.Trace);
+
+            TimeSource.Current = new FakeTimeSource();
+            var logger = LogManager.GetCurrentClassLogger();
+
+            var expectedOutput =
+                "{\"TimeStamp\":\"" + TimeSource.Current.Time.ToString("yyyy-MM-ddTHH\\:mm\\:ss.fffZ") + "\"," +
+                "\"Level\":\"Trace\"," +
+                "\"LoggerName\":\"" + LoggerName +
+                "\",\"Message\":\"" + TestMessage + "\"" +
+                ",\"One\":\"Property render failed: ApplicationException Test render fail\"" +
+                ",\"Two\":\"" + TestProperties.Two + "\"}";
+
+            var logEvent = new LogEventInfo(LogLevel.Trace, LoggerName, TestMessage);
+            logger.Log(logEvent);
+
+            target.Logs.Count.ShouldBe(1);
+
+            var output = target.Logs[0];
+            output.ShouldBe(expectedOutput);
+        }
+
+
 
         public class GetFormattedMessage
         {

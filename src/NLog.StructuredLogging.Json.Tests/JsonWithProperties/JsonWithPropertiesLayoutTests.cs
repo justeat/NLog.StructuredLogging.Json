@@ -93,7 +93,7 @@ namespace NLog.StructuredLogging.Json.Tests.JsonWithProperties
                 "\"Level\":\"Trace\"," +
                 "\"LoggerName\":\"" + LoggerName +
                 "\",\"Message\":\"" + TestMessage + "\"" +
-                ",\"One\":\"Property render failed: ApplicationException Test render fail\"" +
+                ",\"One\":\"Render failed: ApplicationException Test render fail\"" +
                 ",\"Two\":\"" + TestProperties.Two + "\"}";
 
             var logEvent = new LogEventInfo(LogLevel.Trace, LoggerName, TestMessage);

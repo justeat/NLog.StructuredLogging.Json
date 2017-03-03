@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using NLog.Config;
 using NLog.StructuredLogging.Json.Helpers;
@@ -42,16 +43,48 @@ namespace NLog.StructuredLogging.Json
             var layoutRendererWrapper = new JsonEncodeLayoutRendererWrapper();
             foreach (var jsonAttribute in Attributes)
             {
-                layoutRendererWrapper.Inner = jsonAttribute.Layout;
-                layoutRendererWrapper.JsonEncode = jsonAttribute.Encode;
-                var str = layoutRendererWrapper.Render(logEvent);
-                if (string.IsNullOrEmpty(str))
+                AddRenderedValue(logEvent, result, layoutRendererWrapper, jsonAttribute);
+            }
+        }
+
+        private static void AddRenderedValue(
+            LogEventInfo source, IDictionary<string, object> dest,
+            JsonEncodeLayoutRendererWrapper renderer, JsonAttribute attribute)
+        {
+            renderer.Inner = attribute.Layout;
+            renderer.JsonEncode = attribute.Encode;
+
+            string renderedValue;
+            try
+            {
+                renderedValue = renderer.Render(source);
+            }
+            catch (Exception ex)
+            {
+                renderedValue = $"Render failed: {ex.GetType().Name} {ex.Message}";
+            }
+
+            if (string.IsNullOrEmpty(renderedValue))
+            {
+                return;
+            }
+
+            AddProp(dest, attribute.Name, renderedValue);
+        }
+
+        private static void AddProp(IDictionary<string, object> dest, string name, string value)
+        {
+            const string propertyNamePrefix = "properties_";
+            if (!dest.ContainsKey(name))
+            {
+                dest.Add(name, value);
+            }
+            else
+            {
+                name = propertyNamePrefix + name;
+                if (!dest.ContainsKey(name))
                 {
-                    continue;
-                }
-                if (!result.ContainsKey(jsonAttribute.Name))
-                {
-                    result.Add(jsonAttribute.Name, str);
+                    dest.Add(name, value);
                 }
             }
         }

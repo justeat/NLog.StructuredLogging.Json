@@ -1,5 +1,4 @@
-﻿using System;
-using NLog.Config;
+﻿using NLog.Config;
 using NLog.Layouts;
 using NLog.Targets;
 using NLog.Time;
@@ -8,14 +7,6 @@ using Shouldly;
 
 namespace NLog.StructuredLogging.Json.Tests.JsonWithProperties
 {
-    public class FailingLayout : Layout
-    {
-        protected override string GetFormattedMessage(LogEventInfo logEvent)
-        {
-            throw new ApplicationException("Test render fail");
-        }
-    }
-
     [TestFixture]
     public class JsonWithPropertiesLayoutTests
     {

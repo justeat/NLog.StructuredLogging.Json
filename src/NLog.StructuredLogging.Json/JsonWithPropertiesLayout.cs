@@ -69,24 +69,7 @@ namespace NLog.StructuredLogging.Json
                 return;
             }
 
-            AddProp(dest, property.Name, renderedValue);
-        }
-
-        private static void AddProp(IDictionary<string, object> dest, string name, string value)
-        {
-            const string propertyNamePrefix = "properties_";
-            if (!dest.ContainsKey(name))
-            {
-                dest.Add(name, value);
-            }
-            else
-            {
-                name = propertyNamePrefix + name;
-                if (!dest.ContainsKey(name))
-                {
-                    dest.Add(name, value);
-                }
-            }
+            PropertiesHelper.Add(dest, property.Name, renderedValue);
         }
     }
 }

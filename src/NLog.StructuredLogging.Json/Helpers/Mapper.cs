@@ -48,7 +48,7 @@ namespace NLog.StructuredLogging.Json.Helpers
             return result;
         }
 
-        public static void HarvestToDictionary(IDictionary<object, object> source, IDictionary<string, object> result, string keyPrefixWhenCollision)
+        public static void HarvestToDictionary(IDictionary<object, object> source, IDictionary<string, object> dest, string keyPrefixWhenCollision)
         {
             if (source == null)
             {
@@ -57,11 +57,11 @@ namespace NLog.StructuredLogging.Json.Helpers
 
             foreach (var property in source)
             {
-                HarvestToDictionary(result, property.Key.ToString(), property.Value, keyPrefixWhenCollision);
+                HarvestToDictionary(dest, property.Key.ToString(), property.Value, keyPrefixWhenCollision);
             }
         }
 
-        public static void HarvestToDictionary(IDictionary source, IDictionary<string, object> result, string keyPrefixWhenCollision)
+        public static void HarvestToDictionary(IDictionary source, IDictionary<string, object> dest, string keyPrefixWhenCollision)
         {
             if (source == null)
             {
@@ -70,7 +70,7 @@ namespace NLog.StructuredLogging.Json.Helpers
 
             foreach (DictionaryEntry property in source)
             {
-                HarvestToDictionary(result, property.Key.ToString(), property.Value, keyPrefixWhenCollision);
+                HarvestToDictionary(dest, property.Key.ToString(), property.Value, keyPrefixWhenCollision);
             }
         }
 

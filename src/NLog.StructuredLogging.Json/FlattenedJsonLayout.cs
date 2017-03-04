@@ -69,7 +69,8 @@ namespace NLog.StructuredLogging.Json
                 return;
             }
 
-            PropertiesHelper.Add(dest, attribute.Name, renderedValue);
+            Mapper.HarvestStringToDictionary(dest,
+                attribute.Name, renderedValue, "attributes_");
         }
 
         private void AddAttributesForStandardThings()

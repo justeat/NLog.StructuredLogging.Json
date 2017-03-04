@@ -57,7 +57,7 @@ namespace NLog.StructuredLogging.Json.Helpers
 
             foreach (var property in source)
             {
-                HarvestToDictionary(property.Key.ToString(), property.Value, result, keyPrefixWhenCollision);
+                HarvestToDictionary(result, property.Key.ToString(), property.Value, keyPrefixWhenCollision);
             }
         }
 
@@ -70,20 +70,28 @@ namespace NLog.StructuredLogging.Json.Helpers
 
             foreach (DictionaryEntry property in source)
             {
-                HarvestToDictionary(property.Key.ToString(), property.Value, result, keyPrefixWhenCollision);
+                HarvestToDictionary(result, property.Key.ToString(), property.Value, keyPrefixWhenCollision);
             }
         }
 
-        private static void HarvestToDictionary(string key, object value, IDictionary<string, object> result, string keyPrefixWhenCollision)
+        private static void HarvestToDictionary(IDictionary<string, object> dest, string key, object value, string keyPrefixWhenCollision)
         {
             var valueAsString = Convert.ValueAsString(value);
-            if (!result.ContainsKey(key))
+            HarvestStringToDictionary(dest, key, valueAsString, keyPrefixWhenCollision);
+        }
+
+        public static void HarvestStringToDictionary(IDictionary<string, object> dest, string key, string value, string keyPrefixWhenCollision)
+        {
+            if (!dest.ContainsKey(key))
             {
-                result.Add(key, valueAsString);
+                dest.Add(key, value);
+                return;
             }
-            else
+
+            var prefixedKey = keyPrefixWhenCollision + key;
+            if (!dest.ContainsKey(prefixedKey))
             {
-                result.Add(keyPrefixWhenCollision+key, valueAsString);
+                dest.Add(prefixedKey, value);
             }
         }
     }

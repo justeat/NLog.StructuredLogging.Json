@@ -50,7 +50,6 @@
     <Compile Include="FlattenedJsonLayout.cs" />
     <Compile Include="Helpers\ConvertException.cs" />
     <Compile Include="Helpers\ConvertJson.cs" />
-    <Compile Include="Helpers\PropertiesHelper.cs" />
     <Compile Include="Helpers\Sha1Hasher.cs" />
     <Compile Include="StructuredLoggingLayoutRenderer.cs" />
     <Compile Include="LoggerExtensions.cs" />

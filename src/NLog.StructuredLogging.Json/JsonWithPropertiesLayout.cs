@@ -69,7 +69,8 @@ namespace NLog.StructuredLogging.Json
                 return;
             }
 
-            PropertiesHelper.Add(dest, property.Name, renderedValue);
+            Mapper.HarvestStringToDictionary(dest,
+                property.Name, renderedValue, "properties_");
         }
     }
 }

@@ -96,7 +96,43 @@ namespace NLog.StructuredLogging.Json.Tests.JsonWithProperties
             output.ShouldBe(expectedOutput);
         }
 
+        [Test]
+        public void WhenPropertyNamesAreDuplicated()
+        {
+            const string targetName = "650b6a6b-b913-4b36-b594-e9073baf66da";
 
+            var layout = new JsonWithPropertiesLayout();
+            layout.Properties.Add(new StructuredLoggingProperty("duplicate", new SimpleLayout("value1")));
+            layout.Properties.Add(new StructuredLoggingProperty("duplicate", new SimpleLayout("value2")));
+            layout.Properties.Add(new StructuredLoggingProperty("duplicate", new SimpleLayout("value3")));
+
+            var target = new MemoryTarget
+            {
+                Name = targetName,
+                Layout = layout
+            };
+
+            SimpleConfigurator.ConfigureForTargetLogging(target, LogLevel.Trace);
+
+            TimeSource.Current = new FakeTimeSource();
+            var logger = LogManager.GetCurrentClassLogger();
+
+            var expectedOutput =
+                "{\"TimeStamp\":\"" + TimeSource.Current.Time.ToString("yyyy-MM-ddTHH\\:mm\\:ss.fffZ") + "\"," +
+                "\"Level\":\"Trace\"," +
+                "\"LoggerName\":\"" + LoggerName +
+                "\",\"Message\":\"" + TestMessage + "\"" +
+                ",\"duplicate\":\"value1\"" +
+                ",\"properties_duplicate\":\"value2\"}";
+
+            var logEvent = new LogEventInfo(LogLevel.Trace, LoggerName, TestMessage);
+            logger.Log(logEvent);
+
+            target.Logs.Count.ShouldBe(1);
+
+            var output = target.Logs[0];
+            output.ShouldBe(expectedOutput);
+        }
 
         public class GetFormattedMessage
         {

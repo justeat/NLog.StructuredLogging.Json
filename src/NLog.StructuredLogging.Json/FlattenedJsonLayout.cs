@@ -118,7 +118,10 @@ namespace NLog.StructuredLogging.Json
 
         private void Add(string name, Layout layout, bool encode = false)
         {
-            Attributes.Add(new JsonAttribute(name, layout, encode));
+            if (! Attributes.Any(a => string.Equals(a.Name, name, StringComparison.OrdinalIgnoreCase)))
+            {
+                Attributes.Add(new JsonAttribute(name, layout, encode));
+            }
         }
     }
 }

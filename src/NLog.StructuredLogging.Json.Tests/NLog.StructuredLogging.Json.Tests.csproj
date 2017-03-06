@@ -70,6 +70,7 @@
     <Compile Include="EndToEnd\ViaLayout\MultiUniqueKeysThreadedInFlattenedJson.cs" />
     <Compile Include="EndToEnd\ViaLayout\AggregateExceptionEndToEndTestsInFlattenedJson.cs" />
     <Compile Include="EndToEnd\ViaLayout\NestedExceptionEndToEndTestsInFlattenedJson.cs" />
+    <Compile Include="EndToEnd\ViaLayout\WithFailingLayout.cs" />
     <Compile Include="FlattenedJsonCanSerializePushNotification.cs" />
     <Compile Include="Hashing\HasherTests.cs" />
     <Compile Include="Helpers\ConvertExceptionToFingerprintTests.cs" />
@@ -94,6 +95,7 @@
     <Compile Include="EndToEnd\ViaLayout\UnfortunatelyComplexFlattenedJsonLayoutTests.cs" />
     <Compile Include="FakeTimeSource.cs" />
     <Compile Include="Helpers\MapperParametersTests.cs" />
+    <Compile Include="JsonWithProperties\FailingLayout.cs" />
     <Compile Include="JsonWithProperties\JsonWithPropertiesLayoutTests.cs" />
     <Compile Include="LayoutRendererCallSiteTests.cs" />
     <Compile Include="LayoutRendererTests.cs" />

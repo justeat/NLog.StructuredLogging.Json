@@ -44,28 +44,33 @@ namespace NLog.StructuredLogging.Json
 
             foreach (var property in Properties)
             {
-                var name = property.Name;
-
-                if (dictionary.ContainsKey(name))
-                {
-                    name = PropertyNamePrefix + property.Name;
-                }
-
-                string value;
-                try
-                {
-                    value = property.Layout.Render(logEvent);
-                }
-                catch (Exception ex)
-                {
-                    value = $"Property render failed: {ex.GetType().Name} {ex.Message}";
-                }
-
-                dictionary.Add(name, value);
+                AddRenderedValue(logEvent, dictionary, property);
             }
 
-            var json = ConvertJson.Serialize(dictionary);
-            return json;
+            return ConvertJson.Serialize(dictionary);
+        }
+
+        private static void AddRenderedValue(
+            LogEventInfo source, IDictionary<string, object> dest,
+            StructuredLoggingProperty property)
+        {
+            string renderedValue;
+            try
+            {
+                renderedValue = property.Layout.Render(source);
+            }
+            catch (Exception ex)
+            {
+                renderedValue = $"Render failed: {ex.GetType().Name} {ex.Message}";
+            }
+
+            if (string.IsNullOrEmpty(renderedValue))
+            {
+                return;
+            }
+
+            Mapper.HarvestStringToDictionary(dest,
+                property.Name, renderedValue, "properties_");
         }
     }
 }

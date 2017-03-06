@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using NLog.Config;
 using NLog.StructuredLogging.Json.Helpers;
@@ -42,18 +43,34 @@ namespace NLog.StructuredLogging.Json
             var layoutRendererWrapper = new JsonEncodeLayoutRendererWrapper();
             foreach (var jsonAttribute in Attributes)
             {
-                layoutRendererWrapper.Inner = jsonAttribute.Layout;
-                layoutRendererWrapper.JsonEncode = jsonAttribute.Encode;
-                var str = layoutRendererWrapper.Render(logEvent);
-                if (string.IsNullOrEmpty(str))
-                {
-                    continue;
-                }
-                if (!result.ContainsKey(jsonAttribute.Name))
-                {
-                    result.Add(jsonAttribute.Name, str);
-                }
+                AddRenderedValue(logEvent, result, layoutRendererWrapper, jsonAttribute);
             }
+        }
+
+        private static void AddRenderedValue(
+            LogEventInfo source, IDictionary<string, object> dest,
+            JsonEncodeLayoutRendererWrapper renderer, JsonAttribute attribute)
+        {
+            renderer.Inner = attribute.Layout;
+            renderer.JsonEncode = attribute.Encode;
+
+            string renderedValue;
+            try
+            {
+                renderedValue = renderer.Render(source);
+            }
+            catch (Exception ex)
+            {
+                renderedValue = $"Render failed: {ex.GetType().Name} {ex.Message}";
+            }
+
+            if (string.IsNullOrEmpty(renderedValue))
+            {
+                return;
+            }
+
+            Mapper.HarvestStringToDictionary(dest,
+                attribute.Name, renderedValue, "attributes_");
         }
 
         private void AddAttributesForStandardThings()
@@ -101,7 +118,10 @@ namespace NLog.StructuredLogging.Json
 
         private void Add(string name, Layout layout, bool encode = false)
         {
-            Attributes.Add(new JsonAttribute(name, layout, encode));
+            if (! Attributes.Any(a => string.Equals(a.Name, name, StringComparison.OrdinalIgnoreCase)))
+            {
+                Attributes.Add(new JsonAttribute(name, layout, encode));
+            }
         }
     }
 }

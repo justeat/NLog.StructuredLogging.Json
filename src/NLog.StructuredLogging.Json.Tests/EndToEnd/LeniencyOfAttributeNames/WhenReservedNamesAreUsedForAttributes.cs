@@ -33,13 +33,13 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.LeniencyOfAttributeNames
         [Test]
         public void TheDuplicateAttributeNameShouldBePresentWithDataPrefix()
         {
-            Assert.That(_result["data_TimeStamp"], Is.EqualTo(new DateTime(2016,01,01)));
+            Assert.That(_result["data_TimeStamp"].ToObject<DateTime>(), Is.EqualTo(new DateTime(2016,01,01)));
         }
 
         [Test]
         public void TheDuplicateAttributeNameShouldBePresentWithExceptionPrefix()
         {
-            Assert.That(_result["ex_TimeStamp"], Is.EqualTo(new DateTime(2016, 01, 02)));
+            Assert.That(_result["ex_TimeStamp"].ToObject<DateTime>(), Is.EqualTo(new DateTime(2016, 01, 02)));
         }
     }
 

@@ -20,7 +20,9 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
         {
             foreach (var line in Result)
             {
-                Assert.That(line, Is.EqualTo(@"\{\\""foo\\"":\\""bar\\"",\\""baz\\"":\{\\""wibble\\"":\\""chip\\""\}\}"));
+                Assert.That(line, Does.Contain(@"""json start {"));
+                Assert.That(line, Does.Contain(@"json end"""));
+                Assert.That(line, Does.Contain(@"{\""foo\"":\""bar\"",\""baz\"":{\""wibble\"":\""chip\""}}"));
             }
         }
 

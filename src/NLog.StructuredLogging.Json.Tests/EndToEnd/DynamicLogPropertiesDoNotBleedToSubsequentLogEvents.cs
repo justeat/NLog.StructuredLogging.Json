@@ -27,7 +27,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
         [Test]
         public void Message2HasExpectedDynamicProperties()
         {
-            Assert.That(_m1["oddness"].Value<bool>(), Is.True);
+            Assert.That(_m2["oddness"].Value<bool>(), Is.True);
         }
 
         [Test]

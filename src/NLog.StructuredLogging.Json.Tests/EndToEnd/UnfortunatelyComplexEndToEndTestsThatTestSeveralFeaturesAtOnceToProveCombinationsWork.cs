@@ -165,7 +165,7 @@ With lots of possibly bad things in it";
         {
             foreach (var line in Result)
             {
-                Assert.That(line, Does.Contain(@"TimeStamp"":""\d{4,4}-\d{2,2}-\d{2,2}T\d{2,2}:\d{2,2}:\d{2,2}\.\d{3,3}Z"));
+                Assert.That(line, Does.Match(@"TimeStamp"":""\d{4,4}-\d{2,2}-\d{2,2}T\d{2,2}:\d{2,2}:\d{2,2}\.\d{3,3}Z"));
             }
         }
 
@@ -175,7 +175,7 @@ With lots of possibly bad things in it";
             foreach (var line in Result)
             {
                 var jo = JObject.Parse(line);
-                Assert.That(jo["TimeStamp"], Is.EqualTo(TimeSourceForTest.Time));
+                Assert.That(jo["TimeStamp"].ToObject<DateTime>(), Is.EqualTo(TimeSourceForTest.Time));
             }
         }
 
@@ -250,7 +250,7 @@ With lots of possibly bad things in it";
                     }
                     if (prop.Equals("Iteration"))
                     {
-                        Assert.That(actual[prop].Value<int>(), Is.GreaterThan(0));
+                        Assert.That(actual[prop].Value<int>(), Is.GreaterThanOrEqualTo(0));
                         continue;
                     }
 
@@ -293,9 +293,8 @@ With lots of possibly bad things in it";
                 var message = obj.GetValue("Message").ToString();
 
                 Assert.That(message, Does.Contain("This is a message"));
-                Assert.That(message, Does.Contain(@"!\""£\$%\^&\*"));
+                Assert.That(message, Does.Contain(@"!""£$%^&*"));
                 Assert.That(message, Does.Contain("With lots of possibly bad things in it"));
-                Assert.That(message, Does.Contain(@"This is a message\r\n!\"".*\$%\^&\*\r\n\r\nWith lots of possibly bad things in it"));
             }
         }
 
@@ -306,7 +305,7 @@ With lots of possibly bad things in it";
             {
                 Assert.That(line, Does.Contain(@"PropertyOne"":""one"""));
                 Assert.That(line, Does.Contain(@"PropertyTwo"":""2"""));
-                Assert.That(line, Does.Contain(@"Iteration"":""\d+"""));
+                Assert.That(line, Does.Match(@"Iteration"":""\d+"""));
             }
         }
 
@@ -316,7 +315,7 @@ With lots of possibly bad things in it";
             foreach (var line in Result)
             {
                 var obj = JObject.Parse(line);
-                Assert.That(obj.GetValue("Exception").ToString(), Does.Contain(@"System\.InvalidOperationException: Outer Exception"));
+                Assert.That(obj.GetValue("Exception").ToString(), Does.Contain(@"System.InvalidOperationException: Outer Exception"));
                 Assert.That(obj.GetValue("ExceptionType").ToString(), Does.Contain("InvalidOperationException"));
                 Assert.That(obj.GetValue("ExceptionMessage").ToString(), Does.Contain("Outer Exception"));
                 Assert.That(obj.GetValue("ExceptionStackTrace").ToString(), Does.Contain("   at NLog.StructuredLogging.Json.Tests.EndToEnd.UnfortunatelyComplexEndToEndTestsThatTestSeveralFeaturesAtOnceToProveCombinationsWork.PutStackTraceOnException"));
@@ -328,7 +327,7 @@ With lots of possibly bad things in it";
         {
             foreach (var line in Result)
             {
-                Assert.That(line, Does.Contain(@"CallSite"":""NLog\.StructuredLogging\.Json\.Tests\.EndToEnd\.UnfortunatelyComplexEndToEndTestsThatTestSeveralFeaturesAtOnceToProveCombinationsWork\.When"));
+                Assert.That(line, Does.Contain(@"CallSite"":""NLog.StructuredLogging.Json.Tests.EndToEnd.UnfortunatelyComplexEndToEndTestsThatTestSeveralFeaturesAtOnceToProveCombinationsWork.When"));
             }
         }
 

@@ -65,7 +65,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
         [Test]
         public virtual void ShouldHaveExpectedNumberOfLines()
         {
-            Assert.That(Result, Is.EqualTo(Iterations * 4));
+            Assert.That(Result.Count, Is.EqualTo(Iterations * 4));
         }
 
         [Test]
@@ -110,7 +110,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
 
         private void ShouldHaveLoggedAggregateExceptionCorrectly(JObject obj)
         {
-            Assert.That(obj.GetValue("Exception").ToString(), Does.Contain(@"System\.AggregateException: Aggregate Exception"));
+            Assert.That(obj.GetValue("Exception").ToString(), Does.Contain(@"System.AggregateException: Aggregate Exception"));
             Assert.That(obj.GetValue("ExceptionType").ToString(), Does.Contain("AggregateException"));
             Assert.That(obj.GetValue("ExceptionMessage").ToString(), Does.Contain("Aggregate Exception"));
             Assert.That(obj.GetValue("ExceptionStackTrace").ToString(), Does.Contain("   at NLog.StructuredLogging.Json.Tests.EndToEnd.AggregateExceptionEndToEndTests.PutStackTraceOnException"));
@@ -118,7 +118,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
 
         private void ShouldHaveLoggedInner1ExceptionCorrectly(JObject obj)
         {
-            Assert.That(obj.GetValue("Exception").ToString(), Does.Contain(@"System\.ApplicationException: Inner Exception 1"));
+            Assert.That(obj.GetValue("Exception").ToString(), Does.Contain(@"System.ApplicationException: Inner Exception 1"));
             Assert.That(obj.GetValue("ExceptionType").ToString(), Does.Contain("ApplicationException"));
             Assert.That(obj.GetValue("ExceptionMessage").ToString(), Does.Contain("Inner Exception 1"));
             ShouldHaveExpectedStacktrace(obj);
@@ -126,7 +126,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
 
         private void ShouldHaveLoggedInner2ExceptionCorrectly(JObject obj)
         {
-            Assert.That(obj.GetValue("Exception").ToString(), Does.Contain(@"System\.ApplicationException: Inner Exception 2"));
+            Assert.That(obj.GetValue("Exception").ToString(), Does.Contain(@"System.ApplicationException: Inner Exception 2"));
             Assert.That(obj.GetValue("ExceptionType").ToString(), Does.Contain("ApplicationException"));
             Assert.That(obj.GetValue("ExceptionMessage").ToString(), Does.Contain("Inner Exception 2"));
             ShouldHaveExpectedStacktrace(obj);
@@ -134,7 +134,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
 
         private void ShouldHaveLoggedInner3ExceptionCorrectly(JObject obj)
         {
-            Assert.That(obj.GetValue("Exception").ToString(), Does.Contain(@"System\.ApplicationException: Inner Exception 3"));
+            Assert.That(obj.GetValue("Exception").ToString(), Does.Contain(@"System.ApplicationException: Inner Exception 3"));
             Assert.That(obj.GetValue("ExceptionType").ToString(), Does.Contain("ApplicationException"));
             Assert.That(obj.GetValue("ExceptionMessage").ToString(), Does.Contain("Inner Exception 3"));
             ShouldHaveExpectedStacktrace(obj);
@@ -159,7 +159,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
         {
             foreach (var line in Result)
             {
-                Assert.That(line, Does.Contain(@"CallSite"":""NLog\.StructuredLogging\.Json\.Tests\.EndToEnd\.AggregateExceptionEndToEndTests\.When"));
+                Assert.That(line, Does.Contain(@"CallSite"":""NLog.StructuredLogging.Json.Tests.EndToEnd.AggregateExceptionEndToEndTests.When"));
             }
         }
 

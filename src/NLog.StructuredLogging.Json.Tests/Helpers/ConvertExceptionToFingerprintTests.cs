@@ -125,7 +125,7 @@ namespace NLog.StructuredLogging.Json.Tests.Helpers
                     throw inputEx;
                 }
 
-                //Console.WriteLine(message);
+                Console.WriteLine(message);
 
                 throw inputEx;
             }

@@ -101,7 +101,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
 
         private void ShouldHaveLoggedOuterExceptionCorrectly(JObject obj)
         {
-            Assert.That(obj.GetValue("Exception").ToString(), Does.Contain(@"System\.InvalidOperationException: Outer Exception"));
+            Assert.That(obj.GetValue("Exception").ToString(), Does.Contain(@"System.InvalidOperationException: Outer Exception"));
             Assert.That(obj.GetValue("ExceptionType").ToString(), Does.Contain("InvalidOperationException"));
             Assert.That(obj.GetValue("ExceptionMessage").ToString(), Does.Contain("Outer Exception"));
             ShouldHaveExpectedStacktrace(obj);
@@ -109,7 +109,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
 
         private void ShouldHaveLoggedInner1ExceptionCorrectly(JObject obj)
         {
-            Assert.That(obj.GetValue("Exception").ToString(), Does.Contain(@"System\.ArgumentException: Inner Exception 1"));
+            Assert.That(obj.GetValue("Exception").ToString(), Does.Contain(@"System.ArgumentException: Inner Exception 1"));
             Assert.That(obj.GetValue("ExceptionType").ToString(), Does.Contain("ArgumentException"));
             Assert.That(obj.GetValue("ExceptionMessage").ToString(), Does.Contain("Inner Exception 1"));
             ShouldHaveExpectedStacktrace(obj);
@@ -117,7 +117,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
 
         private void ShouldHaveLoggedInner2ExceptionCorrectly(JObject obj)
         {
-            Assert.That(obj.GetValue("Exception").ToString(), Does.Contain(@"System\.ApplicationException: Inner Exception 2"));
+            Assert.That(obj.GetValue("Exception").ToString(), Does.Contain(@"System.ApplicationException: Inner Exception 2"));
             Assert.That(obj.GetValue("ExceptionType").ToString(), Does.Contain("ApplicationException"));
             Assert.That(obj.GetValue("ExceptionMessage").ToString(), Does.Contain("Inner Exception 2"));
             ShouldHaveExpectedStacktrace(obj);
@@ -140,7 +140,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
         {
             foreach (var line in Result)
             {
-                Assert.That(line, Does.Contain(@"CallSite"":""NLog\.StructuredLogging\.Json\.Tests\.EndToEnd\.NestedExceptionEndToEndTests\.When"));
+                Assert.That(line, Does.Contain(@"CallSite"":""NLog.StructuredLogging.Json.Tests.EndToEnd.NestedExceptionEndToEndTests.When"));
             }
         }
 

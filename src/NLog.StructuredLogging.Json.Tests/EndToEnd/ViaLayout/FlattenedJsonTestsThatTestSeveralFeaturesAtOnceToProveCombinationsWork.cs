@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using NLog.Layouts;
 using NUnit.Framework;
-using Shouldly;
 
 namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
 {
@@ -34,7 +33,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
         {
             foreach (var line in Result)
             {
-                line.ShouldMatch(@"""flat1"":""flat1""");
+                Assert.That(line, Does.Contain(@"""flat1"":""flat1"""));
             }
         }
     }

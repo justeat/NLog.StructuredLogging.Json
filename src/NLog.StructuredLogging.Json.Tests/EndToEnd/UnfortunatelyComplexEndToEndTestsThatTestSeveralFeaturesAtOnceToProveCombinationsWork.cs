@@ -7,7 +7,6 @@ using NLog.Config;
 using NLog.Layouts;
 using NLog.Targets;
 using NUnit.Framework;
-using Shouldly;
 
 namespace NLog.StructuredLogging.Json.Tests.EndToEnd
 {
@@ -166,8 +165,7 @@ With lots of possibly bad things in it";
         {
             foreach (var line in Result)
             {
-                line.ShouldMatch(
-                    @"TimeStamp"":""\d{4,4}-\d{2,2}-\d{2,2}T\d{2,2}:\d{2,2}:\d{2,2}\.\d{3,3}Z");
+                Assert.That(line, Does.Match(@"TimeStamp"":""\d{4,4}-\d{2,2}-\d{2,2}T\d{2,2}:\d{2,2}:\d{2,2}\.\d{3,3}Z"));
             }
         }
 
@@ -177,14 +175,14 @@ With lots of possibly bad things in it";
             foreach (var line in Result)
             {
                 var jo = JObject.Parse(line);
-                jo["TimeStamp"].ShouldBe(TimeSourceForTest.Time);
+                Assert.That(jo["TimeStamp"].ToObject<DateTime>(), Is.EqualTo(TimeSourceForTest.Time));
             }
         }
 
         [Test]
         public virtual void ShouldHaveExpectedNumberOfLines()
         {
-            Result.Count.ShouldBe(Iterations);
+            Assert.That(Result.Count, Is.EqualTo(Iterations));
         }
 
         [Test]
@@ -192,7 +190,8 @@ With lots of possibly bad things in it";
         {
             var expected = GivenExpectedNumberBraces();
             var all = string.Concat(Result);
-            all.Count(c => c == '{').ShouldBe(expected);
+
+            Assert.That(all.Count(c => c == '{') , Is.EqualTo(expected));
         }
 
         [Test]
@@ -200,7 +199,8 @@ With lots of possibly bad things in it";
         {
             var expected = GivenExpectedNumberBraces();
             var all = string.Concat(Result);
-            all.Count(c => c == '}').ShouldBe(expected);
+
+            Assert.That(all.Count(c => c == '}'), Is.EqualTo(expected));
         }
 
         [Test]
@@ -208,7 +208,7 @@ With lots of possibly bad things in it";
         {
             foreach (var line in Result)
             {
-                line.Last().ToString().ShouldBe("}");
+                Assert.That(line.Last().ToString(), Is.EqualTo("}"));
             }
         }
 
@@ -222,14 +222,14 @@ With lots of possibly bad things in it";
         {
             foreach (var line in Result)
             {
-                line.ShouldMatch("Error");
+                Assert.That(line, Does.Contain("Error"));
             }
         }
 
         [Test]
         public void EachPropertyShouldMatchControlOutput()
         {
-            _control.Count.ShouldBe(Iterations);
+            Assert.That(_control.Count, Is.EqualTo(Iterations));
 
             for (var i = 0; i < Iterations; i++)
             {
@@ -245,16 +245,16 @@ With lots of possibly bad things in it";
                     }
                     if (prop.Equals("ThreadId"))
                     {
-                        actual[prop].Value<int>().ShouldBeGreaterThan(0);
+                        Assert.That(actual[prop].Value<int>(), Is.GreaterThan(0));
                         continue;
                     }
                     if (prop.Equals("Iteration"))
                     {
-                        actual[prop].Value<int>().ShouldBeGreaterThanOrEqualTo(0);
+                        Assert.That(actual[prop].Value<int>(), Is.GreaterThanOrEqualTo(0));
                         continue;
                     }
 
-                    actual[prop].ShouldBe(control[prop], () => AttributeMissingMessage(prop));
+                    Assert.That(actual[prop], Is.EqualTo(control[prop]), () => AttributeMissingMessage(prop));
                 }
             }
         }
@@ -271,7 +271,7 @@ With lots of possibly bad things in it";
         {
             foreach (var e in Result.Select(JToken.Parse))
             {
-                e.Count().ShouldBe(AttributesOnLogEvent.Count - _attributesNotYetAssertable.Count);
+                Assert.That(e.Count(), Is.EqualTo(AttributesOnLogEvent.Count - _attributesNotYetAssertable.Count));
             }
         }
 
@@ -280,7 +280,7 @@ With lots of possibly bad things in it";
         {
             foreach (var line in Result)
             {
-                line.ShouldMatch(LoggerName);
+                Assert.That(line, Does.Contain(LoggerName));
             }
         }
 
@@ -291,10 +291,10 @@ With lots of possibly bad things in it";
             {
                 var obj = JObject.Parse(line);
                 var message = obj.GetValue("Message").ToString();
-                message.ShouldMatch("This is a message");
-                message.ShouldMatch(@"!\""£\$%\^&\*");
-                message.ShouldMatch("With lots of possibly bad things in it");
-                message.ShouldMatch(@"This is a message\r\n!\"".*\$%\^&\*\r\n\r\nWith lots of possibly bad things in it");
+
+                Assert.That(message, Does.Contain("This is a message"));
+                Assert.That(message, Does.Contain(@"!""£$%^&*"));
+                Assert.That(message, Does.Contain("With lots of possibly bad things in it"));
             }
         }
 
@@ -303,9 +303,9 @@ With lots of possibly bad things in it";
         {
             foreach (var line in Result)
             {
-                line.ShouldMatch(@"PropertyOne"":""one""");
-                line.ShouldMatch(@"PropertyTwo"":""2""");
-                line.ShouldMatch(@"Iteration"":""\d+""");
+                Assert.That(line, Does.Contain(@"PropertyOne"":""one"""));
+                Assert.That(line, Does.Contain(@"PropertyTwo"":""2"""));
+                Assert.That(line, Does.Match(@"Iteration"":""\d+"""));
             }
         }
 
@@ -315,10 +315,10 @@ With lots of possibly bad things in it";
             foreach (var line in Result)
             {
                 var obj = JObject.Parse(line);
-                obj.GetValue("Exception").ToString().ShouldMatch(@"System\.InvalidOperationException: Outer Exception");
-                obj.GetValue("ExceptionType").ToString().ShouldMatch("InvalidOperationException");
-                obj.GetValue("ExceptionMessage").ToString().ShouldMatch("Outer Exception");
-                obj.GetValue("ExceptionStackTrace").ToString().ShouldMatch("   at NLog.StructuredLogging.Json.Tests.EndToEnd.UnfortunatelyComplexEndToEndTestsThatTestSeveralFeaturesAtOnceToProveCombinationsWork.PutStackTraceOnException");
+                Assert.That(obj.GetValue("Exception").ToString(), Does.Contain(@"System.InvalidOperationException: Outer Exception"));
+                Assert.That(obj.GetValue("ExceptionType").ToString(), Does.Contain("InvalidOperationException"));
+                Assert.That(obj.GetValue("ExceptionMessage").ToString(), Does.Contain("Outer Exception"));
+                Assert.That(obj.GetValue("ExceptionStackTrace").ToString(), Does.Contain("   at NLog.StructuredLogging.Json.Tests.EndToEnd.UnfortunatelyComplexEndToEndTestsThatTestSeveralFeaturesAtOnceToProveCombinationsWork.PutStackTraceOnException"));
             }
         }
 
@@ -327,7 +327,7 @@ With lots of possibly bad things in it";
         {
             foreach (var line in Result)
             {
-                line.ShouldMatch(@"CallSite"":""NLog\.StructuredLogging\.Json\.Tests\.EndToEnd\.UnfortunatelyComplexEndToEndTestsThatTestSeveralFeaturesAtOnceToProveCombinationsWork\.When");
+                Assert.That(line, Does.Contain(@"CallSite"":""NLog.StructuredLogging.Json.Tests.EndToEnd.UnfortunatelyComplexEndToEndTestsThatTestSeveralFeaturesAtOnceToProveCombinationsWork.When"));
             }
         }
 
@@ -336,8 +336,8 @@ With lots of possibly bad things in it";
         {
             foreach (var line in Result)
             {
-                line.ShouldMatch(@"""ex_key_1"":""ex_data_1");
-                line.ShouldMatch(@"""ex_key_2"":""ex_data_2");
+                Assert.That(line, Does.Contain(@"""ex_key_1"":""ex_data_1"));
+                Assert.That(line, Does.Contain(@"""ex_key_2"":""ex_data_2"));
             }
         }
 
@@ -346,7 +346,7 @@ With lots of possibly bad things in it";
         {
             foreach (var line in Result)
             {
-                line.ShouldMatch(@"^\{");
+                Assert.That(line, Does.Match(@"^\{"));
             }
         }
 
@@ -355,7 +355,7 @@ With lots of possibly bad things in it";
         {
             foreach (var line in Result)
             {
-                line.ShouldMatch(@"\}$");
+                Assert.That(line, Does.Match(@"\}$"));
             }
         }
 
@@ -381,7 +381,7 @@ With lots of possibly bad things in it";
                 var chars = line.ToCharArray().ToArray();
                 foreach (var bc in controlCharacters)
                 {
-                    chars.ShouldNotContain(bc);
+                    Assert.That(chars.Any(ch => ch == bc), Is.False, "Contains bad char " + bc);
                 }
             }
         }

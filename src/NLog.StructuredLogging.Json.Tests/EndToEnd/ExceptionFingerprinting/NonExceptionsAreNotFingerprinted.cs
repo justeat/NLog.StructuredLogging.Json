@@ -3,7 +3,6 @@ using System.Linq;
 using Newtonsoft.Json.Linq;
 using NLog.Layouts;
 using NUnit.Framework;
-using Shouldly;
 
 namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ExceptionFingerprinting
 {
@@ -22,7 +21,8 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ExceptionFingerprinting
         public void ShouldNotHaveFingerprint()
         {
             JToken val;
-            Result.TryGetValue("ExceptionFingerprint", StringComparison.InvariantCulture, out val).ShouldBeFalse();
+            var gotValue = Result.TryGetValue("ExceptionFingerprint", StringComparison.InvariantCulture, out val);
+            Assert.That(gotValue, Is.False);
         }
     }
 

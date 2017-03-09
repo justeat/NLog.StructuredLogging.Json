@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
-using Shouldly;
 using System.Linq;
 
 namespace NLog.StructuredLogging.Json.Tests.EndToEnd
@@ -66,7 +65,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
         [Test]
         public virtual void ShouldHaveExpectedNumberOfLines()
         {
-            Result.Count.ShouldBe(Iterations * 4);
+            Assert.That(Result.Count, Is.EqualTo(Iterations * 4));
         }
 
         [Test]
@@ -74,7 +73,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
         {
             foreach (var line in Result)
             {
-                line.ShouldMatch("Error");
+                Assert.That(line, Does.Contain("Error"));
             }
         }
 
@@ -111,46 +110,48 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
 
         private void ShouldHaveLoggedAggregateExceptionCorrectly(JObject obj)
         {
-            obj.GetValue("Exception").ToString().ShouldMatch(@"System\.AggregateException: Aggregate Exception");
-            obj.GetValue("ExceptionType").ToString().ShouldMatch("AggregateException");
-            obj.GetValue("ExceptionMessage").ToString().ShouldMatch("Aggregate Exception");
-            obj.GetValue("ExceptionStackTrace").ToString().ShouldMatch("   at NLog.StructuredLogging.Json.Tests.EndToEnd.AggregateExceptionEndToEndTests.PutStackTraceOnException");
+            Assert.That(obj.GetValue("Exception").ToString(), Does.Contain(@"System.AggregateException: Aggregate Exception"));
+            Assert.That(obj.GetValue("ExceptionType").ToString(), Does.Contain("AggregateException"));
+            Assert.That(obj.GetValue("ExceptionMessage").ToString(), Does.Contain("Aggregate Exception"));
+            Assert.That(obj.GetValue("ExceptionStackTrace").ToString(), Does.Contain("   at NLog.StructuredLogging.Json.Tests.EndToEnd.AggregateExceptionEndToEndTests.PutStackTraceOnException"));
         }
 
         private void ShouldHaveLoggedInner1ExceptionCorrectly(JObject obj)
         {
-            obj.GetValue("Exception").ToString().ShouldMatch(@"System\.ApplicationException: Inner Exception 1");
-            obj.GetValue("ExceptionType").ToString().ShouldMatch("ApplicationException");
-            obj.GetValue("ExceptionMessage").ToString().ShouldMatch("Inner Exception 1");
+            Assert.That(obj.GetValue("Exception").ToString(), Does.Contain(@"System.ApplicationException: Inner Exception 1"));
+            Assert.That(obj.GetValue("ExceptionType").ToString(), Does.Contain("ApplicationException"));
+            Assert.That(obj.GetValue("ExceptionMessage").ToString(), Does.Contain("Inner Exception 1"));
             ShouldHaveExpectedStacktrace(obj);
         }
 
         private void ShouldHaveLoggedInner2ExceptionCorrectly(JObject obj)
         {
-            obj.GetValue("Exception").ToString().ShouldMatch(@"System\.ApplicationException: Inner Exception 2");
-            obj.GetValue("ExceptionType").ToString().ShouldMatch("ApplicationException");
-            obj.GetValue("ExceptionMessage").ToString().ShouldMatch("Inner Exception 2");
+            Assert.That(obj.GetValue("Exception").ToString(), Does.Contain(@"System.ApplicationException: Inner Exception 2"));
+            Assert.That(obj.GetValue("ExceptionType").ToString(), Does.Contain("ApplicationException"));
+            Assert.That(obj.GetValue("ExceptionMessage").ToString(), Does.Contain("Inner Exception 2"));
             ShouldHaveExpectedStacktrace(obj);
         }
 
         private void ShouldHaveLoggedInner3ExceptionCorrectly(JObject obj)
         {
-            obj.GetValue("Exception").ToString().ShouldMatch(@"System\.ApplicationException: Inner Exception 3");
-            obj.GetValue("ExceptionType").ToString().ShouldMatch("ApplicationException");
-            obj.GetValue("ExceptionMessage").ToString().ShouldMatch("Inner Exception 3");
+            Assert.That(obj.GetValue("Exception").ToString(), Does.Contain(@"System.ApplicationException: Inner Exception 3"));
+            Assert.That(obj.GetValue("ExceptionType").ToString(), Does.Contain("ApplicationException"));
+            Assert.That(obj.GetValue("ExceptionMessage").ToString(), Does.Contain("Inner Exception 3"));
             ShouldHaveExpectedStacktrace(obj);
         }
 
         private void ShouldHaveExpectedStacktrace(JObject obj)
         {
-            obj.GetValue("ExceptionStackTrace").ToString().ShouldMatch("   at NLog.StructuredLogging.Json.Tests.EndToEnd.AggregateExceptionEndToEndTests.PutStackTraceOnException");
+            var trace = obj.GetValue("ExceptionStackTrace").ToString();
+            Assert.That(trace, Does.Contain("   at NLog.StructuredLogging.Json.Tests.EndToEnd.AggregateExceptionEndToEndTests.PutStackTraceOnException"));
         }
 
         private static void StringShouldStartWithOneOf(string value, params string[] targets)
         {
             var pass = targets.Any(t => value.StartsWith(t));
 
-            pass.ShouldBeTrue("Got " + value + ", expected one of" + string.Join(",", targets));
+            Assert.That(pass, Is.True,
+                "Got " + value + ", expected one of" + string.Join(",", targets));
         }
 
         [Test]
@@ -158,7 +159,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
         {
             foreach (var line in Result)
             {
-                line.ShouldMatch(@"CallSite"":""NLog\.StructuredLogging\.Json\.Tests\.EndToEnd\.AggregateExceptionEndToEndTests\.When");
+                Assert.That(line, Does.Contain(@"CallSite"":""NLog.StructuredLogging.Json.Tests.EndToEnd.AggregateExceptionEndToEndTests.When"));
             }
         }
 
@@ -169,8 +170,8 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
             {
                 if (line.Contains("InvalidOperationException"))
                 {
-                    line.ShouldMatch(@"""ex_key_1"":""ex_data_1");
-                    line.ShouldMatch(@"""ex_key_2"":""ex_data_2");
+                    Assert.That(line, Does.Contain(@"""ex_key_1"":""ex_data_1"));
+                    Assert.That(line, Does.Contain(@"""ex_key_2"":""ex_data_2"));
                 }
             }
         }

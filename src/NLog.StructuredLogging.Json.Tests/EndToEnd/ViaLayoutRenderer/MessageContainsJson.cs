@@ -1,7 +1,6 @@
 using System;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using Shouldly;
 
 namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayoutRenderer
 {
@@ -22,8 +21,8 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayoutRenderer
         {
             foreach (var line in Result)
             {
-                Console.WriteLine(line);
-                line.ShouldMatch(@"\{\\""foo\\"":\\""bar\\"",\\""baz\\"":\{\\""wibble\\"":\\""chip\\""\}\}");
+                //Console.WriteLine(line);
+                Assert.That(line, Does.Match(@"\{\\""foo\\"":\\""bar\\"",\\""baz\\"":\{\\""wibble\\"":\\""chip\\""\}\}"));
             }
         }
 
@@ -32,7 +31,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayoutRenderer
         {
             foreach (var line in Result)
             {
-                line.Length.ShouldBeInRange(550, 1450);
+                Assert.That(line.Length, Is.InRange(550, 1450));
             }
         }
     }

@@ -1,6 +1,5 @@
 using Newtonsoft.Json;
 using NUnit.Framework;
-using Shouldly;
 
 namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
 {
@@ -21,7 +20,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
         {
             foreach (var line in Result)
             {
-                line.ShouldMatch(@"\{\\""foo\\"":\\""bar\\"",\\""baz\\"":\{\\""wibble\\"":\\""chip\\""\}\}");
+                Assert.That(line, Is.EqualTo(@"\{\\""foo\\"":\\""bar\\"",\\""baz\\"":\{\\""wibble\\"":\\""chip\\""\}\}"));
             }
         }
 
@@ -29,7 +28,8 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
         public void ShouldBeSensibleNumberOfCharacters()
         {
             var all = string.Join("\n", Result);
-            all.Length.ShouldBeInRange(1350 * Iterations, 1550 * Iterations);
+
+            Assert.That(all.Length, Is.InRange(1350 * Iterations, 1550 * Iterations));
         }
 
         [Test]
@@ -37,7 +37,8 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
         {
             foreach (var line in Result)
             {
-                line.Length.ShouldBeInRange(1350, 1550, "zzzzline start\n\n" +line + "\n\nzzzzzline end");
+                Assert.That(line.Length, Is.InRange(1350, 1550),
+                    "zzzzline start\n\n" +line + "\n\nzzzzzline end");
             }
         }
     }

@@ -3,7 +3,6 @@ using System.Linq;
 using Newtonsoft.Json.Linq;
 using NLog.Layouts;
 using NUnit.Framework;
-using Shouldly;
 
 namespace NLog.StructuredLogging.Json.Tests.EndToEnd.LeniencyOfAttributeNames
 {
@@ -34,13 +33,13 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.LeniencyOfAttributeNames
         [Test]
         public void TheDuplicateAttributeNameShouldBePresentWithDataPrefix()
         {
-            _result["data_TimeStamp"].ShouldBe(new DateTime(2016,01,01));
+            Assert.That(_result["data_TimeStamp"], Is.EqualTo(new DateTime(2016,01,01)));
         }
 
         [Test]
         public void TheDuplicateAttributeNameShouldBePresentWithExceptionPrefix()
         {
-            _result["ex_TimeStamp"].ShouldBe(new DateTime(2016, 01, 02));
+            Assert.That(_result["ex_TimeStamp"], Is.EqualTo(new DateTime(2016, 01, 02)));
         }
     }
 

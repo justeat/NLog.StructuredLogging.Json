@@ -1,5 +1,4 @@
 ﻿using NUnit.Framework;
-using Shouldly;
 
 namespace NLog.StructuredLogging.Json.Tests.Hashing
 {
@@ -12,7 +11,8 @@ namespace NLog.StructuredLogging.Json.Tests.Hashing
             var h = new HasherLayoutRenderer();
             h.Text = "{$date}";
             var output = h.Render(new LogEventInfo());
-            output.ShouldNotBeNull();
+
+            Assert.That(output, Is.Not.Null);
         }
     }
 }

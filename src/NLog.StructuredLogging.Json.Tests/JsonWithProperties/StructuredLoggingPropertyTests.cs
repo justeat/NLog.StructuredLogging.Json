@@ -1,6 +1,5 @@
 ﻿using System;
 using NUnit.Framework;
-using Shouldly;
 
 namespace NLog.StructuredLogging.Json.Tests.JsonWithProperties
 {
@@ -14,15 +13,15 @@ namespace NLog.StructuredLogging.Json.Tests.JsonWithProperties
             [TestCase("  ")]
             public void DoesNotAllowEmptyName(object name)
             {
-                Action action = () => new StructuredLoggingProperty(name as string, "some-layout-value");
-                action.ShouldThrow<ArgumentException>();
+                Assert.Throws<ArgumentException>(
+                    () => new StructuredLoggingProperty(name as string, "some-layout-value"));
             }
 
             [Test]
             public void AllowsNullLayoutValues()
             {
-                Action action = () => new StructuredLoggingProperty("some-name", null);
-                action.ShouldThrow<ArgumentNullException>();
+                Assert.Throws<ArgumentException>(
+                    () => new StructuredLoggingProperty("some-name", null));
             }
         }
     }

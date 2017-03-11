@@ -7,7 +7,6 @@ using NLog.Config;
 using NLog.Layouts;
 using NLog.Targets;
 using NUnit.Framework;
-using Shouldly;
 
 namespace NLog.StructuredLogging.Json.Tests.EndToEnd
 {
@@ -177,14 +176,14 @@ With lots of possibly bad things in it";
             foreach (var line in Result)
             {
                 var jo = JObject.Parse(line);
-                jo["TimeStamp"].ShouldBe(TimeSourceForTest.Time);
+                Assert.That(jo["TimeStamp"].ToObject<DateTime>(), Is.EqualTo(TimeSourceForTest.Time));
             }
         }
 
         [Test]
         public virtual void ShouldHaveExpectedNumberOfLines()
         {
-            Result.Count.ShouldBe(Iterations);
+            Assert.That(Result.Count, Is.EqualTo(Iterations));
         }
 
         [Test]
@@ -192,7 +191,7 @@ With lots of possibly bad things in it";
         {
             var expected = GivenExpectedNumberBraces();
             var all = string.Concat(Result);
-            all.Count(c => c == '{').ShouldBe(expected);
+            Assert.That(all.Count(c => c == '{'), Is.EqualTo(expected));
         }
 
         [Test]
@@ -200,7 +199,7 @@ With lots of possibly bad things in it";
         {
             var expected = GivenExpectedNumberBraces();
             var all = string.Concat(Result);
-            all.Count(c => c == '}').ShouldBe(expected);
+            Assert.That(all.Count(c => c == '{'), Is.EqualTo(expected));
         }
 
         [Test]
@@ -229,7 +228,7 @@ With lots of possibly bad things in it";
         [Test]
         public void EachPropertyShouldMatchControlOutput()
         {
-            _control.Count.ShouldBe(Iterations);
+            Assert.That(_control.Count, Is.EqualTo(Iterations));
 
             for (var i = 0; i < Iterations; i++)
             {
@@ -245,16 +244,16 @@ With lots of possibly bad things in it";
                     }
                     if (prop.Equals("ThreadId"))
                     {
-                        actual[prop].Value<int>().ShouldBeGreaterThan(0);
+                        Assert.That(actual[prop].Value<int>(), Is.GreaterThan(0));
                         continue;
                     }
                     if (prop.Equals("Iteration"))
                     {
-                        actual[prop].Value<int>().ShouldBeGreaterThanOrEqualTo(0);
+                        Assert.That(actual[prop].Value<int>(), Is.GreaterThanOrEqualTo(0));
                         continue;
                     }
 
-                    actual[prop].ShouldBe(control[prop], () => AttributeMissingMessage(prop));
+                    Assert.That(actual[prop], Is.EqualTo(control[prop]), () => AttributeMissingMessage(prop));
                 }
             }
         }
@@ -271,7 +270,7 @@ With lots of possibly bad things in it";
         {
             foreach (var e in Result.Select(JToken.Parse))
             {
-                e.Count().ShouldBe(AttributesOnLogEvent.Count - _attributesNotYetAssertable.Count);
+                Assert.That(e.Count(), Is.EqualTo(AttributesOnLogEvent.Count - _attributesNotYetAssertable.Count));
             }
         }
 
@@ -381,7 +380,8 @@ With lots of possibly bad things in it";
                 var chars = line.ToCharArray().ToArray();
                 foreach (var bc in controlCharacters)
                 {
-                    chars.ShouldNotContain(bc);
+                    var itsThere = chars.Any(ch => ch == bc);
+                    Assert.That(itsThere, Is.False, "Contains bad char " + bc);
                 }
             }
         }

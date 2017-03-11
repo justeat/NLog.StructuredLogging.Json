@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
-using Shouldly;
 using System.Linq;
 
 namespace NLog.StructuredLogging.Json.Tests.EndToEnd
@@ -61,7 +60,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
         [Test]
         public virtual void ShouldHaveExpectedNumberOfLines()
         {
-            Result.Count.ShouldBe(Iterations * 3);
+            Assert.That(Result.Count, Is.EqualTo(Iterations * 3));
         }
 
         [Test]
@@ -132,7 +131,8 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
         {
             var pass = targets.Any(t => value.StartsWith(t));
 
-            pass.ShouldBeTrue("Got " + value + ", expected one of" + string.Join(",", targets));
+            Assert.That(pass, Is.True,
+                "Got " + value + ", expected one of" + string.Join(",", targets));
         }
 
         [Test]

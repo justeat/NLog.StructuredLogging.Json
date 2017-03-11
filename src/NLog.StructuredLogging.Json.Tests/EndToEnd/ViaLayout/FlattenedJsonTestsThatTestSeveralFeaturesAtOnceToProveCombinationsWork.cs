@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using NLog.Layouts;
 using NUnit.Framework;
-using Shouldly;
 
 namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
 {

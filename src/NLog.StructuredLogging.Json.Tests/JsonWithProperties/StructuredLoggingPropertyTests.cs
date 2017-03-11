@@ -20,7 +20,7 @@ namespace NLog.StructuredLogging.Json.Tests.JsonWithProperties
             [Test]
             public void AllowsNullLayoutValues()
             {
-                Assert.Throws<ArgumentException>(
+                Assert.Throws<ArgumentNullException>(
                     () => new StructuredLoggingProperty("some-name", null));
             }
         }

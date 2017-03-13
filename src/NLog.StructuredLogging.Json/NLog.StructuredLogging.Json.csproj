@@ -17,6 +17,6 @@
   </ItemGroup> 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
-    <PackageReference Include="NLog" Version="5.0.0-beta06" />
+    <PackageReference Include="NLog" Version="4.4.4" />
   </ItemGroup>
 </Project>

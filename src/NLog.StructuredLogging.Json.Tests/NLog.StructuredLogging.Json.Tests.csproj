@@ -2,10 +2,7 @@
   <Import Project="..\..\NLog.StructuredLogging.Json.Common.props" />
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <PackageId>NLog.StructuredLogging.Json.Tests</PackageId>
-    <RootNamespace>NLog.StructuredLogging.Json.Tests</RootNamespace>
     <TargetFrameworks>net462</TargetFrameworks>
-    <AssemblyName>NLog.StructuredLogging.Json.Tests</AssemblyName>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -25,5 +22,5 @@
   </ItemGroup> 
   <ItemGroup>
     <ProjectReference Include="..\NLog.StructuredLogging.Json\NLog.StructuredLogging.Json.csproj" />
-  </ItemGroup>
+  </ItemGroup> 
 </Project>

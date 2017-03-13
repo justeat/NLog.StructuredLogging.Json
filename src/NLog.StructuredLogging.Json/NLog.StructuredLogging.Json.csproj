@@ -2,8 +2,6 @@
   <Import Project="..\..\NLog.StructuredLogging.Json.Common.props" />
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <PackageId>NLog.StructuredLogging.Json</PackageId>
-    <RootNamespace>NLog.StructuredLogging.Json</RootNamespace>
     <TargetFrameworks>net452</TargetFrameworks>
   </PropertyGroup>
 
@@ -19,5 +17,5 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
     <PackageReference Include="NLog" Version="4.4.4" />
-  </ItemGroup>
+  </ItemGroup> 
 </Project>

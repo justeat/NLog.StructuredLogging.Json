@@ -5,7 +5,6 @@ using NLog.Config;
 using NLog.Layouts;
 using NLog.Targets;
 using NUnit.Framework;
-using Shouldly;
 
 namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
 {
@@ -79,7 +78,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
         {
             foreach (var line in _output)
             {
-                line.Count(x => x == '{').ShouldBe(3, line);
+                Assert.That(line.Count(x => x == '{'), Is.EqualTo(3));
             }
         }
     }

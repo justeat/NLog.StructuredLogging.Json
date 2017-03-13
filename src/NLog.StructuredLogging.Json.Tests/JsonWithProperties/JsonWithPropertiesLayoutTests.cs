@@ -3,7 +3,6 @@ using NLog.Layouts;
 using NLog.Targets;
 using NLog.Time;
 using NUnit.Framework;
-using Shouldly;
 
 namespace NLog.StructuredLogging.Json.Tests.JsonWithProperties
 {
@@ -53,7 +52,7 @@ namespace NLog.StructuredLogging.Json.Tests.JsonWithProperties
             var logEvent = new LogEventInfo(LogLevel.Trace, LoggerName, TestMessage);
             logger.Log(logEvent);
 
-            target.Logs.Count.ShouldBe(1);
+            Assert.That(target.Logs.Count, Is.EqualTo(1));
 
             var output = target.Logs[0];
             output.ShouldBe(expectedOutput);
@@ -90,7 +89,7 @@ namespace NLog.StructuredLogging.Json.Tests.JsonWithProperties
             var logEvent = new LogEventInfo(LogLevel.Trace, LoggerName, TestMessage);
             logger.Log(logEvent);
 
-            target.Logs.Count.ShouldBe(1);
+            Assert.That(target.Logs.Count, Is.EqualTo(1));
 
             var output = target.Logs[0];
             output.ShouldBe(expectedOutput);
@@ -128,7 +127,7 @@ namespace NLog.StructuredLogging.Json.Tests.JsonWithProperties
             var logEvent = new LogEventInfo(LogLevel.Trace, LoggerName, TestMessage);
             logger.Log(logEvent);
 
-            target.Logs.Count.ShouldBe(1);
+            Assert.That(target.Logs.Count, Is.EqualTo(1));
 
             var output = target.Logs[0];
             output.ShouldBe(expectedOutput);
@@ -158,7 +157,7 @@ namespace NLog.StructuredLogging.Json.Tests.JsonWithProperties
                     "\",\"Message\":\"" + TestMessage +
                     "\",\"" + expectedPropertyName + "\":\"" + TestProperties.One + "\"}";
 
-                result.ShouldBe(expectedOutput, result);
+                Assert.That(result, Is.EqualTo(expectedOutput));
             }
         }
     }

@@ -3,7 +3,6 @@ using System.Linq;
 using Newtonsoft.Json.Linq;
 using NLog.Layouts;
 using NUnit.Framework;
-using Shouldly;
 
 namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ExceptionFingerprinting
 {
@@ -50,8 +49,8 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ExceptionFingerprinting
         public void ShouldHaveFingerprint()
         {
             var value = Result["ExceptionFingerprint"].Value<string>();
-            value.ShouldNotBeNull();
-            value.Length.ShouldBeGreaterThan(0);
+            Assert.That(value, Is.Not.Null);
+            Assert.That(value, Is.Not.Empty);
         }
     }
 

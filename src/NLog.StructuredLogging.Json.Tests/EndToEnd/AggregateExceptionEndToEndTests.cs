@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
-using Shouldly;
-using System.Linq;
 
 namespace NLog.StructuredLogging.Json.Tests.EndToEnd
 {
@@ -66,7 +64,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
         [Test]
         public virtual void ShouldHaveExpectedNumberOfLines()
         {
-            Result.Count.ShouldBe(Iterations * 4);
+            Assert.That(Result.Count, Is.EqualTo(Iterations * 4));
         }
 
         [Test]
@@ -144,13 +142,6 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
         private void ShouldHaveExpectedStacktrace(JObject obj)
         {
             obj.GetValue("ExceptionStackTrace").ToString().ShouldMatch("   at NLog.StructuredLogging.Json.Tests.EndToEnd.AggregateExceptionEndToEndTests.PutStackTraceOnException");
-        }
-
-        private static void StringShouldStartWithOneOf(string value, params string[] targets)
-        {
-            var pass = targets.Any(t => value.StartsWith(t));
-
-            pass.ShouldBeTrue("Got " + value + ", expected one of" + string.Join(",", targets));
         }
 
         [Test]

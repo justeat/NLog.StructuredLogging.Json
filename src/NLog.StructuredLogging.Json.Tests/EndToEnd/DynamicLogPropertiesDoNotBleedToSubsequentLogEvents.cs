@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
 using NUnit.Framework;
-using Shouldly;
 
 namespace NLog.StructuredLogging.Json.Tests.EndToEnd
 {
@@ -28,7 +27,8 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
         [Test]
         public void Message2HasExpectedDynamicProperties()
         {
-            _m2["oddness"].Value<bool>().ShouldBe(true);
+            var oddness = _m2["oddness"].Value<bool>();
+            Assert.That(oddness, Is.True);
         }
 
         [Test]

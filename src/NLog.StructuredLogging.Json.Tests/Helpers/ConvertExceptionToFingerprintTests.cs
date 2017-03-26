@@ -84,6 +84,7 @@ namespace NLog.StructuredLogging.Json.Tests.Helpers
         }
 
         [Test]
+        [Ignore("Capturing line numbers in stack traces is dependant on debug settings")]
         public void IdenticalExceptionsFromDifferentLinesInAMethodHaveADifferentFingerprint()
         {
             Exception ex1 = PutStackTraceOnExceptionGeneric(new ApplicationException("test 1"), false, "Do stuff");

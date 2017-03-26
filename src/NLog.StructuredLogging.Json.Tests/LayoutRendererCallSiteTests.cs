@@ -24,7 +24,7 @@ namespace NLog.StructuredLogging.Json.Tests
                 Level = LogLevel.Error,
                 LoggerName = "ExampleLoggerName",
                 Message = "test message",
-                TimeStamp = new DateTime(2014, 1, 2, 3, 4, 5, 623)
+                TimeStamp = new DateTime(2014, 1, 2, 3, 4, 5, 623, DateTimeKind.Utc)
             };
 
             ThisNameWillAppearInTheCallSite(LogEvent);

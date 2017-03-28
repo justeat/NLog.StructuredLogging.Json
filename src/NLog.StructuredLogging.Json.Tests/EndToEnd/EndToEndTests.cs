@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using NLog.Config;
 using NLog.Layouts;
 using NLog.Targets;
@@ -50,7 +50,11 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
         {
             ProgrammaticallyRegisterExtensions();
             var config = LogManager.Configuration;
+            Assert.That(config, Is.Not.Null, "No config");
+
             var target = GivenTarget(name);
+            Assert.That(target, Is.Not.Null, "No target");
+
             config.AddTarget(target);
             SetUpRules(target, config);
             ModifyLoggingConfigurationBeforeCommit(name, config);

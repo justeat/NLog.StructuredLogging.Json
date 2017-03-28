@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using NUnit.Framework;
 
 namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
@@ -30,7 +30,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
             var all = string.Join("\n", Result);
 
             Assert.That(all.Length,
-                Is.InRange(1350 * Iterations, 1550 * Iterations));
+                Is.InRange(1000 * Iterations, 1600 * Iterations));
         }
 
         [Test]
@@ -38,7 +38,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
         {
             foreach (var line in Result)
             {
-                Assert.That(line.Length, Is.InRange(1350, 1550),
+                Assert.That(line.Length, Is.InRange(1000, 1600),
                     "zzzzline start\n\n" +line + "\n\nzzzzzline end");
             }
         }

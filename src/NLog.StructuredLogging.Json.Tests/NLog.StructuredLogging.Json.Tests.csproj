@@ -1,140 +1,33 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\..\NLog.StructuredLogging.Json.Common.props" />
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{EE3EAA37-A6A8-45A3-9E15-31E42FF42959}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NLog.StructuredLogging.Json.Tests</RootNamespace>
-    <AssemblyName>NLog.StructuredLogging.Json.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>net462</TargetFrameworks>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
+  <PropertyGroup>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <DebugSymbols>True</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FakeItEasy, Version=3.0.0.0, Culture=neutral, PublicKeyToken=eff28e2146d5fd2c, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\FakeItEasy.3.0.0\lib\net40\FakeItEasy.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NLog.4.4.3\lib\net45\NLog.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="nunit.framework, Version=3.6.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NUnit.3.6.1\lib\net45\nunit.framework.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Serialization" />
-  </ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup> 
   <ItemGroup>
-    <Compile Include="EndToEnd\ExceptionFingerprinting\ExceptionsAreFingerprinted.cs" />
-    <Compile Include="EndToEnd\ExceptionFingerprinting\NonExceptionsAreNotFingerprinted.cs" />
-    <Compile Include="EndToEnd\LeniencyOfAttributeNames\WhenReservedNamesAreUsedForAttributes.cs" />
-    <Compile Include="EndToEnd\MultiThreadedUniqueKeysTests.cs" />
-    <Compile Include="EndToEnd\MultiThreadedUniqueValuesTests.cs" />
-    <Compile Include="EndToEnd\AggregateExceptionEndToEndTests.cs" />
-    <Compile Include="EndToEnd\NestedExceptionEndToEndTests.cs" />
-    <Compile Include="EndToEnd\ViaLayoutRenderer\MultiThreadedUniqueKeysInLayoutRenderer.cs" />
-    <Compile Include="EndToEnd\ViaLayoutRenderer\MultiThreadedUniqueValuesInLayoutRenderer.cs" />
-    <Compile Include="EndToEnd\ViaLayoutRenderer\AggregateExceptionEndToEndTestsLayoutRenderer.cs" />
-    <Compile Include="EndToEnd\ViaLayoutRenderer\NestedExceptionEndToEndTestsLayoutRenderer.cs" />
-    <Compile Include="EndToEnd\ViaLayout\MultiThreadedUniqueValuesInFlattenedJson.cs" />
-    <Compile Include="EndToEnd\ViaLayout\MultiUniqueKeysThreadedInFlattenedJson.cs" />
-    <Compile Include="EndToEnd\ViaLayout\AggregateExceptionEndToEndTestsInFlattenedJson.cs" />
-    <Compile Include="EndToEnd\ViaLayout\NestedExceptionEndToEndTestsInFlattenedJson.cs" />
-    <Compile Include="EndToEnd\ViaLayout\WithFailingLayout.cs" />
-    <Compile Include="FlattenedJsonCanSerializePushNotification.cs" />
-    <Compile Include="Hashing\HasherTests.cs" />
-    <Compile Include="Helpers\ConvertExceptionToFingerprintTests.cs" />
-    <Compile Include="Helpers\ConvertJsonTests.cs" />
-    <Compile Include="Helpers\ConvertValueAsStringTests.cs" />
-    <Compile Include="EndToEnd\DynamicLogPropertiesDoNotBleedToSubsequentLogEvents.cs" />
-    <Compile Include="EndToEnd\DateTimePropertiesAreSerialised.cs" />
-    <Compile Include="EndToEnd\EndToEndTests.cs" />
-    <Compile Include="EndToEnd\UnfortunatelyComplexEndToEndTestsThatTestSeveralFeaturesAtOnceToProveCombinationsWork.cs" />
-    <Compile Include="EndToEnd\ViaLayoutRenderer\DateTimePropertiesInLayoutRenderer.cs" />
-    <Compile Include="EndToEnd\ViaLayoutRenderer\LayoutRendererDoesNotBleed.cs" />
-    <Compile Include="EndToEnd\ViaLayoutRenderer\MessageContainsJson.cs" />
-    <Compile Include="EndToEnd\ViaLayout\AsyncFlattenedJsonTestsThatTestSeveralFeaturesAtOnceToProveCombinationsWork.cs" />
-    <Compile Include="EndToEnd\ViaLayout\DateTimePropertiesInFlattenedJson.cs" />
-    <Compile Include="EndToEnd\ViaLayout\FlattenedJsonLayoutDoesNotBleed.cs" />
-    <Compile Include="EndToEnd\ViaLayout\FlattenedJsonTestsThatTestSeveralFeaturesAtOnceToProveCombinationsWork.cs" />
-    <Compile Include="EndToEnd\ViaLayoutRenderer\AsyncLayoutRendererTestsThatTestSeveralFeaturesAtOnceToProveCombinationsWork.cs" />
-    <Compile Include="EndToEnd\ViaLayoutRenderer\LayoutRendererTestsThatTestSeveralFeaturesAtOnceToProveCombinationsWork.cs" />
-    <Compile Include="EndToEnd\MessageContainsNullParams.cs" />
-    <Compile Include="EndToEnd\ViaLayout\MessageContainsJson.cs" />
-    <Compile Include="EndToEnd\ViaLayout\SimpleJsonInMessage.cs" />
-    <Compile Include="EndToEnd\ViaLayout\UnfortunatelyComplexFlattenedJsonLayoutTests.cs" />
-    <Compile Include="FakeTimeSource.cs" />
-    <Compile Include="Helpers\MapperParametersTests.cs" />
-    <Compile Include="JsonWithProperties\FailingLayout.cs" />
-    <Compile Include="JsonWithProperties\JsonWithPropertiesLayoutTests.cs" />
-    <Compile Include="LayoutRendererCallSiteTests.cs" />
-    <Compile Include="LayoutRendererTests.cs" />
-    <Compile Include="Helpers\MapperExceptionDataTests.cs" />
-    <Compile Include="Helpers\MapperExceptionLoggingTests.cs" />
-    <Compile Include="Helpers\MapperDateTimeFormatTests.cs" />
-    <Compile Include="NestedExceptionTests.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Helpers\MapperStandardTests.cs" />
-    <Compile Include="SerializingJustSayingMessages.cs" />
-    <Compile Include="LoggerExtensionsTests.cs" />
-    <Compile Include="Helpers\ConvertToUtcIso8601Tests.cs" />
-    <Compile Include="JsonWithProperties\StructuredLoggingPropertyTests.cs" />
-    <Compile Include="ShouldAsserts.cs" />
-  </ItemGroup>
+    <PackageReference Include="FakeItEasy" Version="3.1.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+    <PackageReference Include="NLog" Version="4.4.4" />
+    <PackageReference Include="NUnit" Version="3.6.1" />
+    <PackageReference Include="NUnitLite" Version="3.6.1" />
+  </ItemGroup> 
   <ItemGroup>
-    <Content Include="nlog.config">
+    <ProjectReference Include="..\NLog.StructuredLogging.Json\NLog.StructuredLogging.Json.csproj" />
+  </ItemGroup> 
+  <ItemGroup>
+    <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
+  </ItemGroup> 
+  <ItemGroup>
+    <None Update="nlog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </Content>
-    <None Include="NLog.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\NLog.StructuredLogging.Json\NLog.StructuredLogging.Json.csproj">
-      <Project>{E0357801-F86A-4F85-8246-1E06472C57B2}</Project>
-      <Name>Nlog.Structuredlogging.Json</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
-  </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

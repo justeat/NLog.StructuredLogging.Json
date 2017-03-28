@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using NLog.Time;
 
 namespace NLog.StructuredLogging.Json.Tests
@@ -9,7 +9,7 @@ namespace NLog.StructuredLogging.Json.Tests
 
         public FakeTimeSource()
         {
-            _fakeTime = new DateTime(2014,1,2,16,4,5, 623);
+            _fakeTime = new DateTime(2014,1,2,16,4,5, 623, DateTimeKind.Utc);
         }
 
         public override DateTime FromSystemTime(DateTime systemTime)

@@ -58,7 +58,7 @@ With lots of possibly bad things in it";
                 Message = Message,
                 Parameters = new object[] { "One", 1234 },
                 Properties = { { "PropertyOne", "one" }, { "PropertyTwo", 2 } },
-                TimeStamp = new DateTime(2014, 1, 2, 3, 4, 5, 623)
+                TimeStamp = new DateTime(2014, 1, 2, 3, 4, 5, 623, DateTimeKind.Utc)
             };
 
             Renderer = new StructuredLoggingLayoutRenderer();

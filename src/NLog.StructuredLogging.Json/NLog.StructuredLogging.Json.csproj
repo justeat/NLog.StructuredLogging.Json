@@ -9,7 +9,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup> 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
-    <PackageReference Include="NLog" Version="4.4.4" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.1" />
+    <PackageReference Include="NLog" Version="4.4.5" />
   </ItemGroup> 
 </Project>

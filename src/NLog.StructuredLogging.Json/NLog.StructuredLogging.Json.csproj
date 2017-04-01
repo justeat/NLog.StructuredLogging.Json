@@ -2,14 +2,21 @@
   <Import Project="..\..\NLog.StructuredLogging.Json.Common.props" />
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFrameworks>net452</TargetFrameworks>
+    <TargetFrameworks>netstandard1.3;net452</TargetFrameworks>
   </PropertyGroup>
-  <ItemGroup>
+   <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup> 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="10.0.1" />
+  </ItemGroup> 
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
+    <PackageReference Include="NLog" Version="5.0.0-beta06" />
+ <PackageReference Include="System.Reflection.Extensions" Version="4.3.0" />
+ <PackageReference Include="System.Security.Cryptography.Algorithms" Version="4.3.0" />
+  </ItemGroup> 
+   <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
     <PackageReference Include="NLog" Version="4.4.5" />
   </ItemGroup> 
 </Project>

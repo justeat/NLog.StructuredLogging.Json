@@ -12,18 +12,28 @@ namespace NLog.StructuredLogging.Json.Helpers
                 return string.Empty;
             }
 
+            byte[] hash;
+
+#if NET452
             using (var sha1 = new SHA1Managed())
             {
-                var hash = sha1.ComputeHash(Encoding.UTF8.GetBytes(input));
-                var sb = new StringBuilder(hash.Length * 2);
-
-                foreach (var b in hash)
-                {
-                    sb.Append(b.ToString("x2"));
-                }
-
-                return sb.ToString();
+                hash = sha1.ComputeHash(Encoding.UTF8.GetBytes(input));
             }
+#else
+            using (var sha1 = SHA1.Create())
+            {
+                hash = sha1.ComputeHash(Encoding.UTF8.GetBytes(input));
+            }
+#endif
+
+            var sb = new StringBuilder(hash.Length * 2);
+
+            foreach (var b in hash)
+            {
+                sb.Append(b.ToString("x2"));
+            }
+
+            return sb.ToString();
         }
     }
 }

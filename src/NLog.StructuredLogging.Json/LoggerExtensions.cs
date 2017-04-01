@@ -3,7 +3,8 @@
  using System.Collections.Generic;
  using System.Diagnostics;
 ﻿using System.Linq;
-﻿using NLog.StructuredLogging.Json.Helpers;
+ using System.Reflection;
+ using NLog.StructuredLogging.Json.Helpers;
 
 namespace NLog.StructuredLogging.Json
 {
@@ -75,8 +76,11 @@ namespace NLog.StructuredLogging.Json
                 }
             }
 
+#if NET452
             var stackTrace = new StackTrace(0);
             log.SetStackTrace(stackTrace, StackHelper.IndexOfFirstCallingMethod(stackTrace.GetFrames()));
+            // todo: There is still no netCore subsitiute for this!
+#endif
 
             logger.Log(log);
         }
@@ -118,7 +122,7 @@ namespace NLog.StructuredLogging.Json
         private static bool IsDictionary(object logProperties)
         {
             var type = logProperties.GetType();
-            return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>);
+            return type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>);
         }
     }
 }

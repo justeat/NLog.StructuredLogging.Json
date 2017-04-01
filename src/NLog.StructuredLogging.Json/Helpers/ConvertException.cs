@@ -75,12 +75,13 @@ namespace NLog.StructuredLogging.Json.Helpers
         private static string StackTraceWithoutFilePaths(Exception exception)
         {
             var stackTrace = new StackTrace(exception, true);
+            var frames = stackTrace.GetFrames();
             var firstFrame = true;
             var sb = new StringBuilder(255);
 
-            for (var i = 0; i < stackTrace.FrameCount; ++i)
+            for (var i = 0; i < frames.Length; ++i)
             {
-                var stackFrame = stackTrace.GetFrame(i);
+                var stackFrame = frames[i];
                 var method = stackFrame.GetMethod();
                 if (method != null)
                 {

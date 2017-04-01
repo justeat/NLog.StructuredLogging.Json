@@ -76,7 +76,7 @@ namespace NLog.StructuredLogging.Json
                 }
             }
 
-#if NET45
+#if NET452
             var stackTrace = new StackTrace(0);
             log.SetStackTrace(stackTrace, StackHelper.IndexOfFirstCallingMethod(stackTrace.GetFrames()));
             // todo: There is still no netCore subsitiute for this!

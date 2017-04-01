@@ -14,7 +14,7 @@ namespace NLog.StructuredLogging.Json.Helpers
 
             byte[] hash;
 
-#if NET45
+#if NET452
             using (var sha1 = new SHA1Managed())
             {
                 hash = sha1.ComputeHash(Encoding.UTF8.GetBytes(input));

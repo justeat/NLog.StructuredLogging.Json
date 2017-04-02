@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
+using NLog.StructuredLogging.Json.Tests;
 
 namespace NLog.StructuredLogging.Json.Tests.EndToEnd
 {
@@ -21,9 +22,9 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
 
         private static Exception GivenException()
         {
-            var inner1 = new ApplicationException("Inner Exception 1");
-            var inner2 = new ApplicationException("Inner Exception 2");
-            var inner3 = new ApplicationException("Inner Exception 3");
+            var inner1 = new LoggingException("Inner Exception 1");
+            var inner2 = new LoggingException("Inner Exception 2");
+            var inner3 = new LoggingException("Inner Exception 3");
 
             PutStackTraceOnException(inner1);
             PutStackTraceOnException(inner2);

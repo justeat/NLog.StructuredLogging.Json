@@ -22,7 +22,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
 
         private static Exception GivenException()
         {
-            var inner2 = new ApplicationException("Inner Exception 2");
+            var inner2 = new LoggingException("Inner Exception 2");
             var inner1 = new ArgumentException("Inner Exception 1", inner2);
             var testEx = new InvalidOperationException("Outer Exception", inner1);
 

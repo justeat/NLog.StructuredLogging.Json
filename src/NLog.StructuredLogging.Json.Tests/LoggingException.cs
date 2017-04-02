@@ -11,7 +11,6 @@ namespace NLog.StructuredLogging.Json.Tests
 
         public LoggingException(string message) : base(message)
         {
-            
         }
     }
 }

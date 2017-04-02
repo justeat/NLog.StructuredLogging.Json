@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
-using NLog.StructuredLogging.Json.Tests;
 
 namespace NLog.StructuredLogging.Json.Tests.EndToEnd
 {
@@ -118,24 +117,24 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
 
         private void ShouldHaveLoggedInner1ExceptionCorrectly(JObject obj)
         {
-            obj.GetValue("Exception").ToString().ShouldMatch(@"System\.ApplicationException: Inner Exception 1");
-            obj.GetValue("ExceptionType").ToString().ShouldMatch("ApplicationException");
+            obj.GetValue("Exception").ToString().ShouldMatch(@"LoggingException: Inner Exception 1");
+            obj.GetValue("ExceptionType").ToString().ShouldMatch("LoggingException");
             obj.GetValue("ExceptionMessage").ToString().ShouldMatch("Inner Exception 1");
             ShouldHaveExpectedStacktrace(obj);
         }
 
         private void ShouldHaveLoggedInner2ExceptionCorrectly(JObject obj)
         {
-            obj.GetValue("Exception").ToString().ShouldMatch(@"System\.ApplicationException: Inner Exception 2");
-            obj.GetValue("ExceptionType").ToString().ShouldMatch("ApplicationException");
+            obj.GetValue("Exception").ToString().ShouldMatch(@"LoggingException: Inner Exception 2");
+            obj.GetValue("ExceptionType").ToString().ShouldMatch("LoggingException");
             obj.GetValue("ExceptionMessage").ToString().ShouldMatch("Inner Exception 2");
             ShouldHaveExpectedStacktrace(obj);
         }
 
         private void ShouldHaveLoggedInner3ExceptionCorrectly(JObject obj)
         {
-            obj.GetValue("Exception").ToString().ShouldMatch(@"System\.ApplicationException: Inner Exception 3");
-            obj.GetValue("ExceptionType").ToString().ShouldMatch("ApplicationException");
+            obj.GetValue("Exception").ToString().ShouldMatch(@"LoggingException: Inner Exception 3");
+            obj.GetValue("ExceptionType").ToString().ShouldMatch("LoggingException");
             obj.GetValue("ExceptionMessage").ToString().ShouldMatch("Inner Exception 3");
             ShouldHaveExpectedStacktrace(obj);
         }

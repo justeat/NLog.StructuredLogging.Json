@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using NUnit.Framework;
 
 namespace NLog.StructuredLogging.Json.Tests

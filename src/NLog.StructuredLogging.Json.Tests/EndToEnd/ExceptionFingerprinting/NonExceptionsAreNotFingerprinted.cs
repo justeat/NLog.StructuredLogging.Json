@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using Newtonsoft.Json.Linq;
 using NLog.Layouts;
@@ -21,7 +21,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ExceptionFingerprinting
         public void ShouldNotHaveFingerprint()
         {
             JToken val;
-            var gotValue = Result.TryGetValue("ExceptionFingerprint", StringComparison.InvariantCulture, out val);
+            var gotValue = Result.TryGetValue("ExceptionFingerprint", StringComparison.Ordinal, out val);
             Assert.That(gotValue, Is.False);
         }
     }

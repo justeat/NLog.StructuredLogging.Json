@@ -20,7 +20,7 @@ namespace NLog.StructuredLogging.Json.Tests.Helpers
         [Test]
         public void ExceptionFingerprintIsPresent()
         {
-            Exception ex = new ApplicationException("test 1");
+            Exception ex = new LoggingException("test 1");
 
             var fingerprint = ConvertException.ToFingerprint(ex);
 
@@ -30,8 +30,8 @@ namespace NLog.StructuredLogging.Json.Tests.Helpers
         [Test]
         public void IdenticalMessageExceptionsHaveSameFingerprint()
         {
-            Exception ex1 = new ApplicationException("test 1");
-            Exception ex2 = new ApplicationException("test 1");
+            Exception ex1 = new LoggingException("test 1");
+            Exception ex2 = new LoggingException("test 1");
 
             var fingerprint1 = ConvertException.ToFingerprint(ex1);
             var fingerprint2 = ConvertException.ToFingerprint(ex2);
@@ -44,8 +44,8 @@ namespace NLog.StructuredLogging.Json.Tests.Helpers
         [Test]
         public void DifferentMessageExceptionsHaveDifferentFingerprint()
         {
-            Exception ex1 = new ApplicationException("test 1");
-            Exception ex2 = new ApplicationException("test 2");
+            Exception ex1 = new LoggingException("test 1");
+            Exception ex2 = new LoggingException("test 2");
 
             var fingerprint1 = ConvertException.ToFingerprint(ex1);
             var fingerprint2 = ConvertException.ToFingerprint(ex2);
@@ -58,8 +58,8 @@ namespace NLog.StructuredLogging.Json.Tests.Helpers
         [Test]
         public void StackTraceIsUsedWhenPresent()
         {
-            Exception ex1 = new ApplicationException("test 1");
-            Exception ex2 = PutStackTraceOnException(new ApplicationException("test 1"));
+            Exception ex1 = new LoggingException("test 1");
+            Exception ex2 = PutStackTraceOnException(new LoggingException("test 1"));
 
             var fingerprint1 = ConvertException.ToFingerprint(ex1);
             var fingerprint2 = ConvertException.ToFingerprint(ex2);
@@ -72,8 +72,8 @@ namespace NLog.StructuredLogging.Json.Tests.Helpers
         [Test]
         public void IdenticalStacktraceExceptionsHaveSameFingerprint()
         {
-            Exception ex1 = PutStackTraceOnException(new ApplicationException("test 1"));
-            Exception ex2 = PutStackTraceOnException(new ApplicationException("test 1"));
+            Exception ex1 = PutStackTraceOnException(new LoggingException("test 1"));
+            Exception ex2 = PutStackTraceOnException(new LoggingException("test 1"));
 
             var fingerprint1 = ConvertException.ToFingerprint(ex1);
             var fingerprint2 = ConvertException.ToFingerprint(ex2);
@@ -87,8 +87,8 @@ namespace NLog.StructuredLogging.Json.Tests.Helpers
         [Ignore("Capturing line numbers in stack traces is dependant on debug settings")]
         public void IdenticalExceptionsFromDifferentLinesInAMethodHaveADifferentFingerprint()
         {
-            Exception ex1 = PutStackTraceOnExceptionGeneric(new ApplicationException("test 1"), false, "Do stuff");
-            Exception ex2 = PutStackTraceOnExceptionGeneric(new ApplicationException("test 1"), true, "Do stuff");
+            Exception ex1 = PutStackTraceOnExceptionGeneric(new LoggingException("test 1"), false, "Do stuff");
+            Exception ex2 = PutStackTraceOnExceptionGeneric(new LoggingException("test 1"), true, "Do stuff");
 
             var fingerprint1 = ConvertException.ToFingerprint(ex1);
             var fingerprint2 = ConvertException.ToFingerprint(ex2);

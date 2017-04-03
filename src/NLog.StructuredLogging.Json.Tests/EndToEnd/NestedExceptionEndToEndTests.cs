@@ -22,7 +22,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
 
         private static Exception GivenException()
         {
-            var inner2 = new ApplicationException("Inner Exception 2");
+            var inner2 = new LoggingException("Inner Exception 2");
             var inner1 = new ArgumentException("Inner Exception 1", inner2);
             var testEx = new InvalidOperationException("Outer Exception", inner1);
 
@@ -117,8 +117,8 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
 
         private void ShouldHaveLoggedInner2ExceptionCorrectly(JObject obj)
         {
-            obj.GetValue("Exception").ToString().ShouldMatch(@"System\.ApplicationException: Inner Exception 2");
-            obj.GetValue("ExceptionType").ToString().ShouldMatch("ApplicationException");
+            obj.GetValue("Exception").ToString().ShouldMatch(@"LoggingException: Inner Exception 2");
+            obj.GetValue("ExceptionType").ToString().ShouldMatch("LoggingException");
             obj.GetValue("ExceptionMessage").ToString().ShouldMatch("Inner Exception 2");
             ShouldHaveExpectedStacktrace(obj);
         }

@@ -25,7 +25,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
             var output = LogManager.Configuration.LogMessage(loggerName).First();
 
             Assert.That(output, Does.StartWith(
-                "{\"fail1\":\"Render failed: ApplicationException Test render fail\",\"flat1\":\"flat1\",\"TimeStamp\":\""));
+                "{\"fail1\":\"Render failed: LoggingException Test render fail\",\"flat1\":\"flat1\",\"TimeStamp\":\""));
             Assert.That(output, Does.EndWith(
                 "\"prop1\":\"value1\",\"prop2\":\"2\"}"));
         }

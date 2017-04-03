@@ -42,7 +42,9 @@ namespace NLog.StructuredLogging.Json.Tests
         [MethodImpl(MethodImplOptions.NoInlining)]
         private void ThisNameWillNotApppearinTheCallSite(LogEventInfo logEvt)
         {
+            #if NET462
             logEvt.SetStackTrace(new StackTrace(1), 0);
+            #endif
         }
 
         [Test]

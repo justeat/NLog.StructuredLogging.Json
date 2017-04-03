@@ -2,7 +2,7 @@
   <Import Project="..\..\NLog.StructuredLogging.Json.Common.props" />
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>netstandard1.6;net462</TargetFrameworks>
+    <TargetFrameworks>netcoreapp1.0;net462</TargetFrameworks>
   </PropertyGroup>
   <PropertyGroup>
     <DebugType>full</DebugType>

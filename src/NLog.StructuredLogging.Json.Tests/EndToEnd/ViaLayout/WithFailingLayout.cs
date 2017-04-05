@@ -7,8 +7,35 @@ using NUnit.Framework;
 
 namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
 {
+    [TestFixture]
     public class WithFailingLayout
     {
+        [Test]
+        public void WhenLayoutSucceeds()
+        {
+            // arrange
+            const string loggerName = "failingLogger";
+            GivenLoggingIsConfiguredForTest(GivenSucceedingTarget(loggerName));
+            var logger = LogManager.GetLogger(loggerName);
+
+            // act
+            logger.ExtendedInfo("test message", new { prop1 = "value1", prop2 = 2 });
+
+            LogManager.Flush();
+
+            var output = LogManager.Configuration.LogMessage(loggerName).First();
+
+            Assert.That(output, Does.Not.Contain("LoggingException"));
+            Assert.That(output, Does.Not.Contain("Render failed:"));
+
+            Assert.That(output, Does.Contain("test message"));
+
+            Assert.That(output, Does.StartWith(
+                "{\"flat1\":\"flat1\",\"TimeStamp\":\""));
+            Assert.That(output, Does.EndWith(
+                "\"prop1\":\"value1\",\"prop2\":\"2\"}"));
+        }
+
         [Test]
         public void WhenLayoutFails()
         {
@@ -27,6 +54,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
             Assert.That(output, Does.Contain("fail1"));
             Assert.That(output, Does.Contain("Render failed:"));
             Assert.That(output, Does.Contain("LoggingException"));
+            Assert.That(output, Does.Contain("test message"));
 
             Assert.That(output, Does.StartWith(
                 "{\"fail1\":\"Render failed: LoggingException Test render fail\",\"flat1\":\"flat1\",\"TimeStamp\":\""));
@@ -67,6 +95,17 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
             var rule = new LoggingRule("*", LogLevel.Trace, target);
             config.LoggingRules.Insert(0, rule);
             LogManager.Configuration = config;
+        }
+
+        private Target GivenSucceedingTarget(string name)
+        {
+            var layout = new FlattenedJsonLayout();
+            layout.Attributes.Add(new JsonAttribute("flat1", "flat1"));
+            return new MemoryTarget
+            {
+                Name = name,
+                Layout = layout
+            };
         }
 
         private Target GivenFailingTarget(string name)

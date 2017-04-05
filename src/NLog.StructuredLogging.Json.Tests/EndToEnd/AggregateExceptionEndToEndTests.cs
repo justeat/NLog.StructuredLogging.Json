@@ -84,7 +84,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
                 var obj = JObject.Parse(line);
                 var exMessage = obj.GetValue("ExceptionMessage").ToString();
 
-                if (exMessage == "Aggregate Exception")
+                if (exMessage.StartsWith("Aggregate Exception"))
                 {
                     ShouldHaveLoggedAggregateExceptionCorrectly(obj);
                 }

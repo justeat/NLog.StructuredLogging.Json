@@ -15,5 +15,8 @@ indent_size = 4
 [*.lock]
 end_of_line = lf
 
+[*.sh]
+end_of_line = lf
+
 [*.sln]
 indent_style = tab

@@ -2,7 +2,7 @@
   <Import Project="..\..\NLog.StructuredLogging.Json.Common.props" />
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>netstandard1.6;net462</TargetFrameworks>
+    <TargetFrameworks>netcoreapp1.0;net462</TargetFrameworks>
   </PropertyGroup>
   <PropertyGroup>
     <DebugType>full</DebugType>
@@ -14,17 +14,8 @@
   </ItemGroup> 
   <ItemGroup>
     <PackageReference Include="FakeItEasy" Version="3.1.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
     <PackageReference Include="NUnit" Version="3.6.1" />
     <PackageReference Include="NUnitLite" Version="3.6.1" />
-  </ItemGroup> 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
-    <PackageReference Include="NLog" Version="5.0.0-beta06" />
-    <PackageReference Include="System.Reflection.Extensions" Version="4.3.0" />
-    <PackageReference Include="System.Security.Cryptography.Algorithms" Version="4.3.0" />
-  </ItemGroup> 
-   <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
-    <PackageReference Include="NLog" Version="4.4.5" />
   </ItemGroup> 
   <ItemGroup>
     <ProjectReference Include="..\NLog.StructuredLogging.Json\NLog.StructuredLogging.Json.csproj" />

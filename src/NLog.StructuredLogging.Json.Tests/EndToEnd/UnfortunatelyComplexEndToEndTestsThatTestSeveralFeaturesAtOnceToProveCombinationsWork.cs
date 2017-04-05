@@ -279,8 +279,7 @@ With lots of possibly bad things in it";
         [Test]
         public void ShouldNotHavePropertiesBesidesWhatIsExpected()
         {
-            var calculatedCount = AttributesOnLogEvent.Count - _attributesNotYetAssertable.Count;
-            var calculatedCount2 = AttributesOnLogEvent
+            var calculatedCount = AttributesOnLogEvent
                 .Count(s => !_attributesNotYetAssertable.ContainsKey(s));
 
             var jsonRows = Result.Select(JToken.Parse)
@@ -289,9 +288,11 @@ With lots of possibly bad things in it";
             foreach (var entry in jsonRows)
             {
                 var actualProps = string.Join(",", entry.Select(t => t.ToString()));
+                var expectedAttributes = string.Join(",", AttributesOnLogEvent);
+                var excludedAttributes = string.Join(",", _attributesNotYetAssertable.Keys);
 
                 Assert.That(entry.Count(), Is.EqualTo(calculatedCount),
-                    $"Entry has props: '{actualProps}'{Environment.NewLine} counts: { AttributesOnLogEvent.Count} - {_attributesNotYetAssertable.Count} = {calculatedCount2}");
+                    $"Entry has props:{actualProps}{Environment.NewLine}Expected: {expectedAttributes}{Environment.NewLine}Excluded:{excludedAttributes}");
             }
         }
 

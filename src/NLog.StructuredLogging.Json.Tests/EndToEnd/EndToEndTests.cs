@@ -49,11 +49,17 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
         private void GivenLoggingIsConfiguredForTest(string name)
         {
             ProgrammaticallyRegisterExtensions();
+
+            if (LogManager.Configuration == null)
+            {
+                LogManager.Configuration = new LoggingConfiguration();
+            }
+
             var config = LogManager.Configuration;
-            Assert.That(config, Is.Not.Null, "No config");
+            Assert.That(config, Is.Not.Null, "No LogManager.Configuration found");
 
             var target = GivenTarget(name);
-            Assert.That(target, Is.Not.Null, "No target");
+            Assert.That(target, Is.Not.Null, $"No target created for name '{name}'");
 
             config.AddTarget(target);
             SetUpRules(target, config);

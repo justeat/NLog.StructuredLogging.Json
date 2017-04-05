@@ -280,14 +280,18 @@ With lots of possibly bad things in it";
         public void ShouldNotHavePropertiesBesidesWhatIsExpected()
         {
             var calculatedCount = AttributesOnLogEvent.Count - _attributesNotYetAssertable.Count;
+            var calculatedCount2 = AttributesOnLogEvent
+                .Count(s => !_attributesNotYetAssertable.ContainsKey(s));
 
             var jsonRows = Result.Select(JToken.Parse)
                 .ToList();
 
             foreach (var entry in jsonRows)
             {
+                var actualProps = string.Join(",", entry.Select(t => t.ToString()));
+
                 Assert.That(entry.Count(), Is.EqualTo(calculatedCount),
-                    "Entry has props:" + string.Join(",", entry.Select(t => t.ToString())));
+                    $"Entry has props: '{actualProps}'{Environment.NewLine} counts: { AttributesOnLogEvent.Count} - {_attributesNotYetAssertable.Count} = {calculatedCount2}");
             }
         }
 

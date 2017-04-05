@@ -153,7 +153,10 @@ With lots of possibly bad things in it";
             yield return new JsonAttribute("ProcessId", "${processid}");
             yield return new JsonAttribute("ThreadId", "${threadid}");
             yield return new JsonAttribute("Parameters", "");
-            yield return new JsonAttribute("CallSite", "${callsite}");
+            if (Platform.HasCallSite)
+            {
+                yield return new JsonAttribute("CallSite", "${callsite}");
+            }
             yield return new JsonAttribute("PropertyOne", "one");
             yield return new JsonAttribute("PropertyTwo", "2");
             yield return new JsonAttribute("Iteration", "1");

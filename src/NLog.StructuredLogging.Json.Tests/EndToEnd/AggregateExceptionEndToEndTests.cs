@@ -145,6 +145,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
         }
 
         [Test]
+        [Category("CallSite")]
         public void ShouldHaveLoggedCallSite()
         {
             foreach (var line in Result)

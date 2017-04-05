@@ -84,21 +84,22 @@ With lots of possibly bad things in it";
         [Test]
         public void WhenConverted_TheResultProducesTheCorrectJson()
         {
-            const string expected = 
+            var escapedLinebreak = (Environment.NewLine == "\n") ? "\\n" : "\\r\\n";
+
+            var expected = 
                 "{\"TimeStamp\":\"2014-01-02T03:04:05.623Z\"," +
                 "\"Level\":\"Error\",\"LoggerName\":\"ExampleLoggerName\"," +
-                "\"Message\":\"{br}This is a message{br}!\\\"£$%^&*{br}{br}With lots of possibly bad things in it" + 
+                "\"Message\":\"\\r\\nThis is a message\\r\\n!\\\"£$%^&*\\r\\n\\r\\nWith lots of possibly bad things in it" + 
                     "\\u0001\\u0002\\u0003\\u0004\\u0005\\u0006\\u0007\\b\\t\\u0010\\u0011\\u0012\\u0013\\u0014\\u0015\\u0016\\u0017\\u0018\\u0019\"," +
-                "\"Exception\":\"System.Exception: Outer Exception ---> System.Exception: Inner Exception{br}   --- End of inner exception stack trace ---\"," +
+                $"\"Exception\":\"System.Exception: Outer Exception ---> System.Exception: Inner Exception{escapedLinebreak}   --- End of inner exception stack trace ---\"," +
                 "\"ExceptionType\":\"Exception\","+
                 "\"ExceptionMessage\":\"Outer Exception\"," +
                 "\"ExceptionStackTrace\":null," +
                 "\"ExceptionFingerprint\":\"55179621c796d669d13aee15725c01ba4524b44f\"," +
                 "\"Parameters\":\"One,1234\",\"PropertyOne\":\"one\",\"PropertyTwo\":\"2\"}";
 
-            var localExpected = expected.Replace("{br}", Environment.NewLine);
 
-            Assert.That(Result, Is.EqualTo(localExpected));
+            Assert.That(Result, Is.EqualTo(expected));
         }
 
         [Test]

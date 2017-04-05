@@ -322,6 +322,7 @@ With lots of possibly bad things in it";
         }
 
         [Test]
+        [Category("CallSite")]
         public void ShouldHaveLoggedCallSite()
         {
             foreach (var line in Result)

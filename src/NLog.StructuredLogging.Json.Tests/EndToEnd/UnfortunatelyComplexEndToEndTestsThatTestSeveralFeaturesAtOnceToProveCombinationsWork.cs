@@ -278,9 +278,13 @@ With lots of possibly bad things in it";
         {
             var calculatedCount = AttributesOnLogEvent.Count - _attributesNotYetAssertable.Count;
 
-            foreach (var e in Result.Select(JToken.Parse))
+            var jsonRows = Result.Select(JToken.Parse)
+                .ToList();
+
+            foreach (var entry in jsonRows)
             {
-                Assert.That(e.Count(), Is.EqualTo(calculatedCount));
+                Assert.That(entry.Count(), Is.EqualTo(calculatedCount),
+                    "Entry has props:" String.Join(",", entry.Select(t => t.ToString())));
             }
         }
 

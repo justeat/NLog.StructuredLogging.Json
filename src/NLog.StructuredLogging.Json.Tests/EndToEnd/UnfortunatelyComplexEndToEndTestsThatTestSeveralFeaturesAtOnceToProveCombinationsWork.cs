@@ -37,7 +37,15 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
 
         protected virtual IDictionary<string,string> GivenAttributesNotYetAssertable()
         {
-            return new Dictionary<string, string>();
+            var result = new Dictionary<string, string>();
+
+            if (!Env.HasCallSite)
+            {
+                result.Add("CallSite", "Cannot yet generate CallSite in dotNet core");
+            }
+
+            return result;
+
         }
 
         protected virtual IList<string> GivenAttributesOnLogEvent()
@@ -268,9 +276,11 @@ With lots of possibly bad things in it";
         [Test]
         public void ShouldNotHavePropertiesBesidesWhatIsExpected()
         {
+            var calculatedCount = AttributesOnLogEvent.Count - _attributesNotYetAssertable.Count;
+
             foreach (var e in Result.Select(JToken.Parse))
             {
-                Assert.That(e.Count(), Is.EqualTo(AttributesOnLogEvent.Count - _attributesNotYetAssertable.Count));
+                Assert.That(e.Count(), Is.EqualTo(calculatedCount));
             }
         }
 

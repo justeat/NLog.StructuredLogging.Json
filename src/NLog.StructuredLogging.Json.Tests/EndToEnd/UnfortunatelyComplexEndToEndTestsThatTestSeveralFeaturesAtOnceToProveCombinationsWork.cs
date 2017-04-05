@@ -39,7 +39,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
         {
             var result = new Dictionary<string, string>();
 
-            if (!Env.HasCallSite)
+            if (!Platform.HasCallSite)
             {
                 result.Add("CallSite", "Cannot yet generate CallSite in dotNet core");
             }

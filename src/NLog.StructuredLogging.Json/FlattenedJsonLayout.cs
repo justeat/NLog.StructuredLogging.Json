@@ -81,9 +81,12 @@ namespace NLog.StructuredLogging.Json
             Add("Message", "${message}");
             Add("ProcessId", "${processid}");
             Add("ThreadId", "${threadid}");
-#if NET452
-            Add("CallSite", "${callsite}");
-#endif
+
+            if (Platform.HasCallSite)
+            {
+                Add("CallSite", "${callsite}");
+            }
+
             Add("Exception", "${exception:format=ToString}");
             Add("ExceptionType", "${exception:format=ShortType}");
             Add("ExceptionMessage", "${exception:format=Message}");

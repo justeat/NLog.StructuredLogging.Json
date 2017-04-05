@@ -1,10 +1,8 @@
-﻿using System;
-
-namespace NLog.StructuredLogging.Json.Tests
+﻿namespace NLog.StructuredLogging.Json
 {
-    public static class Env
+    public static class Platform
     {
-#if NET462
+#if NET452
         public static bool HasCallSite => true;
 #else
         public static bool HasCallSite => false;

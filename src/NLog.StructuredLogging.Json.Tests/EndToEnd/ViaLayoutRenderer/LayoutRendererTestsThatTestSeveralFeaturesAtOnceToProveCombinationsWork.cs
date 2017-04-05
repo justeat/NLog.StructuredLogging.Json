@@ -14,7 +14,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayoutRenderer
                 {"ThreadId", "StructuredLoggingLayoutRenderer does not output this"}
             };
 
-            if (!Env.HasCallSite)
+            if (!Platform.HasCallSite)
             {
                 result.Add("CallSite", "Cannot yet generate CallSite in dotNet core");
             }

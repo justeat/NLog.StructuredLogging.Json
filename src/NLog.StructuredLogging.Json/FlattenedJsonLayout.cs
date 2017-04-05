@@ -79,7 +79,10 @@ namespace NLog.StructuredLogging.Json
             Add("Level", "${level}");
             Add("LoggerName", "${logger}");
             Add("Message", "${message}");
-            Add("ProcessId", "${processid}");
+            if (Platform.HasProcessId)
+            {
+                Add("ProcessId", "${processid}");
+            }
             Add("ThreadId", "${threadid}");
 
             if (Platform.HasCallSite)

@@ -44,6 +44,11 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
                 result.Add("CallSite", "Cannot yet generate CallSite in dotNet core");
             }
 
+            if (!Platform.HasProcessId)
+            {
+                result.Add("ProcessId", "Cannot yet generate ProcessId in dotNet core");
+            }
+
             return result;
 
         }
@@ -150,7 +155,10 @@ With lots of possibly bad things in it";
             yield return new JsonAttribute("Level", "${level}");
             yield return new JsonAttribute("LoggerName", "${logger}");
             yield return new JsonAttribute("Message", "${message}");
-            yield return new JsonAttribute("ProcessId", "${processid}");
+            if (Platform.HasProcessId)
+            {
+                yield return new JsonAttribute("ProcessId", "${processid}");
+            }
             yield return new JsonAttribute("ThreadId", "${threadid}");
             yield return new JsonAttribute("Parameters", "");
             if (Platform.HasCallSite)

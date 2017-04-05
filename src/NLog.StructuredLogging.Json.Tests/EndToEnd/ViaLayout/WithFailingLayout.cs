@@ -14,12 +14,12 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
         public void WhenLayoutSucceeds()
         {
             // arrange
-            const string loggerName = "failingLogger";
+            const string loggerName = "successLogger";
             GivenLoggingIsConfiguredForTest(GivenSucceedingTarget(loggerName));
             var logger = LogManager.GetLogger(loggerName);
 
             // act
-            logger.ExtendedInfo("test message", new { prop1 = "value1", prop2 = 2 });
+            logger.ExtendedInfo("test success message", new { prop1 = "value1s", prop2s = 2 });
 
             LogManager.Flush();
 
@@ -28,12 +28,12 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
             Assert.That(output, Does.Not.Contain("LoggingException"));
             Assert.That(output, Does.Not.Contain("Render failed:"));
 
-            Assert.That(output, Does.Contain("test message"));
+            Assert.That(output, Does.Contain("test success message"));
 
             Assert.That(output, Does.StartWith(
-                "{\"flat1\":\"flat1\",\"TimeStamp\":\""));
+                "{\"success1\":\"success1\",\"TimeStamp\":\""));
             Assert.That(output, Does.EndWith(
-                "\"prop1\":\"value1\",\"prop2\":\"2\"}"));
+                "\"prop1\":\"value1s\",\"prop2s\":\"2\"}"));
         }
 
         [Test]
@@ -100,7 +100,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
         private Target GivenSucceedingTarget(string name)
         {
             var layout = new FlattenedJsonLayout();
-            layout.Attributes.Add(new JsonAttribute("flat1", "flat1"));
+            layout.Attributes.Add(new JsonAttribute("success1", "success1"));
             return new MemoryTarget
             {
                 Name = name,

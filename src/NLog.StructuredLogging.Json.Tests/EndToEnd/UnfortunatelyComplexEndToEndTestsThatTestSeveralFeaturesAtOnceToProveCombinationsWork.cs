@@ -284,7 +284,7 @@ With lots of possibly bad things in it";
             foreach (var entry in jsonRows)
             {
                 Assert.That(entry.Count(), Is.EqualTo(calculatedCount),
-                    "Entry has props:" String.Join(",", entry.Select(t => t.ToString())));
+                    "Entry has props:" + string.Join(",", entry.Select(t => t.ToString())));
             }
         }
 

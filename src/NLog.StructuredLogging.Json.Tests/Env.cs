@@ -5,17 +5,9 @@ namespace NLog.StructuredLogging.Json.Tests
     public static class Env
     {
 #if NET462
-        public static bool HasCallSite { get  => true; }
+        public static bool HasCallSite => true;
 #else
-        public static bool HasCallSite { get => false; }
+        public static bool HasCallSite => false;
 #endif
-        public static string LocalLineEndings(string value)
-        {
-            if (string.IsNullOrEmpty(value))
-            {
-                return value;
-            }
-            return value.Replace("{br}", Environment.NewLine);
-        }
     }
 }

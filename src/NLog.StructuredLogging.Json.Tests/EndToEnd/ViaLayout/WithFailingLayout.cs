@@ -37,7 +37,27 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
         }
 
         [Test]
-        public void WhenLayoutFails()
+        public void ShouldSurviveWhenLayoutFails()
+        {
+            // arrange
+            const string loggerName = "failingLogger";
+            GivenLoggingIsConfiguredForTest(GivenFailingTarget(loggerName));
+            var logger = LogManager.GetLogger(loggerName);
+
+            // act
+            logger.ExtendedInfo("test message", new { prop1 = "value1", prop2 = 2 });
+
+            LogManager.Flush();
+
+            var output = LogManager.Configuration.LogMessage(loggerName).First();
+
+            Assert.That(output, Does.Contain("\"Message\":\"test message\""));
+            Assert.That(output, Does.Contain("\"flat1\":\"flat1\",\"TimeStamp\":\""));
+            Assert.That(output, Does.EndWith("\"prop1\":\"value1\",\"prop2\":\"2\"}"));
+        }
+
+        [Test]
+        public void ShouldLogFailureWhenLayoutFails()
         {
             // arrange
             const string loggerName = "failingLogger";
@@ -54,12 +74,10 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
             Assert.That(output, Does.Contain("fail1"));
             Assert.That(output, Does.Contain("Render failed:"));
             Assert.That(output, Does.Contain("LoggingException"));
-            Assert.That(output, Does.Contain("test message"));
+            Assert.That(output, Does.Contain("\"Message\":\"test message\""));
 
             Assert.That(output, Does.StartWith(
-                "{\"fail1\":\"Render failed: LoggingException Test render fail\",\"flat1\":\"flat1\",\"TimeStamp\":\""));
-            Assert.That(output, Does.EndWith(
-                "\"prop1\":\"value1\",\"prop2\":\"2\"}"));
+                "{\"fail1\":\"Render failed: LoggingException Test render fail\",\"flat1\":\"flat1\","));
         }
 
         [Test]

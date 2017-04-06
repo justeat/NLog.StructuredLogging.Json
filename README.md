@@ -6,7 +6,6 @@ NLog.StructuredLogging.Json
 
 | | Linux | Windows |
 |:-:|:-:|:-:|
-|:-:|:-:|:-:|
 | **Build Status** | [![Build status](https://img.shields.io/travis/justeat/NLog.StructuredLogging.Json/master.svg)](https://travis-ci.org/justeat/NLog.StructuredLogging.Json) | [![Build status](https://img.shields.io/appveyor/ci/justeattech/nlog-structuredlogging-json/master.svg)](https://ci.appveyor.com/project/justeattech/nlog-structuredlogging-json) |
 | **Build History** | [![Build history](https://buildstats.info/travisci/chart/justeat/NLog.StructuredLogging.Json?branch=master&includeBuildsFromPullRequest=false)](https://travis-ci.org/justeat/NLog.StructuredLogging.Json) |  [![Build history](https://buildstats.info/appveyor/chart/justeattech/nlog-structuredlogging-json?branch=master&includeBuildsFromPullRequest=false)](https://ci.appveyor.com/project/justeattech/nlog-structuredlogging-json) |
 

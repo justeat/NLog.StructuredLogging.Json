@@ -20,7 +20,7 @@ These can .e.g. be sent to [Kibana](https://www.elastic.co/products/kibana) over
 
 for each `LogEventInfo` message, render one JSON object with any parameters as properties.
 
-##What problems does this solve?
+## What problems does this solve?
 
 ### Structured logging
 

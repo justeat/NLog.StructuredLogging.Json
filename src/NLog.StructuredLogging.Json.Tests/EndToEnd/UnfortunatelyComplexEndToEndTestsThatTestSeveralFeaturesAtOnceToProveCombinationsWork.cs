@@ -37,7 +37,20 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
 
         protected virtual IDictionary<string,string> GivenAttributesNotYetAssertable()
         {
-            return new Dictionary<string, string>();
+            var result = new Dictionary<string, string>();
+
+            if (!Platform.HasCallSite)
+            {
+                result.Add("CallSite", "Cannot yet generate CallSite in dotNet core");
+            }
+
+            if (!Platform.HasProcessId)
+            {
+                result.Add("ProcessId", "Cannot yet generate ProcessId in dotNet core");
+            }
+
+            return result;
+
         }
 
         protected virtual IList<string> GivenAttributesOnLogEvent()
@@ -142,10 +155,16 @@ With lots of possibly bad things in it";
             yield return new JsonAttribute("Level", "${level}");
             yield return new JsonAttribute("LoggerName", "${logger}");
             yield return new JsonAttribute("Message", "${message}");
-            yield return new JsonAttribute("ProcessId", "${processid}");
+            if (Platform.HasProcessId)
+            {
+                yield return new JsonAttribute("ProcessId", "${processid}");
+            }
             yield return new JsonAttribute("ThreadId", "${threadid}");
             yield return new JsonAttribute("Parameters", "");
-            yield return new JsonAttribute("CallSite", "${callsite}");
+            if (Platform.HasCallSite)
+            {
+                yield return new JsonAttribute("CallSite", "${callsite}");
+            }
             yield return new JsonAttribute("PropertyOne", "one");
             yield return new JsonAttribute("PropertyTwo", "2");
             yield return new JsonAttribute("Iteration", "1");
@@ -268,9 +287,20 @@ With lots of possibly bad things in it";
         [Test]
         public void ShouldNotHavePropertiesBesidesWhatIsExpected()
         {
-            foreach (var e in Result.Select(JToken.Parse))
+            var calculatedCount = AttributesOnLogEvent
+                .Count(s => !_attributesNotYetAssertable.ContainsKey(s));
+
+            var jsonRows = Result.Select(JToken.Parse)
+                .ToList();
+
+            foreach (var entry in jsonRows)
             {
-                Assert.That(e.Count(), Is.EqualTo(AttributesOnLogEvent.Count - _attributesNotYetAssertable.Count));
+                var actualProps = string.Join(",", entry.Select(t => t.ToString()));
+                var expectedAttributes = string.Join(",", AttributesOnLogEvent);
+                var excludedAttributes = string.Join(",", _attributesNotYetAssertable.Keys);
+
+                Assert.That(entry.Count(), Is.EqualTo(calculatedCount),
+                    $"Entry has props:{actualProps}{Environment.NewLine}Expected: {expectedAttributes}{Environment.NewLine}Excluded:{excludedAttributes}");
             }
         }
 
@@ -322,6 +352,7 @@ With lots of possibly bad things in it";
         }
 
         [Test]
+        [Category("CallSite")]
         public void ShouldHaveLoggedCallSite()
         {
             foreach (var line in Result)

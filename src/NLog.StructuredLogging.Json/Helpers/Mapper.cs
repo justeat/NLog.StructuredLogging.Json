@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -32,11 +32,10 @@ namespace NLog.StructuredLogging.Json.Helpers
                 result.Add("Parameters", string.Join(",", source.Parameters.Select(Convert.ValueAsString)));
             }
 
-            if (source.StackTrace != null)
+            if (Platform.HasCallSite && (source.StackTrace != null))
             {
                 result.Add("CallSite", StackHelper.CallSiteName(source.StackTrace));
             }
-
             HarvestToDictionary(source.Properties, result, "data_");
 
 

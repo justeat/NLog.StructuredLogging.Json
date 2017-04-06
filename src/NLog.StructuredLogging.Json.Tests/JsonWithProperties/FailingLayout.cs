@@ -1,5 +1,4 @@
-﻿using System;
-using NLog.Layouts;
+﻿using NLog.Layouts;
 
 namespace NLog.StructuredLogging.Json.Tests.JsonWithProperties
 {

@@ -79,9 +79,17 @@ namespace NLog.StructuredLogging.Json
             Add("Level", "${level}");
             Add("LoggerName", "${logger}");
             Add("Message", "${message}");
-            Add("ProcessId", "${processid}");
+            if (Platform.HasProcessId)
+            {
+                Add("ProcessId", "${processid}");
+            }
             Add("ThreadId", "${threadid}");
-            Add("CallSite", "${callsite}");
+
+            if (Platform.HasCallSite)
+            {
+                Add("CallSite", "${callsite}");
+            }
+
             Add("Exception", "${exception:format=ToString}");
             Add("ExceptionType", "${exception:format=ShortType}");
             Add("ExceptionMessage", "${exception:format=Message}");

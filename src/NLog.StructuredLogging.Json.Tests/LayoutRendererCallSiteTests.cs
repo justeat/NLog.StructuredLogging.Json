@@ -60,6 +60,7 @@ namespace NLog.StructuredLogging.Json.Tests
         }
 
         [Test]
+        [Category("CallSite")]
         public void WhenConverted_TheResultProducesCallSiteInJson()
         {
             const string expectedPrefix =

@@ -58,7 +58,9 @@ namespace NLog.StructuredLogging.Json.Tests.Helpers
         [Test]
         public void WhenConverted_TheExceptionIsExpanded()
         {
-            Assert.AreEqual("System.Exception: Outer Exception ---> System.Exception: Inner Exception\r\n   --- End of inner exception stack trace ---", _result["Exception"]);
+            string expected = $"System.Exception: Outer Exception ---> System.Exception: Inner Exception{Environment.NewLine}   --- End of inner exception stack trace ---";
+
+            Assert.AreEqual(expected, _result["Exception"]);
         }
 
         private LogEventInfo MakeStandardLogEventInfo()

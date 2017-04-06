@@ -1,7 +1,8 @@
 NLog.StructuredLogging.Json
 =======================
 
-[![NuGet version](https://buildstats.info/nuget/JustEat.NLog.StructuredLogging.Json?includePreReleases=false)](http://www.nuget.org/packages/JustEat.NLog.StructuredLogging.Json)
+
+[![NuGet version](https://buildstats.info/nuget/NLog.StructuredLogging.Json?includePreReleases=false)](http://www.nuget.org/packages/NLog.StructuredLogging.Json)
 
 | | Linux | Windows |
 |:-:|:-:|:-:|

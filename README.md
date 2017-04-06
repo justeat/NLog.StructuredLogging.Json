@@ -1,10 +1,17 @@
 NLog.StructuredLogging.Json
 =======================
 
-[![Join the chat at https://gitter.im/justeat/NLog.StructuredLogging.Json](https://badges.gitter.im/justeat/NLog.StructuredLogging.Json.svg)](https://gitter.im/justeat/NLog.StructuredLogging.Json?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![Build status](https://ci.appveyor.com/api/projects/status/kvpbuiiljr1hdhv8?svg=true)](https://ci.appveyor.com/project/justeattech/nlog-structuredlogging-json)
+[![NuGet version](https://buildstats.info/nuget/JustEat.NLog.StructuredLogging.Json?includePreReleases=false)](http://www.nuget.org/packages/JustEat.NLog.StructuredLogging.Json)
 
-[Get the package on NuGet](https://www.nuget.org/packages/NLog.StructuredLogging.Json/)
+| | Linux | Windows |
+|:-:|:-:|:-:|
+|:-:|:-:|:-:|
+| **Build Status** | [![Build status](https://img.shields.io/travis/justeat/NLog.StructuredLogging.Json/master.svg)](https://travis-ci.org/justeat/NLog.StructuredLogging.Json) | [![Build status](https://img.shields.io/appveyor/ci/justeattech/nlog-structuredlogging-json/master.svg)](https://ci.appveyor.com/project/justeattech/nlog-structuredlogging-json) |
+| **Build History** | [![Build history](https://buildstats.info/travisci/chart/justeat/NLog.StructuredLogging.Json?branch=master&includeBuildsFromPullRequest=false)](https://travis-ci.org/justeat/NLog.StructuredLogging.Json) |  [![Build history](https://buildstats.info/appveyor/chart/justeattech/nlog-structuredlogging-json?branch=master&includeBuildsFromPullRequest=false)](https://ci.appveyor.com/project/justeattech/nlog-structuredlogging-json) |
+
+
+[![Join the chat at https://gitter.im/justeat/NLog.StructuredLogging.Json](https://badges.gitter.im/justeat/NLog.StructuredLogging.Json.svg)](https://gitter.im/justeat/NLog.StructuredLogging.Json?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 
 ## What
 

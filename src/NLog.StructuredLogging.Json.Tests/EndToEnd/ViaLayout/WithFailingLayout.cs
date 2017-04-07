@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using NLog.Common;
 using NLog.Config;
 using NLog.Layouts;
 using NLog.StructuredLogging.Json.Tests.JsonWithProperties;
@@ -137,6 +138,9 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
             config.AddTarget(target);
             var rule = new LoggingRule("*", LogLevel.Trace, target);
             config.LoggingRules.Insert(0, rule);
+
+            InternalLogger.LogLevel = LogLevel.Debug;
+
             LogManager.Configuration = config;
         }
 

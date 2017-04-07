@@ -59,9 +59,9 @@ namespace NLog.StructuredLogging.Json
             {
                 renderedValue = renderer.Render(source);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                renderedValue = $"Render failed: {ex.GetType().Name} {ex.Message}";
+                renderedValue = "Render failed";
             }
 
             if (string.IsNullOrEmpty(renderedValue))

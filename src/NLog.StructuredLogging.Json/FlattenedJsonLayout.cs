@@ -53,7 +53,6 @@ namespace NLog.StructuredLogging.Json
         {
             renderer.Inner = attribute.Layout;
             renderer.JsonEncode = attribute.Encode;
-
             string renderedValue;
             try
             {

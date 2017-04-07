@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using NLog.Common;
 using NLog.Config;
 using NLog.Layouts;
 using NLog.StructuredLogging.Json.Tests.JsonWithProperties;
@@ -8,6 +9,7 @@ using NUnit.Framework;
 namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
 {
     [TestFixture]
+    [Parallelizable(ParallelScope.None)]
     public class WithFailingLayout
     {
         [Test]
@@ -57,8 +59,31 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
         }
 
         [Test]
-        [Ignore("todo: investigate why we don't get this failing prop out when in .Net core")]
-        public void ShouldLogFailureWhenLayoutFails()
+        public void ShouldLogFailureWhenLayoutFailsWithNullReferenceException()
+        {
+            // arrange
+            const string loggerName = "nullrefLogger";
+            GivenLoggingIsConfiguredForTest(GivenNullReferenceInTarget(loggerName));
+            var logger = LogManager.GetLogger(loggerName);
+
+            // act
+            logger.ExtendedInfo("test message", new { prop1 = "value1", prop2 = 2 });
+
+            LogManager.Flush();
+
+            var output = LogManager.Configuration.LogMessage(loggerName).First();
+
+            Assert.That(output, Does.Contain("fail1"));
+            Assert.That(output, Does.Contain("Render failed:"));
+            Assert.That(output, Does.Contain("NullReferenceException"));
+            Assert.That(output, Does.Contain("\"Message\":\"test message\""));
+
+            Assert.That(output, Does.StartWith(
+                "{\"fail1\":\"Render failed: NullReferenceException Object reference not set to an instance of an object.\",\"flat1\":\"flat1\","));
+        }
+
+        [Test]
+        public void ShouldLogFailureWhenLayoutFailsWithCustomException()
         {
             // arrange
             const string loggerName = "failingLogger";
@@ -113,6 +138,9 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
             config.AddTarget(target);
             var rule = new LoggingRule("*", LogLevel.Trace, target);
             config.LoggingRules.Insert(0, rule);
+
+            InternalLogger.LogLevel = LogLevel.Debug;
+
             LogManager.Configuration = config;
         }
 
@@ -131,6 +159,18 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
         {
             var layout = new FlattenedJsonLayout();
             layout.Attributes.Add(new JsonAttribute("fail1", new FailingLayout()));
+            layout.Attributes.Add(new JsonAttribute("flat1", "flat1"));
+            return new MemoryTarget
+            {
+                Name = name,
+                Layout = layout
+            };
+        }
+
+        private Target GivenNullReferenceInTarget(string name)
+        {
+            var layout = new FlattenedJsonLayout();
+            layout.Attributes.Add(new JsonAttribute("fail1", new NullReferenceLayout()));
             layout.Attributes.Add(new JsonAttribute("flat1", "flat1"));
             return new MemoryTarget
             {

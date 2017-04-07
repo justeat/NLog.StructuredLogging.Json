@@ -77,7 +77,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
             Assert.That(output, Does.Contain("\"Message\":\"test message\""));
 
             Assert.That(output, Does.StartWith(
-                "{\"fail1\":\"Render failed: NullReferenceException Test render null ref\",\"flat1\":\"flat1\","));
+                "{\"fail1\":\"Render failed: NullReferenceException Object reference not set to an instance of an object.\",\"flat1\":\"flat1\","));
         }
 
         [Test]

@@ -15,7 +15,7 @@ namespace NLog.StructuredLogging.Json.Tests.JsonWithProperties
     {
         protected override string GetFormattedMessage(LogEventInfo logEvent)
         {
-            throw new NullReferenceException("Test render null ref");
+            throw new NullReferenceException();
         }
     }
 }

@@ -57,7 +57,6 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
         }
 
         [Test]
-        [Ignore("todo: investigate why we don't get this failing prop out when in .Net core")]
         public void ShouldLogFailureWhenLayoutFails()
         {
             // arrange

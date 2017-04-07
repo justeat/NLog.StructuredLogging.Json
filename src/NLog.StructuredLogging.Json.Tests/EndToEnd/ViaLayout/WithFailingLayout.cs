@@ -8,6 +8,7 @@ using NUnit.Framework;
 namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
 {
     [TestFixture]
+    [Parallelizable(ParallelScope.None)]
     public class WithFailingLayout
     {
         [Test]

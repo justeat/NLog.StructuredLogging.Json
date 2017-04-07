@@ -51,11 +51,11 @@ namespace NLog.StructuredLogging.Json
             LogEventInfo source, IDictionary<string, object> dest,
             JsonEncodeLayoutRendererWrapper renderer, JsonAttribute attribute)
         {
+            renderer.Inner = attribute.Layout;
+            renderer.JsonEncode = attribute.Encode;
             string renderedValue;
             try
             {
-                renderer.Inner = attribute.Layout;
-                renderer.JsonEncode = attribute.Encode;
                 renderedValue = renderer.Render(source);
             }
             catch (Exception ex)

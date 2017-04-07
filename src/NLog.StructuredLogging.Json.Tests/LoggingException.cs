@@ -2,6 +2,7 @@
 
 namespace NLog.StructuredLogging.Json.Tests
 {
+    [Serializable]
     public class LoggingException : Exception
     {
         public LoggingException()

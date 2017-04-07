@@ -1,5 +1,4 @@
-﻿using System;
-using NLog.Layouts;
+﻿using NLog.Layouts;
 
 namespace NLog.StructuredLogging.Json.Tests.JsonWithProperties
 {
@@ -7,7 +6,7 @@ namespace NLog.StructuredLogging.Json.Tests.JsonWithProperties
     {
         protected override string GetFormattedMessage(LogEventInfo logEvent)
         {
-            throw new NullReferenceException();
+            throw new LoggingException("Test render fail");
         }
     }
 }

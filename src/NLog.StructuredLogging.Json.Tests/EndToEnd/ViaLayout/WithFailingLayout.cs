@@ -129,6 +129,9 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
 
             var config = LogManager.Configuration;
 
+            // yeah, it's this
+            LogManager.ThrowExceptions = true;
+
             config.AddTarget(target);
             var rule = new LoggingRule("*", LogLevel.Trace, target);
             config.LoggingRules.Insert(0, rule);

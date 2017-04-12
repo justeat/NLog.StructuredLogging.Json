@@ -57,7 +57,6 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
         }
 
         [Test]
-        [Category("NotInNetCore")]
         public void ShouldLogFailureWhenLayoutFails()
         {
             // arrange

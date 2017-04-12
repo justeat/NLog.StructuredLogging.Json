@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using NLog.Common;
 using NLog.Config;
 using NLog.Layouts;
 using NLog.StructuredLogging.Json.Tests.JsonWithProperties;
@@ -57,7 +58,6 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
         }
 
         [Test]
-        [Category("NotInNetCore")]
         public void ShouldLogFailureWhenLayoutFails()
         {
             // arrange
@@ -104,12 +104,16 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
 
         private void GivenLoggingIsConfiguredForTest(Target target)
         {
+            InternalLogger.LogLevel = LogLevel.Debug;
+            InternalLogger.LogToConsole = true;
+
             ConfigurationItemFactory.Default.Layouts.RegisterDefinition("jsonwithproperties", typeof (JsonWithPropertiesLayout));
             ConfigurationItemFactory.Default.Layouts.RegisterDefinition("flattenedjsonlayout", typeof (FlattenedJsonLayout));
             ConfigurationItemFactory.Default.LayoutRenderers.RegisterDefinition("structuredlogging.json", typeof(StructuredLoggingLayoutRenderer));
             ConfigurationItemFactory.Default.LayoutRenderers.RegisterDefinition("hasher", typeof(HasherLayoutRenderer));
 
             var config = LogManager.Configuration;
+
             config.AddTarget(target);
             var rule = new LoggingRule("*", LogLevel.Trace, target);
             config.LoggingRules.Insert(0, rule);

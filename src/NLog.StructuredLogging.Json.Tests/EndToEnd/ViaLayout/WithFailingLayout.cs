@@ -57,7 +57,6 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
         }
 
         [Test]
-        [Category("NotInNetCore")]
         public void ShouldLogFailureWhenLayoutFails()
         {
             // arrange
@@ -104,6 +103,8 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
 
         private void GivenLoggingIsConfiguredForTest(Target target)
         {
+            LogManager.ThrowExceptions = true;
+
             ConfigurationItemFactory.Default.Layouts.RegisterDefinition("jsonwithproperties", typeof (JsonWithPropertiesLayout));
             ConfigurationItemFactory.Default.Layouts.RegisterDefinition("flattenedjsonlayout", typeof (FlattenedJsonLayout));
             ConfigurationItemFactory.Default.LayoutRenderers.RegisterDefinition("structuredlogging.json", typeof(StructuredLoggingLayoutRenderer));

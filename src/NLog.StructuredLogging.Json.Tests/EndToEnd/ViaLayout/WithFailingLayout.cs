@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using NLog.Common;
 using NLog.Config;
 using NLog.Layouts;
 using NLog.StructuredLogging.Json.Tests.JsonWithProperties;
@@ -10,6 +11,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
     [TestFixture]
     public class WithFailingLayout
     {
+
         [Test]
         public void WhenLayoutSucceeds()
         {
@@ -57,9 +59,10 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
         }
 
         [Test]
-        [Category("NotInNetCore")]
         public void ShouldLogFailureWhenLayoutFails()
         {
+            InternalLoggingOn();
+
             // arrange
             const string loggerName = "failingLogger";
             GivenLoggingIsConfiguredForTest(GivenFailingTarget(loggerName));
@@ -72,6 +75,9 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
 
             var output = LogManager.Configuration.LogMessage(loggerName).First();
 
+            InternalLoggingOff();
+
+
             Assert.That(output, Does.Contain("fail1"));
             Assert.That(output, Does.Contain("Render failed:"));
             Assert.That(output, Does.Contain("LoggingException"));
@@ -79,6 +85,18 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
 
             Assert.That(output, Does.StartWith(
                 "{\"fail1\":\"Render failed: LoggingException Test render fail\",\"flat1\":\"flat1\","));
+        }
+
+        private void InternalLoggingOn()
+        {
+            InternalLogger.LogLevel = LogLevel.Info;
+            InternalLogger.LogToConsole = true;
+        }
+
+        private void InternalLoggingOff()
+        {
+            InternalLogger.LogLevel = LogLevel.Fatal;
+            InternalLogger.LogToConsole = false;
         }
 
         [Test]
@@ -110,6 +128,10 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
             ConfigurationItemFactory.Default.LayoutRenderers.RegisterDefinition("hasher", typeof(HasherLayoutRenderer));
 
             var config = LogManager.Configuration;
+
+            // yeah, it's this
+            LogManager.ThrowExceptions = true;
+
             config.AddTarget(target);
             var rule = new LoggingRule("*", LogLevel.Trace, target);
             config.LoggingRules.Insert(0, rule);

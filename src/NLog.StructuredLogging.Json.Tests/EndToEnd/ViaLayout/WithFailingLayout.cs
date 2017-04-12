@@ -11,6 +11,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
     [TestFixture]
     public class WithFailingLayout
     {
+
         [Test]
         public void WhenLayoutSucceeds()
         {
@@ -60,6 +61,8 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
         [Test]
         public void ShouldLogFailureWhenLayoutFails()
         {
+            InternalLoggingOn();
+
             // arrange
             const string loggerName = "failingLogger";
             GivenLoggingIsConfiguredForTest(GivenFailingTarget(loggerName));
@@ -72,6 +75,9 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
 
             var output = LogManager.Configuration.LogMessage(loggerName).First();
 
+            InternalLoggingOff();
+
+
             Assert.That(output, Does.Contain("fail1"));
             Assert.That(output, Does.Contain("Render failed:"));
             Assert.That(output, Does.Contain("LoggingException"));
@@ -79,6 +85,18 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
 
             Assert.That(output, Does.StartWith(
                 "{\"fail1\":\"Render failed: LoggingException Test render fail\",\"flat1\":\"flat1\","));
+        }
+
+        private void InternalLoggingOn()
+        {
+            InternalLogger.LogLevel = LogLevel.Info;
+            InternalLogger.LogToConsole = true;
+        }
+
+        private void InternalLoggingOff()
+        {
+            InternalLogger.LogLevel = LogLevel.Fatal;
+            InternalLogger.LogToConsole = false;
         }
 
         [Test]
@@ -104,9 +122,6 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
 
         private void GivenLoggingIsConfiguredForTest(Target target)
         {
-            InternalLogger.LogLevel = LogLevel.Info;
-            InternalLogger.LogToConsole = true;
-
             ConfigurationItemFactory.Default.Layouts.RegisterDefinition("jsonwithproperties", typeof (JsonWithPropertiesLayout));
             ConfigurationItemFactory.Default.Layouts.RegisterDefinition("flattenedjsonlayout", typeof (FlattenedJsonLayout));
             ConfigurationItemFactory.Default.LayoutRenderers.RegisterDefinition("structuredlogging.json", typeof(StructuredLoggingLayoutRenderer));

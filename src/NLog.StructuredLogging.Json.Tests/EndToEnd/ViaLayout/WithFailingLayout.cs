@@ -104,7 +104,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
 
         private void GivenLoggingIsConfiguredForTest(Target target)
         {
-            InternalLogger.LogLevel = LogLevel.Debug;
+            InternalLogger.LogLevel = LogLevel.Info;
             InternalLogger.LogToConsole = true;
 
             ConfigurationItemFactory.Default.Layouts.RegisterDefinition("jsonwithproperties", typeof (JsonWithPropertiesLayout));

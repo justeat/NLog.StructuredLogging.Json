@@ -15,7 +15,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
         {
             // arrange
             const string loggerName = "successLogger";
-            GivenLoggingIsConfiguredForTest(GivenSucceedingTarget(loggerName));
+            GivenLoggingIsConfiguredForTest(GivenSucceedingTarget(loggerName), true);
             var logger = LogManager.GetLogger(loggerName);
 
             // act
@@ -39,17 +39,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
         [Test]
         public void ShouldSurviveWhenLayoutFails()
         {
-            // arrange
-            const string loggerName = "failing_s_Logger";
-            GivenLoggingIsConfiguredForTest(GivenFailingTarget(loggerName));
-            var logger = LogManager.GetLogger(loggerName);
-
-            // act
-            logger.ExtendedInfo("test message", new { prop1 = "value1", prop2 = 2 });
-
-            LogManager.Flush();
-
-            var output = LogManager.Configuration.LogMessage(loggerName).First();
+            var output = FailingTargetOutput("failing_Logger_s1", true);
 
             Assert.That(output, Does.Contain("\"Message\":\"test message\""));
             Assert.That(output, Does.Contain("\"flat1\":\"flat1\",\"TimeStamp\":\""));
@@ -57,28 +47,36 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
         }
 
         [Test]
-        [Category("NotInNetCore")]
         public void ShouldLogFailureWhenLayoutFails()
         {
-            // arrange
-            const string loggerName = "failingLogger";
-            GivenLoggingIsConfiguredForTest(GivenFailingTarget(loggerName));
-            var logger = LogManager.GetLogger(loggerName);
-
-            // act
-            logger.ExtendedInfo("test message", new { prop1 = "value1", prop2 = 2 });
-
-            LogManager.Flush();
-
-            var output = LogManager.Configuration.LogMessage(loggerName).First();
+            var output = FailingTargetOutput("failing_Logger_s2", true);
 
             Assert.That(output, Does.Contain("fail1"));
             Assert.That(output, Does.Contain("Render failed:"));
             Assert.That(output, Does.Contain("LoggingException"));
-            Assert.That(output, Does.Contain("\"Message\":\"test message\""));
 
             Assert.That(output, Does.StartWith(
                 "{\"fail1\":\"Render failed: LoggingException Test render fail\",\"flat1\":\"flat1\","));
+        }
+
+        [Test]
+        public void ShouldSurviveWhenLayoutFails_AndLayoutExceptionsAreSwallowed()
+        {
+            var output = FailingTargetOutput("failing_Logger_s3", false);
+
+            Assert.That(output, Does.Contain("\"Message\":\"test message\""));
+            Assert.That(output, Does.Contain("\"flat1\":\"flat1\",\"TimeStamp\":\""));
+            Assert.That(output, Does.EndWith("\"prop1\":\"value1\",\"prop2\":\"2\"}"));
+        }
+
+        [Test]
+        public void ShouldNotLogFailureWhenLayoutFails_AndLayoutExceptionsAreSwallowed()
+        {
+            var output = FailingTargetOutput("failing_Logger_s4", false);
+
+            Assert.That(output, Does.Not.Contain("fail1"));
+            Assert.That(output, Does.Not.Contain("Render failed:"));
+            Assert.That(output, Does.Not.Contain("LoggingException"));
         }
 
         [Test]
@@ -86,7 +84,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
         {
             // arrange
             const string loggerName = "duplicatingLogger";
-            GivenLoggingIsConfiguredForTest(GivenTargetWithDuplicates(loggerName));
+            GivenLoggingIsConfiguredForTest(GivenTargetWithDuplicates(loggerName), true);
             var logger = LogManager.GetLogger(loggerName);
 
             // act
@@ -102,8 +100,10 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
                 "\"prop1\":\"value1\",\"prop2\":\"2\"}"));
         }
 
-        private void GivenLoggingIsConfiguredForTest(Target target)
+        private void GivenLoggingIsConfiguredForTest(Target target, bool layoutThrowsExceptions)
         {
+            LogManager.ThrowExceptions = layoutThrowsExceptions;
+
             ConfigurationItemFactory.Default.Layouts.RegisterDefinition("jsonwithproperties", typeof (JsonWithPropertiesLayout));
             ConfigurationItemFactory.Default.Layouts.RegisterDefinition("flattenedjsonlayout", typeof (FlattenedJsonLayout));
             ConfigurationItemFactory.Default.LayoutRenderers.RegisterDefinition("structuredlogging.json", typeof(StructuredLoggingLayoutRenderer));
@@ -151,6 +151,22 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
                 Name = name,
                 Layout = layout
             };
+        }
+
+        private string FailingTargetOutput(string loggerName, bool layoutThrowsExceptions)
+        {
+            // arrange
+            GivenLoggingIsConfiguredForTest(GivenFailingTarget(loggerName), layoutThrowsExceptions);
+            var logger = LogManager.GetLogger(loggerName);
+
+            // act
+            logger.ExtendedInfo("test message", new { prop1 = "value1", prop2 = 2 });
+
+            LogManager.Flush();
+
+            var output = LogManager.Configuration.LogMessage(loggerName).First();
+            Assert.That(output, Is.Not.Empty);
+            return output;
         }
     }
 }

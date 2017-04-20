@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using NLog.Config;
+using NUnit.Framework;
 
 namespace NLog.StructuredLogging.Json.Tests
 {
@@ -8,6 +9,8 @@ namespace NLog.StructuredLogging.Json.Tests
         [Test]
         public void ThrowExceptionsFlagShouldBeRead()
         {
+            LogManager.Configuration = new XmlLoggingConfiguration("nlog.config");
+
             // throwExceptions="true" should have been read from nlog.config
             Assert.That(LogManager.ThrowExceptions, Is.True);
         }

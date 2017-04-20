@@ -1,4 +1,6 @@
-﻿using NLog.Config;
+﻿using System;
+using System.IO;
+using NLog.Config;
 using NUnit.Framework;
 
 namespace NLog.StructuredLogging.Json.Tests
@@ -33,7 +35,17 @@ namespace NLog.StructuredLogging.Json.Tests
 
         private static LoggingConfiguration LoadConfig()
         {
-            return new XmlLoggingConfiguration("nlog.config");
+            var result = new XmlLoggingConfiguration(GetConfigPath());
+            Assert.That(result, Is.Not.Null);
+            return result;
+        }
+
+        private static string GetConfigPath()
+        {
+            var dir = AppContext.BaseDirectory;
+            var configPath = Path.Combine(dir, "nlog.config");
+            Assert.That(File.Exists(configPath), $"Can't find config file at path '{configPath}'");
+            return configPath;
         }
     }
 }

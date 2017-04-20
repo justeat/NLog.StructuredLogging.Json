@@ -155,18 +155,26 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
 
         private string FailingTargetOutput(string loggerName, bool layoutThrowsExceptions)
         {
-            // arrange
-            GivenLoggingIsConfiguredForTest(GivenFailingTarget(loggerName), layoutThrowsExceptions);
-            var logger = LogManager.GetLogger(loggerName);
+            var savedThrowState = LogManager.ThrowExceptions;
+            try
+            {
+                // arrange
+                GivenLoggingIsConfiguredForTest(GivenFailingTarget(loggerName), layoutThrowsExceptions);
+                var logger = LogManager.GetLogger(loggerName);
 
-            // act
-            logger.ExtendedInfo("test message", new { prop1 = "value1", prop2 = 2 });
+                // act
+                logger.ExtendedInfo("test message", new { prop1 = "value1", prop2 = 2 });
 
-            LogManager.Flush();
+                LogManager.Flush();
 
-            var output = LogManager.Configuration.LogMessage(loggerName).First();
-            Assert.That(output, Is.Not.Empty);
-            return output;
+                var output = LogManager.Configuration.LogMessage(loggerName).First();
+                Assert.That(output, Is.Not.Empty);
+                return output;
+            }
+            finally
+            {
+                LogManager.ThrowExceptions = savedThrowState;
+            }
         }
     }
 }

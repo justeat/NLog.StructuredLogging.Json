@@ -16,6 +16,7 @@ namespace NLog.StructuredLogging.Json.Tests
         }
 
         [Test]
+        [Category("NotInNetCore")]
         public void ConfigurationTargetsIsPopulated()
         {
             var config = LoadConfig();
@@ -25,6 +26,7 @@ namespace NLog.StructuredLogging.Json.Tests
         }
 
         [Test]
+        [Category("NotInNetCore")]
         public void ConfigurationRulesIsPopulated()
         {
             var config = LoadConfig();

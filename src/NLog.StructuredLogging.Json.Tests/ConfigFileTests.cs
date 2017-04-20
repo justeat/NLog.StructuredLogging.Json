@@ -6,6 +6,7 @@ using NUnit.Framework;
 namespace NLog.StructuredLogging.Json.Tests
 {
     [TestFixture]
+    [Category("NotInNetCore")]
     public class ConfigFileTests
     {
         [Test]
@@ -16,7 +17,6 @@ namespace NLog.StructuredLogging.Json.Tests
         }
 
         [Test]
-        [Category("NotInNetCore")]
         public void ConfigurationTargetsIsPopulated()
         {
             var config = LoadConfig();
@@ -26,7 +26,6 @@ namespace NLog.StructuredLogging.Json.Tests
         }
 
         [Test]
-        [Category("NotInNetCore")]
         public void ConfigurationRulesIsPopulated()
         {
             var config = LoadConfig();

@@ -15,10 +15,7 @@ namespace NLog.StructuredLogging.Json
         public FlattenedJsonLayout()
         {
             SuppressSpaces = true;
-            EncodeDynamicData = true;
         }
-
-        public bool EncodeDynamicData { get; private set; }
 
         protected override void InitializeLayout()
         {

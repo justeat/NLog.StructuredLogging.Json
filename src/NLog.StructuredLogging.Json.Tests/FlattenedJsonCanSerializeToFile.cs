@@ -50,6 +50,9 @@ namespace NLog.StructuredLogging.Json.Tests
             Assert.That(json.GetValue("SomeText"), Is.Not.Null);
             Assert.That(json.GetValue("ANumber"), Is.Not.Null);
             Assert.That(json.GetValue("Sometime"), Is.Not.Null);
+
+            // but not true for any old string
+            Assert.That(json.GetValue("noSuchProp12345asdfg"), Is.Null);
         }
 
         private static JObject ParseFile(string fileName)
@@ -66,8 +69,8 @@ namespace NLog.StructuredLogging.Json.Tests
                 Assert.Fail($"Output file {fileName} has no  contents");
             }
 
-            var json = JObject.Parse(contents);
-            return json;
+            // this will throw if the json is not valid
+            return JObject.Parse(contents);
         }
 
         private static string UniqueLogFileName()

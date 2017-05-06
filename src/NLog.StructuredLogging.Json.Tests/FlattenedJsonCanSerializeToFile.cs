@@ -1,11 +1,9 @@
 ﻿using System;
 using System.IO;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NLog.Config;
 using NLog.Targets;
 using NUnit.Framework;
-using NUnit.Framework.Constraints;
 
 namespace NLog.StructuredLogging.Json.Tests
 {

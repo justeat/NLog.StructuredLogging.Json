@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Reflection;
 using Newtonsoft.Json.Linq;
 using NLog.Config;
 using NLog.Targets;
@@ -14,7 +13,7 @@ namespace NLog.StructuredLogging.Json.Tests
         [Test]
         public void JsonOutputIsCorrect()
         {
-            var fileName = UniqueLogFileName();
+            var fileName = Path.GetTempFileName();
 
             var fileLogger = GetFlattenedJsonFileLogger(fileName);
             Assert.That(fileLogger, Is.Not.Null);
@@ -72,18 +71,6 @@ namespace NLog.StructuredLogging.Json.Tests
 
             // this will throw if the json is not valid
             return JObject.Parse(contents);
-        }
-
-        private static string UniqueLogFileName()
-        {
-            var unique = Guid.NewGuid().ToString("N");
-            var date = DateTime.UtcNow.ToString("yyyyMMdd_hhmmss");
-            var fileName = $"flattenedjson_{date}_{unique}.log";
-
-            var assemblyPath = Assembly.GetEntryAssembly().Location;
-            var path = Path.GetDirectoryName(assemblyPath);
-
-            return Path.Combine(path, fileName);
         }
 
         private Logger GetFlattenedJsonFileLogger(string fileName)

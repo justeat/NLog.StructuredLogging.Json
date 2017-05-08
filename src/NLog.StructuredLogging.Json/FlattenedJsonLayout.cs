@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using NLog.Config;
 using NLog.StructuredLogging.Json.Helpers;
 using NLog.LayoutRenderers.Wrappers;
@@ -33,6 +34,11 @@ namespace NLog.StructuredLogging.Json
             AppendExceptionData(logEvent, result);
 
             return ConvertJson.Serialize(result);
+        }
+
+        protected override void RenderFormattedMessage(LogEventInfo logEvent, StringBuilder target)
+        {
+            target.Append(GetFormattedMessage(logEvent) ?? string.Empty);
         }
 
         private void AppendDataFromAttributes(LogEventInfo logEvent, IDictionary<string, object> result)

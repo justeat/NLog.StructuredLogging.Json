@@ -62,7 +62,8 @@ namespace NLog.StructuredLogging.Json
             Exception ex, int exceptionIndex, int exceptionCount, string tag)
         {
             var log = new LogEventInfo(logLevel, logger.Name, message);
-            TransferDataToLogEventProperties(log, logProperties);
+            TransferDataObjectToLogEventProperties(log, logProperties);
+            TransferContextDataToLogEventProperties(log);
 
             if (ex != null)
             {
@@ -85,7 +86,7 @@ namespace NLog.StructuredLogging.Json
             logger.Log(log);
         }
 
-        private static void TransferDataToLogEventProperties(LogEventInfo log, object logProperties)
+        private static void TransferDataObjectToLogEventProperties(LogEventInfo log, object logProperties)
         {
             if (logProperties == null)
             {
@@ -119,10 +120,28 @@ namespace NLog.StructuredLogging.Json
             }
         }
 
+        private static void TransferContextDataToLogEventProperties(LogEventInfo log)
+        {
+            foreach (var contextItemName in MappedDiagnosticsLogicalContext.GetNames())
+            {
+                var value = MappedDiagnosticsLogicalContext.Get(contextItemName);
+                var key = contextItemName;
+                if (log.Properties.ContainsKey(contextItemName))
+                {
+                    key = "log_context_" + contextItemName;
+                }
+
+                if (!log.Properties.ContainsKey(key))
+                {
+                    log.Properties.Add(key, value);
+                }
+            }
+        }
+
         private static bool IsDictionary(object logProperties)
         {
-            var type = logProperties.GetType();
-            return type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>);
+            var propsType = logProperties.GetType().GetTypeInfo();
+            return typeof(IDictionary).GetTypeInfo().IsAssignableFrom(propsType);
         }
     }
 }

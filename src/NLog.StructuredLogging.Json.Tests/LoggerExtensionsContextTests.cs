@@ -8,7 +8,6 @@ using FakeItEasy.Configuration;
 
 namespace NLog.StructuredLogging.Json.Tests
 {
-    [Category("mdlc")]
     [TestFixture]
     public class LoggerExtensionsContextTests
     {

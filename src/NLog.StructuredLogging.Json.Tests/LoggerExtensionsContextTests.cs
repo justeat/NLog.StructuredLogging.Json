@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using FakeItEasy;
-using FakeItEasy.Configuration;
 
 namespace NLog.StructuredLogging.Json.Tests
 {
@@ -12,14 +11,17 @@ namespace NLog.StructuredLogging.Json.Tests
     public class LoggerExtensionsContextTests
     {
         private ILogger _logger;
-        public ArgumentCollection Arguments { get; set; }
+        private List<LogEventInfo> _events;
 
         [SetUp]
         public void SetUp()
         {
+            _events = new List<LogEventInfo>();
+
             _logger = A.Fake<ILogger>();
             A.CallTo(() => _logger.Name).Returns("FakeLogger");
-            A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).Invokes(x => Arguments = x.Arguments);
+            A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored))
+                .Invokes(x => _events.Add((LogEventInfo)x.Arguments[0]));
         }
 
         [Test]
@@ -31,17 +33,17 @@ namespace NLog.StructuredLogging.Json.Tests
             var props = new { Key1 = "Value One" };
             _logger.ExtendedInfo("hello world", props);
 
-            var parameters = (LogEventInfo)Arguments[0];
-            Assert.AreEqual(LogLevel.Info, parameters.Level);
-            Assert.IsNotEmpty(parameters.Properties);
-            Assert.AreEqual(1, parameters.Properties.Count(x => x.Key.Equals("Key1")));
-            Assert.AreEqual("Value One", parameters.Properties["Key1"]);
+            var eventInfo = _events.First();
+            Assert.AreEqual(LogLevel.Info, eventInfo.Level);
+            Assert.IsNotEmpty(eventInfo.Properties);
+            Assert.AreEqual(1, eventInfo.Properties.Count(x => x.Key.Equals("Key1")));
+            Assert.AreEqual("Value One", eventInfo.Properties["Key1"]);
 
-            Assert.AreEqual(1, parameters.Properties.Count(x => x.Key.Equals("a2")));
-            Assert.AreEqual("Value Two", parameters.Properties["a2"]);
+            Assert.AreEqual(1, eventInfo.Properties.Count(x => x.Key.Equals("a2")));
+            Assert.AreEqual("Value Two", eventInfo.Properties["a2"]);
 
-            Assert.AreEqual(1, parameters.Properties.Count(x => x.Key.Equals("a3")));
-            Assert.AreEqual("34", parameters.Properties["a3"]);
+            Assert.AreEqual(1, eventInfo.Properties.Count(x => x.Key.Equals("a3")));
+            Assert.AreEqual("34", eventInfo.Properties["a3"]);
 
             A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
         }
@@ -54,17 +56,17 @@ namespace NLog.StructuredLogging.Json.Tests
 
             MethodThatDoesSomeLogging();
 
-            var parameters = (LogEventInfo)Arguments[0];
-            Assert.AreEqual(LogLevel.Info, parameters.Level);
-            Assert.IsNotEmpty(parameters.Properties);
-            Assert.AreEqual(1, parameters.Properties.Count(x => x.Key.Equals("Key1")));
-            Assert.AreEqual("Value One", parameters.Properties["Key1"]);
+            var eventInfo = _events.First();
+            Assert.AreEqual(LogLevel.Info, eventInfo.Level);
+            Assert.IsNotEmpty(eventInfo.Properties);
+            Assert.AreEqual(1, eventInfo.Properties.Count(x => x.Key.Equals("Key1")));
+            Assert.AreEqual("Value One", eventInfo.Properties["Key1"]);
 
-            Assert.AreEqual(1, parameters.Properties.Count(x => x.Key.Equals("b2")));
-            Assert.AreEqual("Value Two", parameters.Properties["b2"]);
+            Assert.AreEqual(1, eventInfo.Properties.Count(x => x.Key.Equals("b2")));
+            Assert.AreEqual("Value Two", eventInfo.Properties["b2"]);
 
-            Assert.AreEqual(1, parameters.Properties.Count(x => x.Key.Equals("b3")));
-            Assert.AreEqual("34", parameters.Properties["b3"]);
+            Assert.AreEqual(1, eventInfo.Properties.Count(x => x.Key.Equals("b3")));
+            Assert.AreEqual("34", eventInfo.Properties["b3"]);
 
             A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
         }
@@ -77,17 +79,17 @@ namespace NLog.StructuredLogging.Json.Tests
 
             await MethodThatDoesSomeLoggingAsync();
 
-            var parameters = (LogEventInfo)Arguments[0];
-            Assert.AreEqual(LogLevel.Info, parameters.Level);
-            Assert.IsNotEmpty(parameters.Properties);
-            Assert.AreEqual(1, parameters.Properties.Count(x => x.Key.Equals("Key1")));
-            Assert.AreEqual("Value One", parameters.Properties["Key1"]);
+            var eventInfo = _events.First();
+            Assert.AreEqual(LogLevel.Info, eventInfo.Level);
+            Assert.IsNotEmpty(eventInfo.Properties);
+            Assert.AreEqual(1, eventInfo.Properties.Count(x => x.Key.Equals("Key1")));
+            Assert.AreEqual("Value One", eventInfo.Properties["Key1"]);
 
-            Assert.AreEqual(1, parameters.Properties.Count(x => x.Key.Equals("c2")));
-            Assert.AreEqual("Value Two", parameters.Properties["c2"]);
+            Assert.AreEqual(1, eventInfo.Properties.Count(x => x.Key.Equals("c2")));
+            Assert.AreEqual("Value Two", eventInfo.Properties["c2"]);
 
-            Assert.AreEqual(1, parameters.Properties.Count(x => x.Key.Equals("c3")));
-            Assert.AreEqual("34", parameters.Properties["c3"]);
+            Assert.AreEqual(1, eventInfo.Properties.Count(x => x.Key.Equals("c3")));
+            Assert.AreEqual("34", eventInfo.Properties["c3"]);
 
             A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
         }
@@ -100,16 +102,48 @@ namespace NLog.StructuredLogging.Json.Tests
             var props = new { Key1 = "Value One" };
             _logger.ExtendedInfo("hello world", props);
 
-            var parameters = (LogEventInfo)Arguments[0];
-            Assert.AreEqual(LogLevel.Info, parameters.Level);
-            Assert.IsNotEmpty(parameters.Properties);
-            Assert.AreEqual(1, parameters.Properties.Count(x => x.Key.Equals("Key1")));
-            Assert.AreEqual("Value One", parameters.Properties["Key1"]);
+            var eventInfo = _events.First();
+            Assert.AreEqual(LogLevel.Info, eventInfo.Level);
+            Assert.IsNotEmpty(eventInfo.Properties);
+            Assert.AreEqual(1, eventInfo.Properties.Count(x => x.Key.Equals("Key1")));
+            Assert.AreEqual("Value One", eventInfo.Properties["Key1"]);
 
-            Assert.AreEqual(1, parameters.Properties.Count(x => x.Key.Equals("log_context_Key1")));
-            Assert.AreEqual("Value MDLC", parameters.Properties["log_context_Key1"]);
+            Assert.AreEqual(1, eventInfo.Properties.Count(x => x.Key.Equals("log_context_Key1")));
+            Assert.AreEqual("Value MDLC", eventInfo.Properties["log_context_Key1"]);
 
             A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
+        }
+
+        [Test]
+        public async Task WhenLoggingHappensInParallel()
+        {
+            const int taskCount = 12;
+            MappedDiagnosticsLogicalContext.Set("parallelContext", "From MDLC");
+
+            var tasks = new List<Task>();
+            for (var i = 0; i < taskCount; i++)
+            {
+               tasks.Add(LogSomethingAsync(i));
+            }
+
+            await Task.WhenAll(tasks);
+
+            for (int i = 0; i < taskCount; i++)
+            {
+                var logEventInfo = _events[i];
+                Assert.AreEqual(LogLevel.Info, logEventInfo.Level);
+                Assert.That(logEventInfo.Message, Does.StartWith("Info in task"));
+                Assert.IsNotEmpty(logEventInfo.Properties);
+                Assert.AreEqual(1, logEventInfo.Properties.Count(x => x.Key.Equals("parallelContext")));
+                Assert.AreEqual("From MDLC", logEventInfo.Properties["parallelContext"]);
+            }
+        }
+
+        private async Task LogSomethingAsync(int iter)
+        {
+            await Task.Delay(10);
+            var props = new { Key1 = $"Value {iter}" };
+            _logger.ExtendedInfo($"Info in task {iter}", props);
         }
 
         private void MethodThatDoesSomeLogging()

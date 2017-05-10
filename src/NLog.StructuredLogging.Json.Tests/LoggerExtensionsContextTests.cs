@@ -128,9 +128,10 @@ namespace NLog.StructuredLogging.Json.Tests
 
             await Task.WhenAll(tasks);
 
-            for (int i = 0; i < taskCount; i++)
+            Assert.That(_events.Count, Is.EqualTo(taskCount));
+
+            foreach (var logEventInfo in _events)
             {
-                var logEventInfo = _events[i];
                 Assert.AreEqual(LogLevel.Info, logEventInfo.Level);
                 Assert.That(logEventInfo.Message, Does.StartWith("Info in task"));
                 Assert.IsNotEmpty(logEventInfo.Properties);

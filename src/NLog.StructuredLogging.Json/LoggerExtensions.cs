@@ -124,7 +124,6 @@ namespace NLog.StructuredLogging.Json
         {
             foreach (var contextItemName in MappedDiagnosticsLogicalContext.GetNames())
             {
-                var value = MappedDiagnosticsLogicalContext.Get(contextItemName);
                 var key = contextItemName;
                 if (log.Properties.ContainsKey(contextItemName))
                 {
@@ -133,15 +132,17 @@ namespace NLog.StructuredLogging.Json
 
                 if (!log.Properties.ContainsKey(key))
                 {
+                    var value = MappedDiagnosticsLogicalContext.Get(contextItemName);
                     log.Properties.Add(key, value);
                 }
             }
         }
 
+        private static readonly TypeInfo DictType = typeof(IDictionary).GetTypeInfo();
+
         private static bool IsDictionary(object logProperties)
         {
-            var propsType = logProperties.GetType().GetTypeInfo();
-            return typeof(IDictionary).GetTypeInfo().IsAssignableFrom(propsType);
+            return DictType.IsAssignableFrom(logProperties.GetType().GetTypeInfo());
         }
     }
 }

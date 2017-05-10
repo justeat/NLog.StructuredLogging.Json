@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,12 +12,12 @@ namespace NLog.StructuredLogging.Json.Tests
     public class LoggerExtensionsContextTests
     {
         private ILogger _logger;
-        private List<LogEventInfo> _events;
+        private ConcurrentBag<LogEventInfo> _events;
 
         [SetUp]
         public void SetUp()
         {
-            _events = new List<LogEventInfo>();
+            _events = new ConcurrentBag<LogEventInfo>();
 
             _logger = A.Fake<ILogger>();
             A.CallTo(() => _logger.Name).Returns("FakeLogger");

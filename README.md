@@ -73,6 +73,7 @@ No need for a custom nxlog configuration file, and no need to specify all the co
 3. Update your NLog config so you write out JSON with properties
 4. Add additional properties when you log
 
+
 1. Update the dependencies
 ------------------------------------------
 
@@ -206,6 +207,18 @@ ExceptionIndex: 3
 ExceptionCount: 3
 ExceptionTag: "6fc5d910-3335-4eba-89fd-f9229e4a29b3"
 ````
+
+### Logging data from context
+
+Properties are also read from the [Mapped Diagnostic Logical Context](https://github.com/NLog/NLog/wiki/MDLC-Layout-Renderer).  This is an NLog class, and the data is [stored on the logical call context](https://github.com/NLog/NLog/blob/master/src/NLog/MappedDiagnosticsLogicalContext.cs#L67)
+and typed as a`Dictionary<string, object>`.
+
+Add a value to the MDLC like this:
+```csharp
+   MappedDiagnosticsLogicalContext.Set("ConversationId", conversationId);
+```
+
+This value will then be attached to all logging that happens afterwards in the same logical thread of execution, even after `await` statements that change the actual thread.
 
 ### Logging additional json properties
 

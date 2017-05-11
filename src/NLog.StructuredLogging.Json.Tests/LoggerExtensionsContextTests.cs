@@ -17,12 +17,19 @@ namespace NLog.StructuredLogging.Json.Tests
         [SetUp]
         public void SetUp()
         {
+            MappedDiagnosticsLogicalContext.Clear();
             _events = new ConcurrentBag<LogEventInfo>();
 
             _logger = A.Fake<ILogger>();
             A.CallTo(() => _logger.Name).Returns("FakeLogger");
             A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored))
                 .Invokes(x => _events.Add((LogEventInfo)x.Arguments[0]));
+        }
+
+        [TearDown]
+        public void Teardown()
+        {
+            MappedDiagnosticsLogicalContext.Clear();
         }
 
         [Test]

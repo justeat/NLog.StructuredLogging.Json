@@ -16,7 +16,6 @@ namespace NLog.StructuredLogging.Json.Tests
         [SetUp]
         public void SetUp()
         {
-            MappedDiagnosticsLogicalContext.Clear();
             _logger = A.Fake<ILogger>();
             A.CallTo(() => _logger.Name).Returns("FakeLogger");
             A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).Invokes(x => Arguments = x.Arguments);

@@ -210,8 +210,9 @@ ExceptionTag: "6fc5d910-3335-4eba-89fd-f9229e4a29b3"
 
 ### Logging data from context
 
-Properties are also read from the [Mapped Diagnostic Logical Context](https://github.com/NLog/NLog/wiki/MDLC-Layout-Renderer).  This is an NLog class, and the data is [stored on the logical call context](https://github.com/NLog/NLog/blob/master/src/NLog/MappedDiagnosticsLogicalContext.cs#L67)
-and typed as a`Dictionary<string, object>`.
+Properties are also read from the [Mapped Diagnostic Logical Context](https://github.com/NLog/NLog/wiki/MDLC-Layout-Renderer).  
+This is an NLog class, and [the data is stored on the logical call context](https://github.com/NLog/NLog/blob/2f5e3cced2fb1e56846e68e260c28c7d237bccfb/src/NLog/MappedDiagnosticsLogicalContext.cs#L67)
+and typed as a `Dictionary<string, object>`.
 
 Add a value to the MDLC like this:
 ```csharp

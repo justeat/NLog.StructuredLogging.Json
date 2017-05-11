@@ -86,7 +86,7 @@ Update-Package NLog
 Update-Package Newtonsoft.Json
 ```
 
-### Install the NLog.StructuredLogging.Json from NuGet
+### Install the `NLog.StructuredLogging.Json` package from NuGet
 ----------------------------------------
 Make sure the DLL is copied to your output folder
 
@@ -100,9 +100,6 @@ NLog needs to write to JSON using the `structuredlogging.json` layout renderer.<
 The `structuredlogging.json` layout renderer is declared in this project.<br />
 Any DLLs that start with NLog. are automatically loaded by NLog at runtime in your app.<br />
 * [Copy and replace your nlog.config with this example nlog.config in your solution](Examples/nlog.config)
-
-###  Write additional properties to the NLog.LogEvent object when logging
------------------------------------------------------------------------
 
 ## Usage
 

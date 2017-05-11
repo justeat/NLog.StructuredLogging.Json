@@ -74,7 +74,7 @@ No need for a custom nxlog configuration file, and no need to specify all the co
 4. Add additional properties when you log
 
 
-1. Update the dependencies
+### Update the dependencies
 ------------------------------------------
 
 - Ensure you have version of NLog >= 4.3.0 (assembly version 4.0.0.0 - remember to update any redirects)
@@ -86,7 +86,7 @@ Update-Package NLog
 Update-Package Newtonsoft.Json
 ```
 
-2. Install the NLog.StructuredLogging.Json renderer from NuGet
+### Install the NLog.StructuredLogging.Json from NuGet
 ----------------------------------------
 Make sure the DLL is copied to your output folder
 
@@ -94,14 +94,14 @@ Make sure the DLL is copied to your output folder
 Install-Package NLog.StructuredLogging.Json
 ```
 
-3. Update your NLog config so you write out JSON with properties
+###  Update your NLog config so you write out JSON with properties
 ----------------------------------------------------------------
 NLog needs to write to JSON using the `structuredlogging.json` layout renderer.<br />
 The `structuredlogging.json` layout renderer is declared in this project.<br />
 Any DLLs that start with NLog. are automatically loaded by NLog at runtime in your app.<br />
 * [Copy and replace your nlog.config with this example nlog.config in your solution](Examples/nlog.config)
 
-4. Write additional properties to the NLog.LogEvent object when logging
+###  Write additional properties to the NLog.LogEvent object when logging
 -----------------------------------------------------------------------
 
 ## Usage

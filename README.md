@@ -73,7 +73,8 @@ No need for a custom nxlog configuration file, and no need to specify all the co
 3. Update your NLog config so you write out JSON with properties
 4. Add additional properties when you log
 
-1. Update the dependencies
+
+### Update the dependencies
 ------------------------------------------
 
 - Ensure you have version of NLog >= 4.3.0 (assembly version 4.0.0.0 - remember to update any redirects)
@@ -85,7 +86,7 @@ Update-Package NLog
 Update-Package Newtonsoft.Json
 ```
 
-2. Install the NLog.StructuredLogging.Json renderer from NuGet
+### Install the `NLog.StructuredLogging.Json` package from NuGet
 ----------------------------------------
 Make sure the DLL is copied to your output folder
 
@@ -93,15 +94,12 @@ Make sure the DLL is copied to your output folder
 Install-Package NLog.StructuredLogging.Json
 ```
 
-3. Update your NLog config so you write out JSON with properties
+###  Update your NLog config so you write out JSON with properties
 ----------------------------------------------------------------
 NLog needs to write to JSON using the `structuredlogging.json` layout renderer.<br />
 The `structuredlogging.json` layout renderer is declared in this project.<br />
 Any DLLs that start with NLog. are automatically loaded by NLog at runtime in your app.<br />
 * [Copy and replace your nlog.config with this example nlog.config in your solution](Examples/nlog.config)
-
-4. Write additional properties to the NLog.LogEvent object when logging
------------------------------------------------------------------------
 
 ## Usage
 
@@ -206,6 +204,19 @@ ExceptionIndex: 3
 ExceptionCount: 3
 ExceptionTag: "6fc5d910-3335-4eba-89fd-f9229e4a29b3"
 ````
+
+### Logging data from context
+
+Properties are also read from the [Mapped Diagnostic Logical Context](https://github.com/NLog/NLog/wiki/MDLC-Layout-Renderer).  
+This is an NLog class, and [the data is stored on the logical call context](https://github.com/NLog/NLog/blob/2f5e3cced2fb1e56846e68e260c28c7d237bccfb/src/NLog/MappedDiagnosticsLogicalContext.cs#L67)
+and typed as a `Dictionary<string, object>`.
+
+Add a value to the MDLC like this:
+```csharp
+   MappedDiagnosticsLogicalContext.Set("ConversationId", conversationId);
+```
+
+This value will then be attached to all logging that happens afterwards in the same logical thread of execution, even after `await` statements that change the actual thread.
 
 ### Logging additional json properties
 

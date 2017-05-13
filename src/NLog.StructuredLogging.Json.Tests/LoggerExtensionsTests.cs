@@ -225,7 +225,7 @@ namespace NLog.StructuredLogging.Json.Tests
             Assert.That(parameters.Properties.Count, Is.EqualTo(2));
             Assert.That(parameters.Properties["ExceptionIndex"], Is.EqualTo(1));
             Assert.That(parameters.Properties["ExceptionCount"], Is.EqualTo(1));
-            Assert.IsFalse(parameters.Properties.ContainsKey("ExceptionTag"));
+            Assert.That(parameters.Properties.ContainsKey("ExceptionTag"), Is.False);
         }
 
         [Test]

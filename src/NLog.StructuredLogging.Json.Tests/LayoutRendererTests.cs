@@ -107,25 +107,25 @@ With lots of possibly bad things in it";
         {
             var chars = Result.ToCharArray().ToArray();
 
-            Assert.IsFalse(chars.Contains('\u0001'));
-            Assert.IsFalse(chars.Contains('\u0002'));
-            Assert.IsFalse(chars.Contains('\u0003'));
-            Assert.IsFalse(chars.Contains('\u0004'));
-            Assert.IsFalse(chars.Contains('\u0005'));
-            Assert.IsFalse(chars.Contains('\u0006'));
-            Assert.IsFalse(chars.Contains('\u0007'));
-            Assert.IsFalse(chars.Contains('\u0008'));
-            Assert.IsFalse(chars.Contains('\u0009'));
-            Assert.IsFalse(chars.Contains('\u0010'));
-            Assert.IsFalse(chars.Contains('\u0011'));
-            Assert.IsFalse(chars.Contains('\u0012'));
-            Assert.IsFalse(chars.Contains('\u0013'));
-            Assert.IsFalse(chars.Contains('\u0014'));
-            Assert.IsFalse(chars.Contains('\u0015'));
-            Assert.IsFalse(chars.Contains('\u0016'));
-            Assert.IsFalse(chars.Contains('\u0017'));
-            Assert.IsFalse(chars.Contains('\u0018'));
-            Assert.IsFalse(chars.Contains('\u0019'));
+            Assert.That(chars.Contains('\u0001'), Is.False);
+            Assert.That(chars.Contains('\u0002'), Is.False);
+            Assert.That(chars.Contains('\u0003'), Is.False);
+            Assert.That(chars.Contains('\u0004'), Is.False);
+            Assert.That(chars.Contains('\u0005'), Is.False);
+            Assert.That(chars.Contains('\u0006'), Is.False);
+            Assert.That(chars.Contains('\u0007'), Is.False);
+            Assert.That(chars.Contains('\u0008'), Is.False);
+            Assert.That(chars.Contains('\u0009'), Is.False);
+            Assert.That(chars.Contains('\u0010'), Is.False);
+            Assert.That(chars.Contains('\u0011'), Is.False);
+            Assert.That(chars.Contains('\u0012'), Is.False);
+            Assert.That(chars.Contains('\u0013'), Is.False);
+            Assert.That(chars.Contains('\u0014'), Is.False);
+            Assert.That(chars.Contains('\u0015'), Is.False);
+            Assert.That(chars.Contains('\u0016'), Is.False);
+            Assert.That(chars.Contains('\u0017'), Is.False);
+            Assert.That(chars.Contains('\u0018'), Is.False);
+            Assert.That(chars.Contains('\u0019'), Is.False);
         }
     }
 }

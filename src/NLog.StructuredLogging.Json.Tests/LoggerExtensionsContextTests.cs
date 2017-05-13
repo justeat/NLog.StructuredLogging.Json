@@ -41,7 +41,7 @@ namespace NLog.StructuredLogging.Json.Tests
             var props = new { Key1 = "Value One" };
             _logger.ExtendedInfo("hello world", props);
 
-            var eventInfo = _events.First();
+            var eventInfo = _events.Single();
             Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Info));
             Assert.That(eventInfo.Properties, Is.Not.Empty);
             Assert.That(eventInfo.Properties.Count(x => x.Key.Equals("Key1")), Is.EqualTo(1));
@@ -64,7 +64,7 @@ namespace NLog.StructuredLogging.Json.Tests
 
             MethodThatDoesSomeLogging();
 
-            var eventInfo = _events.First();
+            var eventInfo = _events.Single();
             Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Info));
             Assert.That(eventInfo.Properties, Is.Not.Empty);
             Assert.That(eventInfo.Properties.Count(x => x.Key.Equals("Key1")), Is.EqualTo(1));
@@ -87,7 +87,7 @@ namespace NLog.StructuredLogging.Json.Tests
 
             await MethodThatDoesSomeLoggingAsync();
 
-            var eventInfo = _events.First();
+            var eventInfo = _events.Single();
             Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Info));
             Assert.That(eventInfo.Properties, Is.Not.Empty);
             Assert.That(eventInfo.Properties.Count(x => x.Key.Equals("Key1")), Is.EqualTo(1));
@@ -110,7 +110,7 @@ namespace NLog.StructuredLogging.Json.Tests
             var props = new { Key1 = "Value One" };
             _logger.ExtendedInfo("hello world", props);
 
-            var eventInfo = _events.First();
+            var eventInfo = _events.Single();
             Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Info));
             Assert.That(eventInfo.Properties, Is.Not.Empty);
             Assert.That(eventInfo.Properties.Count(x => x.Key.Equals("Key1")), Is.EqualTo(1));

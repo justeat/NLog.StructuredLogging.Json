@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using FakeItEasy;
-using FakeItEasy.Configuration;
 
 namespace NLog.StructuredLogging.Json.Tests
 {
@@ -11,14 +11,17 @@ namespace NLog.StructuredLogging.Json.Tests
     public class LoggerExtensionsTests
     {
         private ILogger _logger;
-        public ArgumentCollection Arguments { get; set; }
+        private ConcurrentBag<LogEventInfo> _events;
 
         [SetUp]
         public void SetUp()
         {
+            _events = new ConcurrentBag<LogEventInfo>();
             _logger = A.Fake<ILogger>();
+
             A.CallTo(() => _logger.Name).Returns("FakeLogger");
-            A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).Invokes(x => Arguments = x.Arguments);
+            A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored))
+                .Invokes(x => _events.Add((LogEventInfo)x.Arguments[0]));
         }
 
         [Test]
@@ -26,7 +29,7 @@ namespace NLog.StructuredLogging.Json.Tests
         {
             _logger.ExtendedDebug("hello world", null);
 
-            var parameters = (LogEventInfo)Arguments[0];
+            var parameters = _events.Single();
             Assert.That(parameters.Level, Is.EqualTo(LogLevel.Debug));
             Assert.That(parameters.Properties, Is.Empty);
         }
@@ -36,7 +39,7 @@ namespace NLog.StructuredLogging.Json.Tests
         {
             _logger.ExtendedDebug("hello world", new { Key1 = "Value One", key2 = "Value Two" });
 
-            var parameters = (LogEventInfo)Arguments[0];
+            var parameters = _events.Single();
             Assert.That(parameters.Level, Is.EqualTo(LogLevel.Debug));
             Assert.That(parameters.Properties, Is.Not.Empty);
             Assert.That(parameters.Properties.Count(x => x.Key.Equals("Key1")), Is.EqualTo(1));
@@ -63,7 +66,7 @@ namespace NLog.StructuredLogging.Json.Tests
         {
             _logger.ExtendedInfo("hello world", null);
 
-            var parameters = (LogEventInfo)Arguments[0];
+            var parameters = _events.Single();
             Assert.That(parameters.Level, Is.EqualTo(LogLevel.Info));
             Assert.That(parameters.Properties, Is.Empty);
         }
@@ -73,7 +76,7 @@ namespace NLog.StructuredLogging.Json.Tests
         {
             _logger.ExtendedInfo("hello world", new { Key1 = "Value One", key2 = "Value Two" });
 
-            var parameters = (LogEventInfo)Arguments[0];
+            var parameters = _events.Single();
             Assert.That(parameters.Level, Is.EqualTo(LogLevel.Info));
             Assert.That(parameters.Properties, Is.Not.Empty);
             Assert.That(parameters.Properties.Count(x => x.Key.Equals("Key1")), Is.EqualTo(1));
@@ -94,7 +97,7 @@ namespace NLog.StructuredLogging.Json.Tests
 
             _logger.ExtendedInfo("hello world", props);
 
-            var parameters = (LogEventInfo)Arguments[0];
+            var parameters = _events.Single();
             Assert.That(parameters.Level, Is.EqualTo(LogLevel.Info));
             Assert.That(parameters.Properties, Is.Not.Empty);
             Assert.That(parameters.Properties.Count(x => x.Key.Equals("Key1")), Is.EqualTo(1));
@@ -121,7 +124,7 @@ namespace NLog.StructuredLogging.Json.Tests
         {
             _logger.ExtendedWarn("hello world", null);
 
-            var parameters = (LogEventInfo)Arguments[0];
+            var parameters = _events.Single();
             Assert.That(parameters.Level, Is.EqualTo(LogLevel.Warn));
             Assert.That(parameters.Properties, Is.Empty);
         }
@@ -143,7 +146,7 @@ namespace NLog.StructuredLogging.Json.Tests
         {
             _logger.ExtendedError("hello world", null);
 
-            var parameters = (LogEventInfo)Arguments[0];
+            var parameters = _events.Single();
             Assert.That(parameters.Level, Is.EqualTo(LogLevel.Error));
             Assert.That(parameters.Properties, Is.Empty);
             A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
@@ -154,7 +157,7 @@ namespace NLog.StructuredLogging.Json.Tests
         {
             _logger.ExtendedError("hello world", new { Key1 = "Value One", key2 = "Value Two" });
 
-            var parameters = (LogEventInfo)Arguments[0];
+            var parameters = _events.Single();
             Assert.That(parameters.Level, Is.EqualTo(LogLevel.Error));
             Assert.That(parameters.Properties, Is.Not.Empty);
             Assert.That(parameters.Properties.Count(x => x.Key.Equals("Key1")), Is.EqualTo(1));
@@ -181,7 +184,7 @@ namespace NLog.StructuredLogging.Json.Tests
         {
             _logger.ExtendedException(new Exception("example exception"), "hello world", new {});
 
-            var parameters = (LogEventInfo)Arguments[0];
+            var parameters = _events.Single();
             Assert.That(parameters.Level, Is.EqualTo(LogLevel.Error));
             Assert.NotNull(parameters.Exception);
             Assert.That(parameters.Exception.Message, Is.EqualTo("example exception"));
@@ -193,7 +196,7 @@ namespace NLog.StructuredLogging.Json.Tests
         {
             _logger.ExtendedException(new Exception("example exception"), "hello world", null);
 
-            var parameters = (LogEventInfo)Arguments[0];
+            var parameters = _events.Single();
             Assert.That(parameters.Level, Is.EqualTo(LogLevel.Error));
             Assert.NotNull(parameters.Exception);
             Assert.That(parameters.Exception.Message, Is.EqualTo("example exception"));
@@ -205,7 +208,7 @@ namespace NLog.StructuredLogging.Json.Tests
         {
             _logger.ExtendedException(new Exception("example exception"), "hello world");
 
-            var parameters = (LogEventInfo)Arguments[0];
+            var parameters = _events.Single();
             Assert.That(parameters.Level, Is.EqualTo(LogLevel.Error));
             Assert.NotNull(parameters.Exception);
             Assert.That(parameters.Exception.Message, Is.EqualTo("example exception"));
@@ -217,11 +220,11 @@ namespace NLog.StructuredLogging.Json.Tests
         {
             _logger.ExtendedException(new Exception("example exception"), "hello world", new { });
 
-            var parameters = (LogEventInfo)Arguments[0];
+            var parameters = _events.Single();
 
-            Assert.That(2, Is.EqualTo(parameters.Properties.Count));
-            Assert.That(1, Is.EqualTo(parameters.Properties["ExceptionIndex"]));
-            Assert.That(1, Is.EqualTo(parameters.Properties["ExceptionCount"]));
+            Assert.That(parameters.Properties.Count, Is.EqualTo(2));
+            Assert.That(parameters.Properties["ExceptionIndex"], Is.EqualTo(1));
+            Assert.That(parameters.Properties["ExceptionCount"], Is.EqualTo(1));
             Assert.IsFalse(parameters.Properties.ContainsKey("ExceptionTag"));
         }
 
@@ -230,7 +233,7 @@ namespace NLog.StructuredLogging.Json.Tests
         {
             _logger.ExtendedException(new Exception("example exception"), "hello world", new { Key1 = "Value One", key2 = "Value Two" });
 
-            var parameters = (LogEventInfo)Arguments[0];
+            var parameters = _events.Single();
             Assert.That(parameters.Level, Is.EqualTo(LogLevel.Error));
             Assert.That(parameters.Properties, Is.Not.Empty);
             Assert.That(parameters.Properties.Count(x => x.Key.Equals("Key1")), Is.EqualTo(1));
@@ -254,7 +257,7 @@ namespace NLog.StructuredLogging.Json.Tests
 
             _logger.ExtendedException(new Exception("example exception"), "hello world", logProperties);
 
-            var parameters = (LogEventInfo)Arguments[0];
+            var parameters = _events.Single();
             Assert.That(parameters.Level, Is.EqualTo(LogLevel.Error));
             Assert.That(parameters.Properties, Is.Not.Empty);
             Assert.That(parameters.Properties.Count(x => x.Key.Equals("Key1")), Is.EqualTo(1));

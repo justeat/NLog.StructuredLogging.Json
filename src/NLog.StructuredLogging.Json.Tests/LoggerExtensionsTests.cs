@@ -28,7 +28,7 @@ namespace NLog.StructuredLogging.Json.Tests
 
             var parameters = (LogEventInfo)Arguments[0];
             Assert.That(parameters.Level, Is.EqualTo(LogLevel.Debug));
-            Assert.IsEmpty(parameters.Properties);
+            Assert.That(parameters.Properties, Is.Empty);
         }
 
         [Test]
@@ -65,7 +65,7 @@ namespace NLog.StructuredLogging.Json.Tests
 
             var parameters = (LogEventInfo)Arguments[0];
             Assert.That(parameters.Level, Is.EqualTo(LogLevel.Info));
-            Assert.IsEmpty(parameters.Properties);
+            Assert.That(parameters.Properties, Is.Empty);
         }
 
         [Test]
@@ -123,7 +123,7 @@ namespace NLog.StructuredLogging.Json.Tests
 
             var parameters = (LogEventInfo)Arguments[0];
             Assert.That(parameters.Level, Is.EqualTo(LogLevel.Warn));
-            Assert.IsEmpty(parameters.Properties);
+            Assert.That(parameters.Properties, Is.Empty);
         }
 
         [Test]
@@ -145,7 +145,7 @@ namespace NLog.StructuredLogging.Json.Tests
 
             var parameters = (LogEventInfo)Arguments[0];
             Assert.That(parameters.Level, Is.EqualTo(LogLevel.Error));
-            Assert.IsEmpty(parameters.Properties);
+            Assert.That(parameters.Properties, Is.Empty);
             A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
         }
 

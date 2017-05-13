@@ -38,7 +38,7 @@ namespace NLog.StructuredLogging.Json.Tests
 
             var parameters = (LogEventInfo)Arguments[0];
             Assert.That(parameters.Level, Is.EqualTo(LogLevel.Debug));
-            Assert.IsNotEmpty(parameters.Properties);
+            Assert.That(parameters.Properties, Is.Not.Empty);
             Assert.That(parameters.Properties.Count(x => x.Key.Equals("Key1")), Is.EqualTo(1));
             Assert.That(parameters.Properties["Key1"], Is.EqualTo("Value One"));
             Assert.That(parameters.Properties.Count(x => x.Key.Equals("key2")), Is.EqualTo(1));
@@ -75,7 +75,7 @@ namespace NLog.StructuredLogging.Json.Tests
 
             var parameters = (LogEventInfo)Arguments[0];
             Assert.That(parameters.Level, Is.EqualTo(LogLevel.Info));
-            Assert.IsNotEmpty(parameters.Properties);
+            Assert.That(parameters.Properties, Is.Not.Empty);
             Assert.That(parameters.Properties.Count(x => x.Key.Equals("Key1")), Is.EqualTo(1));
             Assert.That(parameters.Properties["Key1"], Is.EqualTo("Value One"));
             Assert.That(parameters.Properties.Count(x => x.Key.Equals("key2")), Is.EqualTo(1));
@@ -96,7 +96,7 @@ namespace NLog.StructuredLogging.Json.Tests
 
             var parameters = (LogEventInfo)Arguments[0];
             Assert.That(parameters.Level, Is.EqualTo(LogLevel.Info));
-            Assert.IsNotEmpty(parameters.Properties);
+            Assert.That(parameters.Properties, Is.Not.Empty);
             Assert.That(parameters.Properties.Count(x => x.Key.Equals("Key1")), Is.EqualTo(1));
             Assert.That(parameters.Properties["Key1"], Is.EqualTo("Value One"));
             Assert.That(parameters.Properties.Count(x => x.Key.Equals("key2")), Is.EqualTo(1));
@@ -156,7 +156,7 @@ namespace NLog.StructuredLogging.Json.Tests
 
             var parameters = (LogEventInfo)Arguments[0];
             Assert.That(parameters.Level, Is.EqualTo(LogLevel.Error));
-            Assert.IsNotEmpty(parameters.Properties);
+            Assert.That(parameters.Properties, Is.Not.Empty);
             Assert.That(parameters.Properties.Count(x => x.Key.Equals("Key1")), Is.EqualTo(1));
             Assert.That(parameters.Properties["Key1"], Is.EqualTo("Value One"));
             Assert.That(parameters.Properties.Count(x => x.Key.Equals("key2")), Is.EqualTo(1));
@@ -232,7 +232,7 @@ namespace NLog.StructuredLogging.Json.Tests
 
             var parameters = (LogEventInfo)Arguments[0];
             Assert.That(parameters.Level, Is.EqualTo(LogLevel.Error));
-            Assert.IsNotEmpty(parameters.Properties);
+            Assert.That(parameters.Properties, Is.Not.Empty);
             Assert.That(parameters.Properties.Count(x => x.Key.Equals("Key1")), Is.EqualTo(1));
             Assert.That(parameters.Properties["Key1"], Is.EqualTo("Value One"));
             Assert.That(parameters.Properties.Count(x => x.Key.Equals("key2")), Is.EqualTo(1));
@@ -256,7 +256,7 @@ namespace NLog.StructuredLogging.Json.Tests
 
             var parameters = (LogEventInfo)Arguments[0];
             Assert.That(parameters.Level, Is.EqualTo(LogLevel.Error));
-            Assert.IsNotEmpty(parameters.Properties);
+            Assert.That(parameters.Properties, Is.Not.Empty);
             Assert.That(parameters.Properties.Count(x => x.Key.Equals("Key1")), Is.EqualTo(1));
             Assert.That(parameters.Properties["Key1"], Is.EqualTo("Value One"));
             Assert.That(parameters.Properties.Count(x => x.Key.Equals("key2")), Is.EqualTo(1));

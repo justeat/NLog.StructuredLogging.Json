@@ -43,7 +43,7 @@ namespace NLog.StructuredLogging.Json.Tests
 
             var eventInfo = _events.First();
             Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Info));
-            Assert.IsNotEmpty(eventInfo.Properties);
+            Assert.That(eventInfo.Properties, Is.Not.Empty);
             Assert.That(eventInfo.Properties.Count(x => x.Key.Equals("Key1")), Is.EqualTo(1));
             Assert.That(eventInfo.Properties["Key1"], Is.EqualTo("Value One"));
 
@@ -66,7 +66,7 @@ namespace NLog.StructuredLogging.Json.Tests
 
             var eventInfo = _events.First();
             Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Info));
-            Assert.IsNotEmpty(eventInfo.Properties);
+            Assert.That(eventInfo.Properties, Is.Not.Empty);
             Assert.That(eventInfo.Properties.Count(x => x.Key.Equals("Key1")), Is.EqualTo(1));
             Assert.That(eventInfo.Properties["Key1"], Is.EqualTo("Value One"));
 
@@ -89,7 +89,7 @@ namespace NLog.StructuredLogging.Json.Tests
 
             var eventInfo = _events.First();
             Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Info));
-            Assert.IsNotEmpty(eventInfo.Properties);
+            Assert.That(eventInfo.Properties, Is.Not.Empty);
             Assert.That(eventInfo.Properties.Count(x => x.Key.Equals("Key1")), Is.EqualTo(1));
             Assert.That(eventInfo.Properties["Key1"], Is.EqualTo("Value One"));
 
@@ -112,7 +112,7 @@ namespace NLog.StructuredLogging.Json.Tests
 
             var eventInfo = _events.First();
             Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Info));
-            Assert.IsNotEmpty(eventInfo.Properties);
+            Assert.That(eventInfo.Properties, Is.Not.Empty);
             Assert.That(eventInfo.Properties.Count(x => x.Key.Equals("Key1")), Is.EqualTo(1));
             Assert.That(eventInfo.Properties["Key1"], Is.EqualTo("Value One"));
 
@@ -142,7 +142,7 @@ namespace NLog.StructuredLogging.Json.Tests
             {
                 Assert.That(logEventInfo.Level, Is.EqualTo(LogLevel.Info));
                 Assert.That(logEventInfo.Message, Does.StartWith("Info in task"));
-                Assert.IsNotEmpty(logEventInfo.Properties);
+                Assert.That(logEventInfo.Properties, Is.Not.Empty);
                 Assert.That(logEventInfo.Properties.Count(x => x.Key.Equals("parallelContext")), Is.EqualTo(1));
                 Assert.That(logEventInfo.Properties["parallelContext"], Is.EqualTo("From MDLC"));
             }

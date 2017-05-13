@@ -26,7 +26,7 @@ namespace NLog.StructuredLogging.Json.Tests
         [Test]
         public void SimpleException_IsLogged()
         {
-            List<LogEventInfo> itemsLogged = new List<LogEventInfo>();
+            var itemsLogged = new List<LogEventInfo>();
             CaptureLogInfoToList(itemsLogged);
 
             var ex = new Exception("example exception");
@@ -41,7 +41,7 @@ namespace NLog.StructuredLogging.Json.Tests
         [Test]
         public void SimpleException_HasExpectedProperties()
         {
-            List<LogEventInfo> itemsLogged = new List<LogEventInfo>();
+            var itemsLogged = new List<LogEventInfo>();
             CaptureLogInfoToList(itemsLogged);
 
             var ex = new Exception("example exception");
@@ -57,7 +57,7 @@ namespace NLog.StructuredLogging.Json.Tests
         [Test]
         public void InnerException()
         {
-            List<LogEventInfo> itemsLogged = new List<LogEventInfo>();
+            var itemsLogged = new List<LogEventInfo>();
             CaptureLogInfoToList(itemsLogged);
 
             var ex = new Exception("example exception", new Exception("inner"));
@@ -76,7 +76,7 @@ namespace NLog.StructuredLogging.Json.Tests
         [Test]
         public void InnerExceptionTracking()
         {
-            List<LogEventInfo> itemsLogged = new List<LogEventInfo>();
+            var itemsLogged = new List<LogEventInfo>();
             CaptureLogInfoToList(itemsLogged);
 
             var ex = new Exception("example exception", new Exception("inner"));
@@ -97,7 +97,7 @@ namespace NLog.StructuredLogging.Json.Tests
         [Test]
         public void InnerInnerException()
         {
-            List<LogEventInfo> itemsLogged = new List<LogEventInfo>();
+            var itemsLogged = new List<LogEventInfo>();
             CaptureLogInfoToList(itemsLogged);
 
             var ex = new Exception("example exception", new Exception("inner", new Exception("Inner inner")));
@@ -118,7 +118,7 @@ namespace NLog.StructuredLogging.Json.Tests
         [Test]
         public void AggregateExceptionWithOneContained()
         {
-            List<LogEventInfo> itemsLogged = new List<LogEventInfo>();
+            var itemsLogged = new List<LogEventInfo>();
             CaptureLogInfoToList(itemsLogged);
 
             var ex = new AggregateException("example exception", new Exception("inner 1"));
@@ -137,7 +137,7 @@ namespace NLog.StructuredLogging.Json.Tests
         [Test]
         public void AggregateExceptionWithTwoContained()
         {
-            List<LogEventInfo> itemsLogged = new List<LogEventInfo>();
+            var itemsLogged = new List<LogEventInfo>();
             CaptureLogInfoToList(itemsLogged);
 
             var ex = new AggregateException("example exception", new Exception("inner 1"), new Exception("inner 2"));
@@ -158,7 +158,7 @@ namespace NLog.StructuredLogging.Json.Tests
         [Test]
         public void AggregateAndInnerException()
         {
-            List<LogEventInfo> itemsLogged = new List<LogEventInfo>();
+            var itemsLogged = new List<LogEventInfo>();
             CaptureLogInfoToList(itemsLogged);
 
             var exWithInner = new Exception("example exception", new Exception("inner"));
@@ -183,7 +183,7 @@ namespace NLog.StructuredLogging.Json.Tests
         [Test]
         public void DoubleAggregateException()
         {
-            List<LogEventInfo> itemsLogged = new List<LogEventInfo>();
+            var itemsLogged = new List<LogEventInfo>();
             CaptureLogInfoToList(itemsLogged);
 
             var innerAggregate = new AggregateException("inner aggregate", new Exception("inner ag 1"), new Exception("inner ag 2"));

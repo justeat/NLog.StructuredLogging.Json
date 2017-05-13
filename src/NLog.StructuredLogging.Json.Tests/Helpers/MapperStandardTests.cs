@@ -21,7 +21,7 @@ namespace NLog.StructuredLogging.Json.Tests.Helpers
         [Test]
         public void WhenConverted_TheRightNumberOfItemsAreReturned()
         {
-            Assert.AreEqual(12, _result.Count);
+            Assert.That(_result.Count, Is.EqualTo(12));
         }
 
         [Test]
@@ -51,8 +51,8 @@ namespace NLog.StructuredLogging.Json.Tests.Helpers
             Assert.True(_result.Keys.Contains("PropertyOne"));
             Assert.True(_result.Keys.Contains("PropertyTwo"));
 
-            Assert.AreEqual("This value is in property one", _result["PropertyOne"]);
-            Assert.AreEqual("2", _result["PropertyTwo"]);
+            Assert.That(_result["PropertyOne"], Is.EqualTo("This value is in property one"));
+            Assert.That(_result["PropertyTwo"], Is.EqualTo("2"));
         }
 
         [Test]
@@ -60,7 +60,7 @@ namespace NLog.StructuredLogging.Json.Tests.Helpers
         {
             string expected = $"System.Exception: Outer Exception ---> System.Exception: Inner Exception{Environment.NewLine}   --- End of inner exception stack trace ---";
 
-            Assert.AreEqual(expected, _result["Exception"]);
+            Assert.That(_result["Exception"], Is.EqualTo(expected));
         }
 
         private LogEventInfo MakeStandardLogEventInfo()

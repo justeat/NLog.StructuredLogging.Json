@@ -17,7 +17,7 @@ namespace NLog.StructuredLogging.Json.Tests.Helpers
             logEventInfo.Exception = null;
             var result = Mapper.ToDictionary(logEventInfo);
 
-            Assert.AreEqual(7, result.Count);
+            Assert.That(result.Count, Is.EqualTo(7));
         }
 
         [Test]
@@ -29,7 +29,7 @@ namespace NLog.StructuredLogging.Json.Tests.Helpers
 
             var result = Mapper.ToDictionary(logEventInfo);
 
-            Assert.AreEqual(10, result.Count);
+            Assert.That(result.Count, Is.EqualTo(10));
         }
 
         [Test]

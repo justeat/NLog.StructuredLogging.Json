@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using FakeItEasy;
-using FakeItEasy.Configuration;
 
 namespace NLog.StructuredLogging.Json.Tests
 {
@@ -11,14 +11,17 @@ namespace NLog.StructuredLogging.Json.Tests
     public class LoggerExtensionsTests
     {
         private ILogger _logger;
-        public ArgumentCollection Arguments { get; set; }
+        private ConcurrentBag<LogEventInfo> _events;
 
         [SetUp]
         public void SetUp()
         {
+            _events = new ConcurrentBag<LogEventInfo>();
             _logger = A.Fake<ILogger>();
+
             A.CallTo(() => _logger.Name).Returns("FakeLogger");
-            A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).Invokes(x => Arguments = x.Arguments);
+            A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored))
+                .Invokes(x => _events.Add((LogEventInfo)x.Arguments[0]));
         }
 
         [Test]
@@ -26,9 +29,9 @@ namespace NLog.StructuredLogging.Json.Tests
         {
             _logger.ExtendedDebug("hello world", null);
 
-            var parameters = (LogEventInfo)Arguments[0];
-            Assert.AreEqual(LogLevel.Debug, parameters.Level);
-            Assert.IsEmpty(parameters.Properties);
+            var eventInfo = _events.Single();
+            Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Debug));
+            Assert.That(eventInfo.Properties, Is.Empty);
         }
 
         [Test]
@@ -36,13 +39,13 @@ namespace NLog.StructuredLogging.Json.Tests
         {
             _logger.ExtendedDebug("hello world", new { Key1 = "Value One", key2 = "Value Two" });
 
-            var parameters = (LogEventInfo)Arguments[0];
-            Assert.AreEqual(LogLevel.Debug, parameters.Level);
-            Assert.IsNotEmpty(parameters.Properties);
-            Assert.AreEqual(1, parameters.Properties.Count(x => x.Key.Equals("Key1")));
-            Assert.AreEqual("Value One", parameters.Properties["Key1"]);
-            Assert.AreEqual(1, parameters.Properties.Count(x => x.Key.Equals("key2")));
-            Assert.AreEqual("Value Two", parameters.Properties["key2"]);
+            var eventInfo = _events.Single();
+            Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Debug));
+            Assert.That(eventInfo.Properties, Is.Not.Empty);
+            Assert.That(eventInfo.Properties.Count(x => x.Key.Equals("Key1")), Is.EqualTo(1));
+            Assert.That(eventInfo.Properties["Key1"], Is.EqualTo("Value One"));
+            Assert.That(eventInfo.Properties.Count(x => x.Key.Equals("key2")), Is.EqualTo(1));
+            Assert.That(eventInfo.Properties["key2"], Is.EqualTo("Value Two"));
             A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
         }
 
@@ -63,9 +66,9 @@ namespace NLog.StructuredLogging.Json.Tests
         {
             _logger.ExtendedInfo("hello world", null);
 
-            var parameters = (LogEventInfo)Arguments[0];
-            Assert.AreEqual(LogLevel.Info, parameters.Level);
-            Assert.IsEmpty(parameters.Properties);
+            var eventInfo = _events.Single();
+            Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Info));
+            Assert.That(eventInfo.Properties, Is.Empty);
         }
 
         [Test]
@@ -73,13 +76,13 @@ namespace NLog.StructuredLogging.Json.Tests
         {
             _logger.ExtendedInfo("hello world", new { Key1 = "Value One", key2 = "Value Two" });
 
-            var parameters = (LogEventInfo)Arguments[0];
-            Assert.AreEqual(LogLevel.Info, parameters.Level);
-            Assert.IsNotEmpty(parameters.Properties);
-            Assert.AreEqual(1, parameters.Properties.Count(x => x.Key.Equals("Key1")));
-            Assert.AreEqual("Value One", parameters.Properties["Key1"]);
-            Assert.AreEqual(1, parameters.Properties.Count(x => x.Key.Equals("key2")));
-            Assert.AreEqual("Value Two", parameters.Properties["key2"]);
+            var eventInfo = _events.Single();
+            Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Info));
+            Assert.That(eventInfo.Properties, Is.Not.Empty);
+            Assert.That(eventInfo.Properties.Count(x => x.Key.Equals("Key1")), Is.EqualTo(1));
+            Assert.That(eventInfo.Properties["Key1"], Is.EqualTo("Value One"));
+            Assert.That(eventInfo.Properties.Count(x => x.Key.Equals("key2")), Is.EqualTo(1));
+            Assert.That(eventInfo.Properties["key2"], Is.EqualTo("Value Two"));
             A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
         }
 
@@ -94,13 +97,13 @@ namespace NLog.StructuredLogging.Json.Tests
 
             _logger.ExtendedInfo("hello world", props);
 
-            var parameters = (LogEventInfo)Arguments[0];
-            Assert.AreEqual(LogLevel.Info, parameters.Level);
-            Assert.IsNotEmpty(parameters.Properties);
-            Assert.AreEqual(1, parameters.Properties.Count(x => x.Key.Equals("Key1")));
-            Assert.AreEqual("Value One", parameters.Properties["Key1"]);
-            Assert.AreEqual(1, parameters.Properties.Count(x => x.Key.Equals("key2")));
-            Assert.AreEqual("Value Two", parameters.Properties["key2"]);
+            var eventInfo = _events.Single();
+            Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Info));
+            Assert.That(eventInfo.Properties, Is.Not.Empty);
+            Assert.That(eventInfo.Properties.Count(x => x.Key.Equals("Key1")), Is.EqualTo(1));
+            Assert.That(eventInfo.Properties["Key1"], Is.EqualTo("Value One"));
+            Assert.That(eventInfo.Properties.Count(x => x.Key.Equals("key2")), Is.EqualTo(1));
+            Assert.That(eventInfo.Properties["key2"], Is.EqualTo("Value Two"));
             A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
         }
 
@@ -121,9 +124,9 @@ namespace NLog.StructuredLogging.Json.Tests
         {
             _logger.ExtendedWarn("hello world", null);
 
-            var parameters = (LogEventInfo)Arguments[0];
-            Assert.AreEqual(LogLevel.Warn, parameters.Level);
-            Assert.IsEmpty(parameters.Properties);
+            var eventInfo = _events.Single();
+            Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Warn));
+            Assert.That(eventInfo.Properties, Is.Empty);
         }
 
         [Test]
@@ -143,9 +146,9 @@ namespace NLog.StructuredLogging.Json.Tests
         {
             _logger.ExtendedError("hello world", null);
 
-            var parameters = (LogEventInfo)Arguments[0];
-            Assert.AreEqual(LogLevel.Error, parameters.Level);
-            Assert.IsEmpty(parameters.Properties);
+            var eventInfo = _events.Single();
+            Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Error));
+            Assert.That(eventInfo.Properties, Is.Empty);
             A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
         }
 
@@ -154,13 +157,13 @@ namespace NLog.StructuredLogging.Json.Tests
         {
             _logger.ExtendedError("hello world", new { Key1 = "Value One", key2 = "Value Two" });
 
-            var parameters = (LogEventInfo)Arguments[0];
-            Assert.AreEqual(LogLevel.Error, parameters.Level);
-            Assert.IsNotEmpty(parameters.Properties);
-            Assert.AreEqual(1, parameters.Properties.Count(x => x.Key.Equals("Key1")));
-            Assert.AreEqual("Value One", parameters.Properties["Key1"]);
-            Assert.AreEqual(1, parameters.Properties.Count(x => x.Key.Equals("key2")));
-            Assert.AreEqual("Value Two", parameters.Properties["key2"]);
+            var eventInfo = _events.Single();
+            Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Error));
+            Assert.That(eventInfo.Properties, Is.Not.Empty);
+            Assert.That(eventInfo.Properties.Count(x => x.Key.Equals("Key1")), Is.EqualTo(1));
+            Assert.That(eventInfo.Properties["Key1"], Is.EqualTo("Value One"));
+            Assert.That(eventInfo.Properties.Count(x => x.Key.Equals("key2")), Is.EqualTo(1));
+            Assert.That(eventInfo.Properties["key2"], Is.EqualTo("Value Two"));
             A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
         }
 
@@ -181,10 +184,10 @@ namespace NLog.StructuredLogging.Json.Tests
         {
             _logger.ExtendedException(new Exception("example exception"), "hello world", new {});
 
-            var parameters = (LogEventInfo)Arguments[0];
-            Assert.AreEqual(LogLevel.Error, parameters.Level);
-            Assert.NotNull(parameters.Exception);
-            Assert.AreEqual("example exception", parameters.Exception.Message);
+            var eventInfo = _events.Single();
+            Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Error));
+            Assert.NotNull(eventInfo.Exception);
+            Assert.That(eventInfo.Exception.Message, Is.EqualTo("example exception"));
             A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
         }
 
@@ -193,10 +196,10 @@ namespace NLog.StructuredLogging.Json.Tests
         {
             _logger.ExtendedException(new Exception("example exception"), "hello world", null);
 
-            var parameters = (LogEventInfo)Arguments[0];
-            Assert.AreEqual(LogLevel.Error, parameters.Level);
-            Assert.NotNull(parameters.Exception);
-            Assert.AreEqual("example exception", parameters.Exception.Message);
+            var eventInfo = _events.Single();
+            Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Error));
+            Assert.NotNull(eventInfo.Exception);
+            Assert.That(eventInfo.Exception.Message, Is.EqualTo("example exception"));
             A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
         }
 
@@ -205,10 +208,10 @@ namespace NLog.StructuredLogging.Json.Tests
         {
             _logger.ExtendedException(new Exception("example exception"), "hello world");
 
-            var parameters = (LogEventInfo)Arguments[0];
-            Assert.AreEqual(LogLevel.Error, parameters.Level);
-            Assert.NotNull(parameters.Exception);
-            Assert.AreEqual("example exception", parameters.Exception.Message);
+            var eventInfo = _events.Single();
+            Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Error));
+            Assert.NotNull(eventInfo.Exception);
+            Assert.That(eventInfo.Exception.Message, Is.EqualTo("example exception"));
             A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
         }
 
@@ -217,12 +220,12 @@ namespace NLog.StructuredLogging.Json.Tests
         {
             _logger.ExtendedException(new Exception("example exception"), "hello world", new { });
 
-            var parameters = (LogEventInfo)Arguments[0];
+            var eventInfo = _events.Single();
 
-            Assert.AreEqual(parameters.Properties.Count, 2);
-            Assert.AreEqual(parameters.Properties["ExceptionIndex"], 1);
-            Assert.AreEqual(parameters.Properties["ExceptionCount"], 1);
-            Assert.IsFalse(parameters.Properties.ContainsKey("ExceptionTag"));
+            Assert.That(eventInfo.Properties.Count, Is.EqualTo(2));
+            Assert.That(eventInfo.Properties["ExceptionIndex"], Is.EqualTo(1));
+            Assert.That(eventInfo.Properties["ExceptionCount"], Is.EqualTo(1));
+            Assert.That(eventInfo.Properties.ContainsKey("ExceptionTag"), Is.False);
         }
 
         [Test]
@@ -230,15 +233,15 @@ namespace NLog.StructuredLogging.Json.Tests
         {
             _logger.ExtendedException(new Exception("example exception"), "hello world", new { Key1 = "Value One", key2 = "Value Two" });
 
-            var parameters = (LogEventInfo)Arguments[0];
-            Assert.AreEqual(LogLevel.Error, parameters.Level);
-            Assert.IsNotEmpty(parameters.Properties);
-            Assert.AreEqual(1, parameters.Properties.Count(x => x.Key.Equals("Key1")));
-            Assert.AreEqual("Value One", parameters.Properties["Key1"]);
-            Assert.AreEqual(1, parameters.Properties.Count(x => x.Key.Equals("key2")));
-            Assert.AreEqual("Value Two", parameters.Properties["key2"]);
-            Assert.NotNull(parameters.Exception);
-            Assert.AreEqual("example exception", parameters.Exception.Message);
+            var eventInfo = _events.Single();
+            Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Error));
+            Assert.That(eventInfo.Properties, Is.Not.Empty);
+            Assert.That(eventInfo.Properties.Count(x => x.Key.Equals("Key1")), Is.EqualTo(1));
+            Assert.That(eventInfo.Properties["Key1"], Is.EqualTo("Value One"));
+            Assert.That(eventInfo.Properties.Count(x => x.Key.Equals("key2")), Is.EqualTo(1));
+            Assert.That(eventInfo.Properties["key2"], Is.EqualTo("Value Two"));
+            Assert.NotNull(eventInfo.Exception);
+            Assert.That(eventInfo.Exception.Message, Is.EqualTo("example exception"));
             A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
         }
 
@@ -254,15 +257,15 @@ namespace NLog.StructuredLogging.Json.Tests
 
             _logger.ExtendedException(new Exception("example exception"), "hello world", logProperties);
 
-            var parameters = (LogEventInfo)Arguments[0];
-            Assert.AreEqual(LogLevel.Error, parameters.Level);
-            Assert.IsNotEmpty(parameters.Properties);
-            Assert.AreEqual(1, parameters.Properties.Count(x => x.Key.Equals("Key1")));
-            Assert.AreEqual("Value One", parameters.Properties["Key1"]);
-            Assert.AreEqual(1, parameters.Properties.Count(x => x.Key.Equals("key2")));
-            Assert.AreEqual(2, parameters.Properties["key2"]);
-            Assert.NotNull(parameters.Exception);
-            Assert.AreEqual("example exception", parameters.Exception.Message);
+            var eventInfo = _events.Single();
+            Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Error));
+            Assert.That(eventInfo.Properties, Is.Not.Empty);
+            Assert.That(eventInfo.Properties.Count(x => x.Key.Equals("Key1")), Is.EqualTo(1));
+            Assert.That(eventInfo.Properties["Key1"], Is.EqualTo("Value One"));
+            Assert.That(eventInfo.Properties.Count(x => x.Key.Equals("key2")), Is.EqualTo(1));
+            Assert.That(eventInfo.Properties["key2"], Is.EqualTo(2));
+            Assert.NotNull(eventInfo.Exception);
+            Assert.That(eventInfo.Exception.Message, Is.EqualTo("example exception"));
             A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
         }
 

@@ -185,9 +185,12 @@ namespace NLog.StructuredLogging.Json.Tests
             _logger.ExtendedException(new Exception("example exception"), "hello world", new {});
 
             var eventInfo = _events.Single();
+
             Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Error));
-            Assert.NotNull(eventInfo.Exception);
+
+            Assert.That(eventInfo.Exception, Is.Not.Null);
             Assert.That(eventInfo.Exception.Message, Is.EqualTo("example exception"));
+
             A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
         }
 
@@ -197,9 +200,12 @@ namespace NLog.StructuredLogging.Json.Tests
             _logger.ExtendedException(new Exception("example exception"), "hello world", null);
 
             var eventInfo = _events.Single();
+
             Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Error));
-            Assert.NotNull(eventInfo.Exception);
+
+            Assert.That(eventInfo.Exception, Is.Not.Null);
             Assert.That(eventInfo.Exception.Message, Is.EqualTo("example exception"));
+
             A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
         }
 
@@ -209,9 +215,12 @@ namespace NLog.StructuredLogging.Json.Tests
             _logger.ExtendedException(new Exception("example exception"), "hello world");
 
             var eventInfo = _events.Single();
+
             Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Error));
-            Assert.NotNull(eventInfo.Exception);
+
+            Assert.That(eventInfo.Exception, Is.Not.Null);
             Assert.That(eventInfo.Exception.Message, Is.EqualTo("example exception"));
+
             A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
         }
 
@@ -234,17 +243,19 @@ namespace NLog.StructuredLogging.Json.Tests
             _logger.ExtendedException(new Exception("example exception"), "hello world", new { Key1 = "Value One", key2 = "Value Two" });
 
             var eventInfo = _events.Single();
+
             Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Error));
+
             Assert.That(eventInfo.Properties, Is.Not.Empty);
             Assert.That(eventInfo.Properties.Count(x => x.Key.Equals("Key1")), Is.EqualTo(1));
             Assert.That(eventInfo.Properties["Key1"], Is.EqualTo("Value One"));
             Assert.That(eventInfo.Properties.Count(x => x.Key.Equals("key2")), Is.EqualTo(1));
             Assert.That(eventInfo.Properties["key2"], Is.EqualTo("Value Two"));
-            Assert.NotNull(eventInfo.Exception);
+
+            Assert.That(eventInfo.Exception, Is.Not.Null);
             Assert.That(eventInfo.Exception.Message, Is.EqualTo("example exception"));
             A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
         }
-
 
         [Test]
         public void ExtendedException_WithDictionaryProperties()
@@ -258,13 +269,17 @@ namespace NLog.StructuredLogging.Json.Tests
             _logger.ExtendedException(new Exception("example exception"), "hello world", logProperties);
 
             var eventInfo = _events.Single();
+
             Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Error));
+
             Assert.That(eventInfo.Properties, Is.Not.Empty);
             Assert.That(eventInfo.Properties.Count(x => x.Key.Equals("Key1")), Is.EqualTo(1));
             Assert.That(eventInfo.Properties["Key1"], Is.EqualTo("Value One"));
             Assert.That(eventInfo.Properties.Count(x => x.Key.Equals("key2")), Is.EqualTo(1));
             Assert.That(eventInfo.Properties["key2"], Is.EqualTo(2));
-            Assert.NotNull(eventInfo.Exception);
+
+            Assert.That(eventInfo.Exception, Is.Not.Null);
+
             Assert.That(eventInfo.Exception.Message, Is.EqualTo("example exception"));
             A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
         }

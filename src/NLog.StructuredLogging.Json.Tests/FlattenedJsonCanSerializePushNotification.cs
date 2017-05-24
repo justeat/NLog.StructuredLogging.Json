@@ -28,7 +28,7 @@ namespace NLog.StructuredLogging.Json.Tests
             string result = layout.Render(log);
 
             var token = JToken.Parse(result);
-            Assert.IsTrue(token.HasValues);
+            Assert.That(token.HasValues, Is.True);
         }
     }
 }

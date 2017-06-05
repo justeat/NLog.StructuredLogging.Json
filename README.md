@@ -315,8 +315,8 @@ Don't serialise complex objects such as domain objects or DTOs as values, e.g.:
 ```csharp
 var orderDetails = new OrderDetails
   {
-     OrderId = 123,
-	 Time = DateTimeOffset.UtcNow.AddMinutes(45)
+    OrderId = 123,
+    Time = DateTimeOffset.UtcNow.AddMinutes(45)
   };
 
 // let's log the OrderDetails

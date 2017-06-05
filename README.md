@@ -269,7 +269,23 @@ where we can see that the properties specified in the layout are appended to the
 
 #### Reserved field names
 
-The enforced set of attributes is hard-coded. Supplemental data (from logProperties or the exception data bag), to avoid colliding with this, will be emitted with `data_` or `ex_` prefixes.
+Some attributes are generated automatically. `Message` is the text field, and others are added: `CallSite`, `Level`, `LoggerName`, `Parameters`, `TimeStamp`. If there is an exception, there are several other fields present as well, all starting with `Exception`.
+
+In some cases of name clashes it can keep the value under a different name, e.g. `data_` or `ex_` prefixes. But if this fails the extra value must be discarded.
+
+Don't do this:
+
+```csharp
+_logger.ExtendedInfo("This text is the message", new { Message = someData, TimeStamp = DateTime.Now } );`
+```
+
+Do not add a timestamp at all, this is done automatically, and find a name for the "Message" that does not clash, e.g.:
+
+```csharp
+_logger.ExtendedInfo("This text is the message", new { QueueMessageData = someData } );`
+```
+
+
 
 #### No format strings
 

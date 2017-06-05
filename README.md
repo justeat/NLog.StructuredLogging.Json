@@ -292,7 +292,7 @@ _logger.ExtendedInfo("This text is the message", new { QueueMessageData = someDa
 Don't do this:
 
 ```csharp
-_logger.ExtendedWarn("Order {0} resent", new { OrderId = 1234 } );`
+_logger.ExtendedWarn("Order {0} resent", new { OrderId = 1234 } );
 ```
 
 As there's no format string, the `{0}` is not filled in.

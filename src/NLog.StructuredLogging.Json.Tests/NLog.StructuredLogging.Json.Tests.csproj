@@ -21,7 +21,7 @@
     </Content>
   </ItemGroup> 
   <ItemGroup>
-    <PackageReference Include="FakeItEasy" Version="3.2.0" />
+    <PackageReference Include="FakeItEasy" Version="3.4.2" />
     <PackageReference Include="NUnit" Version="3.7.1" />
     <PackageReference Include="NUnitLite" Version="3.7.1" />
   </ItemGroup> 

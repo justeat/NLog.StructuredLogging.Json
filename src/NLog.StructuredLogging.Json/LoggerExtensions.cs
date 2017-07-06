@@ -1,6 +1,5 @@
 ﻿﻿using System;
  using System.Collections;
- using System.Collections.Generic;
  using System.Diagnostics;
 ﻿using System.Linq;
  using System.Reflection;
@@ -58,12 +57,19 @@ namespace NLog.StructuredLogging.Json
             }
         }
 
+        public static INestedContext BeginScope(this ILogger logger, string scopeName, object logProps = null)
+        {
+            var properties = ObjectDictionaryParser.ConvertObjectToDictionaty(logProps);
+            return new NestedContext(logger, scopeName, properties);
+        }
+
         private static void ExtendedWithException(ILogger logger, LogLevel logLevel, string message, object logProperties,
             Exception ex, int exceptionIndex, int exceptionCount, string tag)
         {
             var log = new LogEventInfo(logLevel, logger.Name, message);
             TransferDataObjectToLogEventProperties(log, logProperties);
             TransferContextDataToLogEventProperties(log);
+            TransferScopeDataToLogEventProperties(log);
 
             if (ex != null)
             {
@@ -109,13 +115,10 @@ namespace NLog.StructuredLogging.Json
             }
             else
             {
-                var props = logProperties.GetType()
-                    .GetProperties()
-                    .Where(p => p.GetIndexParameters().Length == 0);
-
-                foreach (var prop in props)
+                var convertObjectToDictionaty = ObjectDictionaryParser.ConvertObjectToDictionaty(logProperties);
+                foreach (var pair in convertObjectToDictionaty)
                 {
-                    log.Properties.Add(prop.Name, prop.GetValue(logProperties));
+                    log.Properties.Add(pair.Key, pair.Value);
                 }
             }
         }
@@ -138,11 +141,33 @@ namespace NLog.StructuredLogging.Json
             }
         }
 
+        private static void TransferScopeDataToLogEventProperties(LogEventInfo log)
+        {
+            var nestedContexts = NestedDiagnosticsLogicalContext.GetAllObjects();
+            var topScope = nestedContexts?.FirstOrDefault() as NestedContext;
+            if(topScope == null) return;
+
+            
+            foreach (var property in topScope.AttachProperties)
+            {
+                var key = property.Key;
+                if (log.Properties.ContainsKey(key))
+                {
+                    key = "log_nested_context_" + key;
+                }
+
+                if (!log.Properties.ContainsKey(key))
+                {
+                    log.Properties.Add(key, property.Value);
+                }
+            }
+        }
+
         private static readonly TypeInfo DictType = typeof(IDictionary).GetTypeInfo();
 
         private static bool IsDictionary(object logProperties)
         {
             return DictType.IsAssignableFrom(logProperties.GetType().GetTypeInfo());
-        }
+        }        
     }
 }

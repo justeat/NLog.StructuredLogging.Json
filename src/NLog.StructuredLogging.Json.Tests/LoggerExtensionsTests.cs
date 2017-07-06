@@ -34,6 +34,35 @@ namespace NLog.StructuredLogging.Json.Tests
             Assert.That(eventInfo.Properties, Is.Empty);
         }
 
+
+        [Test]
+        public void ExtendedDebug_NoScopeProperties_NoPropertiesSet()
+        {
+            using (_logger.BeginScope("empty scope").WithoutProperties())
+            {
+                
+            }
+
+            _logger.ExtendedDebug("hello world", null);
+
+            var eventInfos = _events.Reverse().ToArray();
+
+            var eventInfo = eventInfos[0];
+            Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Debug));
+            Assert.That(eventInfo.Properties, Is.Empty);
+            Assert.AreEqual(eventInfo.FormattedMessage, "Start logical scope");
+
+            eventInfo = eventInfos[1];
+            Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Debug));
+            Assert.That(eventInfo.Properties, Is.Empty);
+            Assert.AreEqual(eventInfo.FormattedMessage, "Finish logical scope");
+
+            eventInfo = eventInfos[2];
+            Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Debug));
+            Assert.That(eventInfo.Properties, Is.Empty);
+            Assert.AreEqual(eventInfo.FormattedMessage, "hello world");
+        }
+
         [Test]
         public void ExtendedDebug_WithProperties_PublicPropertiesAreInjected()
         {

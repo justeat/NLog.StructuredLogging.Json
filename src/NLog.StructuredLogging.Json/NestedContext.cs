@@ -1,106 +1,177 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using NLog.StructuredLogging.Json.Helpers;
 
 namespace NLog.StructuredLogging.Json
 {
     internal class NestedContext : IDisposable, INestedContext
     {
+        private const string ScopePropertyName = "Scope";
+        private const string ScopeIdPropertyName = "ScopeId";
+        private const string ScopeTracePropertyName = "ScopeTrace";
+
         private readonly ILogger _logger;
         private readonly IDisposable _disposable;
-        private readonly NestedContext _parentScope;
-
-        public INestedContext ParentScope => _parentScope;
-
-        public Guid ScopeId { get; }
-        public string Scope { get; }
-        public string ScopeTrace { get; }
-
-        public Dictionary<string, object> Properties { get; }
-
-        public Dictionary<string, object> AttachProperties { get; private set; }
+        private readonly NestedContext _parentScope;    
+        private readonly ScopeConfiguration _scopeConfiguration;
+        private readonly Guid _scopeId;
+        private readonly string _scope;
+        private readonly string _scopeTrace;
+        private readonly string _scopeNameTrace;
+        private readonly Dictionary<string, object> _properties;
+        private Dictionary<string, object> _attachProperties;        
+        public IReadOnlyDictionary<string, object> Properties => _attachProperties;
 
         public NestedContext(ILogger logger, string scope, IDictionary<string, object> properties)
         {
-            _logger = logger;            
+            _scopeConfiguration = new ScopeConfiguration();
 
-            _parentScope = (NestedDiagnosticsLogicalContext.GetAllObjects() as NestedContext[])?.FirstOrDefault();
+            _logger = logger;
 
-            ScopeId = Guid.NewGuid();
-            Scope = scope;
-            ScopeTrace = GetScopeTrace();
-            Properties = AttachScopeProperties(new Dictionary<string, object>(properties));
-            AttachProperties = AttachScopeProperties(new Dictionary<string, object>(3));
-            ;
-            AttachParentProperties(Properties);
-            AttachParentProperties(AttachProperties);
+            _parentScope = GetParentScope();
 
-            _logger.Extended(LogLevel.Trace, "Start logical scope", Properties);
+            _scopeId = Guid.NewGuid();
+            _scope = scope;
+            _scopeTrace = GetScopeTrace();
+            _scopeNameTrace = GetScopeNameTrace();
+
+            _properties = AttachScopeProperties(new Dictionary<string, object>(properties));
+            _attachProperties = AttachScopeProperties(new Dictionary<string, object>(3));
+            
+            AttachParentProperties(_properties);
+            AttachParentProperties(_attachProperties);
+
+            _logger.Extended(LogLevel.Trace, "Start logical scope", _properties);
 
             _disposable = NestedDiagnosticsLogicalContext.Push(this);
+        }        
+
+        public INestedContext WithInheritedConfiguration()
+        {
+            var parentScopeScopeConfiguration = _parentScope?._scopeConfiguration;
+            if (parentScopeScopeConfiguration != null)
+            {
+                WithConfiguration(parentScopeScopeConfiguration);
+            }
+
+            return this;
+        }
+
+        public INestedContext WithConfiguration(ScopeConfiguration scopeConfiguration)
+        {
+            ApplyIncludePropertiesChanged(scopeConfiguration);
+            ApplyIncludeNamedScopeTraceChanged(scopeConfiguration);
+
+            return this;
+        }
+
+        public INestedContext WithConfiguration(Action<ScopeConfiguration> scopeConfiguration)
+        {
+            var newConfiguration = new ScopeConfiguration();
+            scopeConfiguration(newConfiguration);
+
+            WithConfiguration(newConfiguration);
+
+            return this;
         }
 
         public void Dispose()
         {
-            _logger.Extended(LogLevel.Trace, "Finish logical scope", null);
+            _logger.Extended(LogLevel.Trace, "Finish logical scope", _properties);
             _disposable?.Dispose();
+
+            _properties.Clear();
+            _attachProperties.Clear();
+
+            GC.SuppressFinalize(this);
         }
 
-        public IDisposable WithProperties()
+        private void ApplyIncludePropertiesChanged(ScopeConfiguration scopeConfiguration)
         {
-            AttachProperties = new Dictionary<string, object>(Properties);
-            AttachParentProperties(AttachProperties);
+            if (_scopeConfiguration.IncludeProperties != scopeConfiguration.IncludeProperties)
+            {
+                if (scopeConfiguration.IncludeProperties)
+                {
+                    _attachProperties = _properties;
+                }
+                else
+                {
+                    _attachProperties = AttachScopeProperties(new Dictionary<string, object>(3));
+                    _attachProperties = AttachParentProperties(_attachProperties);
+                }
 
-            return this;
+                _scopeConfiguration.IncludeProperties = scopeConfiguration.IncludeProperties;
+            }
         }
 
-        public IDisposable WithoutProperties()
+        private void ApplyIncludeNamedScopeTraceChanged(ScopeConfiguration scopeConfiguration)
         {
-            return this;
-        }
+            if (_scopeConfiguration.IncludeNamedScopeTrace != scopeConfiguration.IncludeNamedScopeTrace)
+            {
+                if (scopeConfiguration.IncludeNamedScopeTrace)
+                {
+                    _attachProperties[ScopeTracePropertyName] = _scopeNameTrace;
+                }
+                else
+                {
+                    _attachProperties.Remove(ScopeTracePropertyName);
+                }
 
-        public IDisposable SpecificProperties(object logProps)
+                _scopeConfiguration.IncludeNamedScopeTrace = scopeConfiguration.IncludeNamedScopeTrace;
+            }
+        }        
+
+        private NestedContext GetParentScope()
         {
-            var properties = ObjectDictionaryParser.ConvertObjectToDictionaty(logProps);
-            properties = AttachScopeProperties(properties);
-            AttachProperties = new Dictionary<string, object>(properties);
-            AttachParentProperties(AttachProperties);
-
-            return this;
+            var allObjects = NestedDiagnosticsLogicalContext.GetAllObjects();
+            return allObjects?.FirstOrDefault() as NestedContext;
         }
 
         private string GetScopeTrace()
         {
-            return ParentScope == null ?
-                $"{ScopeId}" :
-                $"{_parentScope.ScopeTrace} -> {ScopeId}";
+            return _parentScope == null ?
+                $"{_scopeId}" :
+                $"{_parentScope._scopeTrace} -> {_scopeId}";
         }
 
-        private void AttachParentProperties(Dictionary<string, object> target)
+        private string GetScopeNameTrace()
         {
-            if (ParentScope == null)
-                return;
+            return _parentScope == null ?
+                $"{_scope}" :
+                $"{_parentScope._scopeNameTrace} -> {_scope}";
+        }
 
-            foreach (var property in _parentScope.AttachProperties)
+        private Dictionary<string, object> AttachParentProperties(Dictionary<string, object> target)
+        {
+            if (_parentScope == null)
+                return target;
+
+            return AttachProperties(target, _parentScope._attachProperties);
+        }
+
+        private static Dictionary<string, object> AttachProperties(Dictionary<string, object> target, Dictionary<string, object> source)
+        {            
+            foreach (var property in source)
             {
-                if (property.Key == nameof(Scope) ||
-                    property.Key == nameof(ScopeId) ||
-                    property.Key == nameof(ScopeTrace)) continue;
+                if (property.Key == ScopePropertyName ||
+                    property.Key == ScopeIdPropertyName ||
+                    property.Key == ScopeTracePropertyName) continue;
 
                 var prefix = string.Empty;
                 while (target.ContainsKey(prefix + property.Key)) prefix += "scoped_";
                 target.Add(prefix + property.Key, property.Value);
             }
+
+            return target;
         }
 
         private Dictionary<string, object> AttachScopeProperties(Dictionary<string, object> properties)
         {
-            properties.Add(nameof(Scope), Scope);
-            properties.Add(nameof(ScopeId), ScopeId.ToString());
-            properties.Add(nameof(ScopeTrace), ScopeTrace);
+            properties.Add(ScopePropertyName, _scope);
+            properties.Add(ScopeIdPropertyName, _scopeId.ToString());
+            properties.Add(ScopeTracePropertyName, _scopeTrace);
 
             return properties;
-        }
+        }        
     }
 }

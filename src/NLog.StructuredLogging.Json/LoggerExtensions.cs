@@ -148,7 +148,7 @@ namespace NLog.StructuredLogging.Json
             if(topScope == null) return;
 
             
-            foreach (var property in topScope.AttachProperties)
+            foreach (var property in topScope.Properties)
             {
                 var key = property.Key;
                 if (log.Properties.ContainsKey(key))

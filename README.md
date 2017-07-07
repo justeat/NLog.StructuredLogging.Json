@@ -218,6 +218,83 @@ Add a value to the MDLC like this:
 
 This value will then be attached to all logging that happens afterwards in the same logical thread of execution, even after `await` statements that change the actual thread.
 
+### Logical scopes
+
+To provide your logs with more logical context information you can use `BeginScope` extension.
+```csharp
+using(Logger.BeginScope("first scope description", firstScopeProps)) // first scope, Guid 5D646242-C5A3-4FA0-9A7A-779ED5EA56E2
+{
+  Logger.ExtendedInfo("scoped log", innerLogProps); // first message
+  using(Logger.BeginScope("second scope description", secondScopeProps)) // second scope, Guid 74253AC8-11BB-4CBD-B68D-ED966DBDB478
+  {
+    Logger.ExtendedInfo("scoped log", null); // second message
+    using(Logger.BeginScope("third scope description", thirdScopeProps)) // third scope, Guid 0721B91D-4764-4693-99D9-1AF4B63463A0
+    {
+      Logger.ExtendedInfo("scoped log", null); // third message
+    }
+  }
+}
+```
+Each scope has start and end logs. 
+And in properties we get something like this:
+- For first message:
+```javascript
+  "Scope":"first scope description",
+  "ScopeId":"5D646242-C5A3-4FA0-9A7A-779ED5EA56E2", // first scope GUID
+  "ScopeIdTrace":"5D646242-C5A3-4FA0-9A7A-779ED5EA56E2",
+  "ScopeNameTrace":"first scope description",
+  // innerLogProps go here
+  // firstScopeProps go here
+```
+- For second message:
+```javascript
+  "Scope":"second scope description",
+  "ScopeId":"74253AC8-11BB-4CBD-B68D-ED966DBDB478", // second scope GUID
+  "ScopeIdTrace":"5D646242-C5A3-4FA0-9A7A-779ED5EA56E2 -> 74253AC8-11BB-4CBD-B68D-ED966DBDB478", // first scope GUID -> second scope GUID
+  "ScopeNameTrace":"first scope description -> second scope description",
+  // firstScopeProps go here
+  // secondScopeProps go here
+```
+- For third message:
+```javascript
+  "Scope":"third scope description",
+  "ScopeId":"0721B91D-4764-4693-99D9-1AF4B63463A0", // third scope GUID
+  "ScopeIdTrace":"5D646242-C5A3-4FA0-9A7A-779ED5EA56E2 -> 74253AC8-11BB-4CBD-B68D-ED966DBDB478 -> 0721B91D-4764-4693-99D9-1AF4B63463A0", // first scope GUID -> second scope GUID -> third scope GUID
+  "ScopeNameTrace":"first scope description -> second scope description -> third scope description"
+  // firstScopeProps go here
+  // secondScopeProps go here
+  // thirdScopeProps
+```
+#### Scope configuration
+Multiple parameters are available:
+- IncludeProperties : defines if scope properties should be attached to inner elements (default: `true`)
+- IncludeScopeNameTrace : defines if `ScopeNameTrace` property should be provided (default: `true`)
+- IncludeScopeIdTrace : defines if `ScopeIdTrace` property should be provided (default: `true`)
+- InheritConfiguration : defines if nested scope should inherit configuration of outer scope (default: `false`)
+##### Scope configuration via code
+`BeginScope` has overload with `ScopeConfiguration` parameter:
+```csharp
+using(Logger.BeginScope("scope", properties, new ScopeConfiguration{ ... }))
+{
+    ...
+}
+```
+
+##### Scope configuration via nlog.config
+Configuration via `nlog.config` variables also available:
+```xml
+<nlog xmlns="http://www.nlog-project.org/schemas/NLog.xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ... >
+    
+  <variable name = "include_scope_properties" value="true"/>
+  <variable name = "inherit_scope_configuration" value="false"/>
+  <variable name = "include_scope_name_trace" value="true"/>
+  <variable name = "include_scope_id_trace" value="true"/>
+  
+  ...
+</nlog>
+```
+
 ### Logging additional json properties
 
 You can add context to your log events by using the `JsonWithProperties` layout instead of the `structuredlogging.json` layout renderer.

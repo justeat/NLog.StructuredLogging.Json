@@ -1,7 +1,7 @@
 ﻿﻿using System;
  using System.Collections;
  using System.Diagnostics;
-﻿using System.Linq;
+ using System.Linq;
  using System.Reflection;
  using NLog.StructuredLogging.Json.Helpers;
 
@@ -57,15 +57,15 @@ namespace NLog.StructuredLogging.Json
             }
         }
 
-        public static INestedContext BeginScope(this ILogger logger, string scopeName, object logProps = null)
+        public static INestedContext BeginScope(this ILogger logger, string scopeName, object logProps = null, ScopeConfiguration configuration = null)
         {
-            var properties = ObjectDictionaryParser.ConvertObjectToDictionaty(logProps);
-            return new NestedContext(logger, scopeName, properties);
+            var properties = ObjectToDictionaryConverter.Convert(logProps);
+            return new NestedContext(logger, scopeName, properties, configuration);
         }
 
         private static void ExtendedWithException(ILogger logger, LogLevel logLevel, string message, object logProperties,
             Exception ex, int exceptionIndex, int exceptionCount, string tag)
-        {
+        {            
             var log = new LogEventInfo(logLevel, logger.Name, message);
             TransferDataObjectToLogEventProperties(log, logProperties);
             TransferContextDataToLogEventProperties(log);
@@ -115,8 +115,8 @@ namespace NLog.StructuredLogging.Json
             }
             else
             {
-                var convertObjectToDictionaty = ObjectDictionaryParser.ConvertObjectToDictionaty(logProperties);
-                foreach (var pair in convertObjectToDictionaty)
+                var logPropertiesDictionary = ObjectToDictionaryConverter.Convert(logProperties);
+                foreach (var pair in logPropertiesDictionary)
                 {
                     log.Properties.Add(pair.Key, pair.Value);
                 }
@@ -146,9 +146,41 @@ namespace NLog.StructuredLogging.Json
             var nestedContexts = NestedDiagnosticsLogicalContext.GetAllObjects();
             var topScope = nestedContexts?.FirstOrDefault() as NestedContext;
             if(topScope == null) return;
-
             
-            foreach (var property in topScope.Properties)
+            log.Properties.Add(nameof(topScope.Scope), topScope.Scope);
+            log.Properties.Add(nameof(topScope.ScopeId), topScope.ScopeId.ToString());            
+
+            if(topScope.ScopeConfiguration.IncludeScopeIdTrace)
+                log.Properties.Add(nameof(topScope.ScopeIdTrace), topScope.ScopeIdTrace);
+
+            if (topScope.ScopeConfiguration.IncludeScopeNameTrace)
+                log.Properties.Add(nameof(topScope.ScopeNameTrace), topScope.ScopeNameTrace);
+
+            var properties = topScope.GetOrCalculateProperties(calculatedContext =>
+            {
+                foreach (NestedContext context in nestedContexts)
+                {
+                    if (!context.ScopeConfiguration.IncludeProperties)
+                        continue;
+
+                    foreach (var property in context.Properties)
+                    {
+                        var key = property.Key;
+                        if (calculatedContext.Contains(key))
+                        {
+                            key = "nested_" + key;
+                        }
+
+                        // to omit multiple nesting
+                        if (!calculatedContext.Contains(key))
+                        {
+                            calculatedContext.Add(key, property.Value);
+                        }
+                    }
+                }
+            });
+
+            foreach (var property in properties)
             {
                 var key = property.Key;
                 if (log.Properties.ContainsKey(key))
@@ -156,11 +188,12 @@ namespace NLog.StructuredLogging.Json
                     key = "log_nested_context_" + key;
                 }
 
+                // to omit multiple nesting
                 if (!log.Properties.ContainsKey(key))
                 {
                     log.Properties.Add(key, property.Value);
                 }
-            }
+            }            
         }
 
         private static readonly TypeInfo DictType = typeof(IDictionary).GetTypeInfo();

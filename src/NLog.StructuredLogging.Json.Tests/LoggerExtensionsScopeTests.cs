@@ -2,37 +2,60 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using NUnit.Framework;
 using FakeItEasy;
 
 namespace NLog.StructuredLogging.Json.Tests
 {
-    [TestFixture]
+    [TestFixture("Debug")]
+    [TestFixture("Info")]
+    [TestFixture("Warn")]
+    [TestFixture("Error")]
     public class LoggerExtensionsScopeTests
     {
+        private const string StartLogicalScopeMessage = "Start logical scope";
+        private const string ScopePropertyName = "Scope";
+        private const string ScopeIdTracePropertyName = "ScopeIdTrace";
+        private const string ScopeIdPropertyName = "ScopeId";
+        private const string ScopeNameTracePropertyName = "ScopeNameTrace";
+        private const string FinishLogicalScopeMessage = "Finish logical scope";
         private ILogger _logger;
-        private ConcurrentBag<LogEventInfo> _events;
+        private ConcurrentQueue<LogEventInfo> _events;
+        private readonly LogLevel _logLevel;
 
         private class ExpectedData
         {            
             public LogLevel LogLevel { get; set; }
             public Predicate<IDictionary<object, object>> PropertiesPredicate { get; set; }
             public string Message { get; set; }
+        }        
+
+        public LoggerExtensionsScopeTests(string logLevel)
+        {            
+            _logLevel = LogLevel.FromString(logLevel);
         }
 
         [SetUp]
         public void SetUp()
         {
-            _events = new ConcurrentBag<LogEventInfo>();
+            _events = new ConcurrentQueue<LogEventInfo>();
             _logger = A.Fake<ILogger>();
 
             A.CallTo(() => _logger.Name).Returns("FakeLogger");
             A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored))
-                .Invokes(x => _events.Add((LogEventInfo)x.Arguments[0]));
-        }        
+                .Invokes(x => _events.Enqueue((LogEventInfo)x.Arguments[0]));
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            _events = null;
+            NestedDiagnosticsLogicalContext.Clear();
+        }
 
         [Test]
-        public void ExtendedDebug_Out_Of_Scope_NoScopeProperties_NoPropertiesSet()
+        public void When_Out_Of_Scope_NoScopeProperties_NoPropertiesSet()
         {
             const string scopeName = "empty scope";
             const string message = "hello world";
@@ -42,33 +65,33 @@ namespace NLog.StructuredLogging.Json.Tests
                 new ExpectedData
                 {
                     LogLevel = LogLevel.Trace,
-                    Message = "Start logical scope",
-                    PropertiesPredicate = properties => properties["Scope"].Equals(scopeName) &&                                                        
-                                                        properties["ScopeTrace"].Equals(properties["ScopeId"])
+                    Message = StartLogicalScopeMessage,
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(scopeName) &&                                                        
+                                                        properties[ScopeIdTracePropertyName].Equals(properties[ScopeIdPropertyName])
                 },
                 new ExpectedData
                 {
                     LogLevel = LogLevel.Trace,
-                    Message = "Finish logical scope",
-                    PropertiesPredicate = properties => properties["Scope"].Equals(scopeName) &&
-                                                        properties["ScopeTrace"].Equals(properties["ScopeId"])
+                    Message = FinishLogicalScopeMessage,
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(scopeName) &&
+                                                        properties[ScopeIdTracePropertyName].Equals(properties[ScopeIdPropertyName])
                 },
                 new ExpectedData
                 {
-                    LogLevel = LogLevel.Debug,
+                    LogLevel = _logLevel,
                     Message = message,
                     PropertiesPredicate = properties => !properties.Any()
                 }
             };
 
-            using (_logger.BeginScope(scopeName).WithoutProperties())
+            using (_logger.BeginScope(scopeName, configuration: new ScopeConfiguration{IncludeProperties = false}))
             {
                 
             }
 
-            _logger.ExtendedDebug(message, null);
+            _logger.Extended(_logLevel, message, null);
 
-            var events = _events.Reverse().ToArray();
+            var events = _events.ToArray();
             for (int i = 0; i < events.Length; i++)
             {
                 var eventInfo = events[i];
@@ -81,7 +104,7 @@ namespace NLog.StructuredLogging.Json.Tests
         }
 
         [Test]
-        public void ExtendedDebug_Out_Of_Scope_ScopeProperties_NoPropertiesSet()
+        public void When_Out_Of_Scope_ScopeProperties_PropertiesSet()
         {
             const string scopeName = "empty scope";
             const string message = "hello world";
@@ -92,37 +115,37 @@ namespace NLog.StructuredLogging.Json.Tests
                 new ExpectedData
                 {
                     LogLevel = LogLevel.Trace,
-                    Message = "Start logical scope",
-                    PropertiesPredicate = properties => properties["Scope"].Equals(scopeName) &&                                                        
-                                                        properties["ScopeTrace"].Equals(properties["ScopeId"]) &&
+                    Message = StartLogicalScopeMessage,
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(scopeName) &&                                                        
+                                                        properties[ScopeIdTracePropertyName].Equals(properties[ScopeIdPropertyName]) &&
                                                         properties[nameof(logProps.Key1)].Equals(logProps.Key1) &&
                                                         properties[nameof(logProps.key2)].Equals(logProps.key2)
                 },
                 new ExpectedData
                 {
                     LogLevel = LogLevel.Trace,
-                    Message = "Finish logical scope",
-                    PropertiesPredicate = properties => properties["Scope"].Equals(scopeName) &&
-                                                        properties["ScopeTrace"].Equals(properties["ScopeId"]) &&
+                    Message = FinishLogicalScopeMessage,
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(scopeName) &&
+                                                        properties[ScopeIdTracePropertyName].Equals(properties[ScopeIdPropertyName]) &&
                                                         properties[nameof(logProps.Key1)].Equals(logProps.Key1) &&
                                                         properties[nameof(logProps.key2)].Equals(logProps.key2)
                 },
                 new ExpectedData
                 {
-                    LogLevel = LogLevel.Debug,
+                    LogLevel = _logLevel,
                     Message = message,
                     PropertiesPredicate = properties => !properties.Any()
                 }
             };
 
-            using (_logger.BeginScope(scopeName, logProps).WithoutProperties())
+            using (_logger.BeginScope(scopeName, logProps))
             {
 
             }
 
-            _logger.ExtendedDebug(message, null);
+            _logger.Extended(_logLevel, message, null);
 
-            var events = _events.Reverse().ToArray();
+            var events = _events.ToArray();
             for (int i = 0; i < events.Length; i++)
             {
                 var eventInfo = events[i];
@@ -135,7 +158,7 @@ namespace NLog.StructuredLogging.Json.Tests
         }
 
         [Test]
-        public void ExtendedDebug_ScopeProperties_Default()
+        public void When_ScopeProperties_Default()
         {
             const string scopeName = "empty scope";
             const string message = "hello world";
@@ -146,38 +169,38 @@ namespace NLog.StructuredLogging.Json.Tests
                 new ExpectedData
                 {
                     LogLevel = LogLevel.Trace,
-                    Message = "Start logical scope",
-                    PropertiesPredicate = properties => properties["Scope"].Equals(scopeName) &&
-                                                        properties["ScopeTrace"].Equals(properties["ScopeId"]) &&
+                    Message = StartLogicalScopeMessage,
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(scopeName) &&
+                                                        properties[ScopeIdTracePropertyName].Equals(properties[ScopeIdPropertyName]) &&
                                                         properties[nameof(logProps.Key1)].Equals(logProps.Key1) &&
                                                         properties[nameof(logProps.key2)].Equals(logProps.key2)
                 },
                 new ExpectedData
                 {
-                    LogLevel = LogLevel.Debug,
+                    LogLevel = _logLevel,
                     Message = message,
-                    PropertiesPredicate = properties => properties["Scope"].Equals(scopeName) &&
-                                                        properties["ScopeTrace"].Equals(properties["ScopeId"]) &&
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(scopeName) &&
+                                                        properties[ScopeIdTracePropertyName].Equals(properties[ScopeIdPropertyName]) &&
                                                         properties[nameof(logProps.Key1)].Equals(logProps.Key1) &&
                                                         properties[nameof(logProps.key2)].Equals(logProps.key2)
                 },
                 new ExpectedData
                 {
                     LogLevel = LogLevel.Trace,
-                    Message = "Finish logical scope",
-                    PropertiesPredicate = properties => properties["Scope"].Equals(scopeName) &&
-                                                        properties["ScopeTrace"].Equals(properties["ScopeId"]) &&
+                    Message = FinishLogicalScopeMessage,
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(scopeName) &&
+                                                        properties[ScopeIdTracePropertyName].Equals(properties[ScopeIdPropertyName]) &&
                                                         properties[nameof(logProps.Key1)].Equals(logProps.Key1) &&
                                                         properties[nameof(logProps.key2)].Equals(logProps.key2)
                 }
             };
 
-            using (_logger.BeginScope(scopeName, logProps).WithProperties())
+            using (_logger.BeginScope(scopeName, logProps))
             {
-                _logger.ExtendedDebug(message, null);
+                _logger.Extended(_logLevel, message, null);
             }
 
-            var events = _events.Reverse().ToArray();
+            var events = _events.ToArray();
             for (int i = 0; i < events.Length; i++)
             {
                 var eventInfo = events[i];
@@ -190,7 +213,7 @@ namespace NLog.StructuredLogging.Json.Tests
         }
 
         [Test]
-        public void ExtendedDebug_ScopeProperties_NoPropertiesSet()
+        public void When_ScopeNameTrace_Not_Included()
         {
             const string scopeName = "empty scope";
             const string message = "hello world";
@@ -201,36 +224,41 @@ namespace NLog.StructuredLogging.Json.Tests
                 new ExpectedData
                 {
                     LogLevel = LogLevel.Trace,
-                    Message = "Start logical scope",
-                    PropertiesPredicate = properties => properties["Scope"].Equals(scopeName) &&
-                                                        properties["ScopeTrace"].Equals(properties["ScopeId"]) &&
+                    Message = StartLogicalScopeMessage,
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(scopeName) &&
+                                                        properties[ScopeIdTracePropertyName].Equals(properties[ScopeIdPropertyName]) &&
+                                                        !properties.ContainsKey(ScopeNameTracePropertyName) &&
                                                         properties[nameof(logProps.Key1)].Equals(logProps.Key1) &&
                                                         properties[nameof(logProps.key2)].Equals(logProps.key2)
                 },
                 new ExpectedData
                 {
-                    LogLevel = LogLevel.Debug,
+                    LogLevel = _logLevel,
                     Message = message,
-                    PropertiesPredicate = properties => properties["Scope"].Equals(scopeName) &&
-                                                        properties["ScopeTrace"].Equals(properties["ScopeId"])                                                        
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(scopeName) &&
+                                                        properties[ScopeIdTracePropertyName].Equals(properties[ScopeIdPropertyName]) &&
+                                                        !properties.ContainsKey(ScopeNameTracePropertyName) &&
+                                                        properties[nameof(logProps.Key1)].Equals(logProps.Key1) &&
+                                                        properties[nameof(logProps.key2)].Equals(logProps.key2)
                 },
                 new ExpectedData
                 {
                     LogLevel = LogLevel.Trace,
-                    Message = "Finish logical scope",
-                    PropertiesPredicate = properties => properties["Scope"].Equals(scopeName) &&
-                                                        properties["ScopeTrace"].Equals(properties["ScopeId"]) &&
+                    Message = FinishLogicalScopeMessage,
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(scopeName) &&
+                                                        properties[ScopeIdTracePropertyName].Equals(properties[ScopeIdPropertyName]) &&
+                                                        !properties.ContainsKey(ScopeNameTracePropertyName) &&
                                                         properties[nameof(logProps.Key1)].Equals(logProps.Key1) &&
                                                         properties[nameof(logProps.key2)].Equals(logProps.key2)
                 }
             };
 
-            using (_logger.BeginScope(scopeName, logProps).WithoutProperties())
+            using (_logger.BeginScope(scopeName, logProps, new ScopeConfiguration{IncludeScopeNameTrace = false}))
             {
-                _logger.ExtendedDebug(message, null);
+                _logger.Extended(_logLevel, message, null);
             }
 
-            var events = _events.Reverse().ToArray();
+            var events = _events.ToArray();
             for (int i = 0; i < events.Length; i++)
             {
                 var eventInfo = events[i];
@@ -243,7 +271,203 @@ namespace NLog.StructuredLogging.Json.Tests
         }
 
         [Test]
-        public void ExtendedDebug_ScopeProperties_PropertiesSet()
+        public async Task When_Logging_Happens_In_Parallel()
+        {
+            const string scopeName = "empty scope";
+            const string message = "hello world";
+            var logProps = new { Key1 = "Value One", key2 = "Value Two" };
+            var taskOneLogProps = new { Task = "one"};
+            var taskTwoLogProps = new { Task = "two" };
+
+            var expectedData = new[]
+            {
+                new ExpectedData
+                {
+                    LogLevel = LogLevel.Trace,
+                    Message = StartLogicalScopeMessage,
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(scopeName) &&
+                                                        properties[ScopeIdTracePropertyName].Equals(properties[ScopeIdPropertyName]) &&
+                                                        properties[nameof(logProps.Key1)].Equals(logProps.Key1) &&
+                                                        properties[nameof(logProps.key2)].Equals(logProps.key2)
+                },
+                new ExpectedData
+                {
+                    LogLevel = _logLevel,
+                    Message = message,
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(scopeName) &&
+                                                        properties[ScopeIdTracePropertyName].Equals(properties[ScopeIdPropertyName]) &&
+                                                        properties[nameof(logProps.Key1)].Equals(logProps.Key1) &&
+                                                        properties[nameof(logProps.key2)].Equals(logProps.key2) &&
+                                                        properties.ContainsKey("Task")
+                },
+                new ExpectedData
+                {
+                    LogLevel = _logLevel,
+                    Message = message,
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(scopeName) &&
+                                                        properties[ScopeIdTracePropertyName].Equals(properties[ScopeIdPropertyName]) &&
+                                                        properties[nameof(logProps.Key1)].Equals(logProps.Key1) &&
+                                                        properties[nameof(logProps.key2)].Equals(logProps.key2) &&
+                                                        properties.ContainsKey("Task")
+                },
+                new ExpectedData
+                {
+                    LogLevel = LogLevel.Trace,
+                    Message = FinishLogicalScopeMessage,
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(scopeName) &&
+                                                        properties[ScopeIdTracePropertyName].Equals(properties[ScopeIdPropertyName]) &&
+                                                        properties[nameof(logProps.Key1)].Equals(logProps.Key1) &&
+                                                        properties[nameof(logProps.key2)].Equals(logProps.key2)
+                }
+            };
+
+            using (_logger.BeginScope(scopeName, logProps))
+            {
+                var taskOne = Task.Run(() => _logger.Extended(_logLevel, message, taskOneLogProps));
+                var taskTwo = Task.Run(() => _logger.Extended(_logLevel, message, taskTwoLogProps));
+                await Task.WhenAll(taskOne, taskTwo);
+            }
+
+            var events = _events.ToArray();
+            for (int i = 0; i < events.Length; i++)
+            {
+                var eventInfo = events[i];
+                var expected = expectedData[i];
+
+                Assert.That(eventInfo.Level, Is.EqualTo(expected.LogLevel));
+                Assert.That(expected.PropertiesPredicate(eventInfo.Properties));
+                Assert.AreEqual(eventInfo.FormattedMessage, expected.Message);
+            }
+        }
+
+        [Test]
+        public async Task When_Logging_Happens_In_Parallel_With_Nested_Scope()
+        {
+            const string scopeName = "empty scope";
+            var nestedScopeForTaskTwo = "nested scope for task two";
+            var nestedScopeForTaskOne = "nested scope for task one";
+            const string message = "hello world";
+            var logProps = new { Key1 = "Value One", key2 = "Value Two" };
+            var taskOneLogProps = new { Task = "one" };
+            var taskTwoLogProps = new { Task = "two" };
+
+            object topScopeId = null;
+
+            var expectedData = new[]
+            {
+                new ExpectedData
+                {
+                    LogLevel = LogLevel.Trace,
+                    Message = StartLogicalScopeMessage,
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(scopeName) &&
+                                                        properties[ScopeIdTracePropertyName].Equals(properties[ScopeIdPropertyName]) &&
+                                                        properties[nameof(logProps.Key1)].Equals(logProps.Key1) &&
+                                                        properties[nameof(logProps.key2)].Equals(logProps.key2)
+                },
+                new ExpectedData
+                {
+                    LogLevel = LogLevel.Trace,
+                    Message = StartLogicalScopeMessage,
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(nestedScopeForTaskOne)&&
+                                                        properties[ScopeIdTracePropertyName].Equals($"{topScopeId} -> {properties[ScopeIdPropertyName]}") &&
+                                                        properties[nameof(logProps.Key1)].Equals(logProps.Key1) &&
+                                                        properties[nameof(logProps.key2)].Equals(logProps.key2)
+                },
+                new ExpectedData
+                {
+                    LogLevel = LogLevel.Trace,
+                    Message = StartLogicalScopeMessage,
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(nestedScopeForTaskTwo) &&
+                                                        properties[ScopeIdTracePropertyName].Equals($"{topScopeId} -> {properties[ScopeIdPropertyName]}") &&
+                                                        properties[nameof(logProps.Key1)].Equals(logProps.Key1) &&
+                                                        properties[nameof(logProps.key2)].Equals(logProps.key2)
+                },
+                new ExpectedData
+                {
+                    LogLevel = _logLevel,
+                    Message = message,
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(nestedScopeForTaskOne) &&
+                                                        properties[ScopeIdTracePropertyName].Equals($"{topScopeId} -> {properties[ScopeIdPropertyName]}") &&
+                                                        properties[nameof(logProps.Key1)].Equals(logProps.Key1) &&
+                                                        properties[nameof(logProps.key2)].Equals(logProps.key2) &&
+                                                        properties[nameof(taskOneLogProps.Task)].Equals(taskOneLogProps.Task)
+                },
+                new ExpectedData
+                {
+                    LogLevel = _logLevel,
+                    Message = message,
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(nestedScopeForTaskTwo) &&
+                                                        properties[ScopeIdTracePropertyName].Equals($"{topScopeId} -> {properties[ScopeIdPropertyName]}") &&
+                                                        properties[nameof(logProps.Key1)].Equals(logProps.Key1) &&
+                                                        properties[nameof(logProps.key2)].Equals(logProps.key2) &&
+                                                        properties[nameof(taskTwoLogProps.Task)].Equals(taskTwoLogProps.Task)
+                },                
+                new ExpectedData
+                {
+                    LogLevel = LogLevel.Trace,
+                    Message = FinishLogicalScopeMessage,
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(nestedScopeForTaskOne)&&
+                                                        properties[ScopeIdTracePropertyName].Equals($"{topScopeId} -> {properties[ScopeIdPropertyName]}") &&
+                                                        properties[nameof(logProps.Key1)].Equals(logProps.Key1) &&
+                                                        properties[nameof(logProps.key2)].Equals(logProps.key2)
+                },
+                new ExpectedData
+                {
+                    LogLevel = LogLevel.Trace,
+                    Message = FinishLogicalScopeMessage,
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(nestedScopeForTaskTwo) &&
+                                                        properties[ScopeIdTracePropertyName].Equals($"{topScopeId} -> {properties[ScopeIdPropertyName]}") &&
+                                                        properties[nameof(logProps.Key1)].Equals(logProps.Key1) &&
+                                                        properties[nameof(logProps.key2)].Equals(logProps.key2)
+                },
+                new ExpectedData
+                {
+                    LogLevel = LogLevel.Trace,
+                    Message = FinishLogicalScopeMessage,
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(scopeName) &&
+                                                        properties[ScopeIdTracePropertyName].Equals(properties[ScopeIdPropertyName]) &&
+                                                        properties[nameof(logProps.Key1)].Equals(logProps.Key1) &&
+                                                        properties[nameof(logProps.key2)].Equals(logProps.key2)
+                }
+            };
+
+            using (var topScope = _logger.BeginScope(scopeName, logProps))
+            {
+                topScopeId = topScope.ScopeId;
+                var taskOne = Task.Run(() =>
+                {                    
+                    using (_logger.BeginScope(nestedScopeForTaskOne))
+                    {
+                        _logger.Extended(_logLevel, message, taskOneLogProps);
+                    }
+                });
+                var taskTwo = Task.Run(() =>
+                {                   
+                    using (_logger.BeginScope(nestedScopeForTaskTwo))
+                    {
+                        _logger.Extended(_logLevel, message, taskTwoLogProps);
+                    }
+                });
+                await Task.WhenAll(taskOne, taskTwo);
+            }
+
+            var events = _events.ToArray();
+            for (int i = 0; i < events.Length; i++)
+            {
+                var eventInfo = events[i];                
+                var match = expectedData.SingleOrDefault(o =>
+                {
+                    return o.LogLevel == eventInfo.Level &&
+                           o.PropertiesPredicate(eventInfo.Properties) &&
+                           o.Message.Equals(eventInfo.FormattedMessage);
+                });
+
+                Assert.NotNull(match);
+            }
+        }
+
+        [Test]
+        public void When_ScopeProperties_NoPropertiesSet()
         {
             const string scopeName = "empty scope";
             const string message = "hello world";
@@ -254,38 +478,36 @@ namespace NLog.StructuredLogging.Json.Tests
                 new ExpectedData
                 {
                     LogLevel = LogLevel.Trace,
-                    Message = "Start logical scope",
-                    PropertiesPredicate = properties => properties["Scope"].Equals(scopeName) &&
-                                                        properties["ScopeTrace"].Equals(properties["ScopeId"]) &&
+                    Message = StartLogicalScopeMessage,
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(scopeName) &&
+                                                        properties[ScopeIdTracePropertyName].Equals(properties[ScopeIdPropertyName]) &&
                                                         properties[nameof(logProps.Key1)].Equals(logProps.Key1) &&
                                                         properties[nameof(logProps.key2)].Equals(logProps.key2)
                 },
                 new ExpectedData
                 {
-                    LogLevel = LogLevel.Debug,
+                    LogLevel = _logLevel,
                     Message = message,
-                    PropertiesPredicate = properties => properties["Scope"].Equals(scopeName) &&
-                                                        properties["ScopeTrace"].Equals(properties["ScopeId"]) &&
-                                                        properties[nameof(logProps.Key1)].Equals(logProps.Key1) &&
-                                                        properties[nameof(logProps.key2)].Equals(logProps.key2)
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(scopeName) &&
+                                                        properties[ScopeIdTracePropertyName].Equals(properties[ScopeIdPropertyName])                                                        
                 },
                 new ExpectedData
                 {
                     LogLevel = LogLevel.Trace,
-                    Message = "Finish logical scope",
-                    PropertiesPredicate = properties => properties["Scope"].Equals(scopeName) &&
-                                                        properties["ScopeTrace"].Equals(properties["ScopeId"]) &&
+                    Message = FinishLogicalScopeMessage,
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(scopeName) &&
+                                                        properties[ScopeIdTracePropertyName].Equals(properties[ScopeIdPropertyName]) &&
                                                         properties[nameof(logProps.Key1)].Equals(logProps.Key1) &&
                                                         properties[nameof(logProps.key2)].Equals(logProps.key2)
                 }
             };
 
-            using (_logger.BeginScope(scopeName, logProps).WithProperties())
+            using (_logger.BeginScope(scopeName, logProps, new ScopeConfiguration{IncludeProperties = false}))
             {
-                _logger.ExtendedDebug(message, null);
+                _logger.Extended(_logLevel, message, null);
             }
 
-            var events = _events.Reverse().ToArray();
+            var events = _events.ToArray();
             for (int i = 0; i < events.Length; i++)
             {
                 var eventInfo = events[i];
@@ -295,10 +517,10 @@ namespace NLog.StructuredLogging.Json.Tests
                 Assert.That(expected.PropertiesPredicate(eventInfo.Properties));
                 Assert.AreEqual(eventInfo.FormattedMessage, expected.Message);
             }
-        }
+        }        
 
         [Test]
-        public void ExtendedDebug_ScopeProperties_LoggerProperties_PropertiesSet()
+        public void When_ScopeProperties_LoggerProperties_PropertiesSet()
         {
             const string scopeName = "empty scope";
             const string message = "hello world";
@@ -310,18 +532,18 @@ namespace NLog.StructuredLogging.Json.Tests
                 new ExpectedData
                 {
                     LogLevel = LogLevel.Trace,
-                    Message = "Start logical scope",
-                    PropertiesPredicate = properties => properties["Scope"].Equals(scopeName) &&
-                                                        properties["ScopeTrace"].Equals(properties["ScopeId"]) &&
+                    Message = StartLogicalScopeMessage,
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(scopeName) &&
+                                                        properties[ScopeIdTracePropertyName].Equals(properties[ScopeIdPropertyName]) &&
                                                         properties[nameof(scopeProperties.Key1)].Equals(scopeProperties.Key1) &&
                                                         properties[nameof(scopeProperties.key2)].Equals(scopeProperties.key2)
                 },
                 new ExpectedData
                 {
-                    LogLevel = LogLevel.Debug,
+                    LogLevel = _logLevel,
                     Message = message,
-                    PropertiesPredicate = properties => properties["Scope"].Equals(scopeName) &&
-                                                        properties["ScopeTrace"].Equals(properties["ScopeId"]) &&
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(scopeName) &&
+                                                        properties[ScopeIdTracePropertyName].Equals(properties[ScopeIdPropertyName]) &&
                                                         properties[nameof(scopeProperties.Key1)].Equals(scopeProperties.Key1) &&
                                                         properties[nameof(scopeProperties.key2)].Equals(scopeProperties.key2) &&
                                                         properties[nameof(loggerProperties.LoggerProperty)].Equals(loggerProperties.LoggerProperty)
@@ -329,20 +551,20 @@ namespace NLog.StructuredLogging.Json.Tests
                 new ExpectedData
                 {
                     LogLevel = LogLevel.Trace,
-                    Message = "Finish logical scope",
-                    PropertiesPredicate = properties => properties["Scope"].Equals(scopeName) &&
-                                                        properties["ScopeTrace"].Equals(properties["ScopeId"]) &&
+                    Message = FinishLogicalScopeMessage,
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(scopeName) &&
+                                                        properties[ScopeIdTracePropertyName].Equals(properties[ScopeIdPropertyName]) &&
                                                         properties[nameof(scopeProperties.Key1)].Equals(scopeProperties.Key1) &&
                                                         properties[nameof(scopeProperties.key2)].Equals(scopeProperties.key2)
                 }
             };
 
-            using (_logger.BeginScope(scopeName, scopeProperties).WithProperties())
+            using (_logger.BeginScope(scopeName, scopeProperties))
             {
-                _logger.ExtendedDebug(message, loggerProperties);
+                _logger.Extended(_logLevel, message, loggerProperties);
             }
 
-            var events = _events.Reverse().ToArray();
+            var events = _events.ToArray();
             for (int i = 0; i < events.Length; i++)
             {
                 var eventInfo = events[i];
@@ -355,7 +577,7 @@ namespace NLog.StructuredLogging.Json.Tests
         }
 
         [Test]
-        public void ExtendedDebug_ScopeProperties_NestedScope_NoPropertiesSet()
+        public void When_ScopeProperties_NestedScope_NoPropertiesSet()
         {
             const string scopeName = "empty scope";
             const string nestedScope = "nested scope";
@@ -363,45 +585,56 @@ namespace NLog.StructuredLogging.Json.Tests
             var scopeProperties = new { Key1 = "Value One", key2 = "Value Two" };
             var nestedScopeProperties = new { NestedScopeProperty = "Value Four" };
             var loggerProperties = new { LoggerProperty = "Value Three" };
-            object outerScopeId = null;
+            var loggerPropertiesTwo = new { LoggerProperty = "Value Five" };
+            string outerScopeId = null;
 
             var expectedData = new[]
             {
                 new ExpectedData
                 {
                     LogLevel = LogLevel.Trace,
-                    Message = "Start logical scope",
-                    PropertiesPredicate = properties => properties["Scope"].Equals(scopeName) &&
-                                                        properties["ScopeTrace"].Equals(properties["ScopeId"]) &&
+                    Message = StartLogicalScopeMessage,
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(scopeName) &&
+                                                        properties[ScopeIdTracePropertyName].Equals(properties[ScopeIdPropertyName]) &&
                                                         properties[nameof(scopeProperties.Key1)].Equals(scopeProperties.Key1) &&
                                                         properties[nameof(scopeProperties.key2)].Equals(scopeProperties.key2)
                 },
                 new ExpectedData
                 {
                     LogLevel = LogLevel.Trace,
-                    Message = "Start logical scope",
-                    PropertiesPredicate = properties => properties["Scope"].Equals(nestedScope) &&
-                                                        properties["ScopeTrace"].Equals($"{outerScopeId} -> {properties["ScopeId"]}") &&
+                    Message = StartLogicalScopeMessage,
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(nestedScope) &&
+                                                        properties[ScopeIdTracePropertyName].Equals($"{outerScopeId} -> {properties[ScopeIdPropertyName]}") &&
                                                         properties[nameof(scopeProperties.Key1)].Equals(scopeProperties.Key1) &&
                                                         properties[nameof(scopeProperties.key2)].Equals(scopeProperties.key2) &&
                                                         properties[nameof(nestedScopeProperties.NestedScopeProperty)].Equals(nestedScopeProperties.NestedScopeProperty)                               
                 },
                 new ExpectedData
                 {
-                    LogLevel = LogLevel.Debug,
+                    LogLevel = _logLevel,
                     Message = message,
-                    PropertiesPredicate = properties => properties["Scope"].Equals(nestedScope) &&
-                                                        properties["ScopeTrace"].Equals($"{outerScopeId} -> {properties["ScopeId"]}") &&
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(nestedScope) &&
+                                                        properties[ScopeIdTracePropertyName].Equals($"{outerScopeId} -> {properties[ScopeIdPropertyName]}") &&
                                                         properties[nameof(scopeProperties.Key1)].Equals(scopeProperties.Key1) &&
                                                         properties[nameof(scopeProperties.key2)].Equals(scopeProperties.key2) &&
                                                         properties[nameof(loggerProperties.LoggerProperty)].Equals(loggerProperties.LoggerProperty)
                 },
                 new ExpectedData
                 {
+                    LogLevel = _logLevel,
+                    Message = message,
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(nestedScope) &&
+                                                        properties[ScopeIdTracePropertyName].Equals($"{outerScopeId} -> {properties[ScopeIdPropertyName]}") &&
+                                                        properties[nameof(scopeProperties.Key1)].Equals(scopeProperties.Key1) &&
+                                                        properties[nameof(scopeProperties.key2)].Equals(scopeProperties.key2) &&
+                                                        properties[nameof(loggerPropertiesTwo.LoggerProperty)].Equals(loggerPropertiesTwo.LoggerProperty)
+                },
+                new ExpectedData
+                {
                     LogLevel = LogLevel.Trace,
-                    Message = "Finish logical scope",
-                    PropertiesPredicate = properties => properties["Scope"].Equals(nestedScope) &&
-                                                        properties["ScopeTrace"].Equals($"{outerScopeId} -> {properties["ScopeId"]}") &&
+                    Message = FinishLogicalScopeMessage,
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(nestedScope) &&
+                                                        properties[ScopeIdTracePropertyName].Equals($"{outerScopeId} -> {properties[ScopeIdPropertyName]}") &&
                                                         properties[nameof(scopeProperties.Key1)].Equals(scopeProperties.Key1) &&
                                                         properties[nameof(scopeProperties.key2)].Equals(scopeProperties.key2) &&
                                                         properties[nameof(nestedScopeProperties.NestedScopeProperty)].Equals(nestedScopeProperties.NestedScopeProperty)
@@ -409,24 +642,25 @@ namespace NLog.StructuredLogging.Json.Tests
                 new ExpectedData
                 {
                     LogLevel = LogLevel.Trace,
-                    Message = "Finish logical scope",
-                    PropertiesPredicate = properties => properties["Scope"].Equals(scopeName) &&
-                                                        properties["ScopeTrace"].Equals(properties["ScopeId"]) &&
+                    Message = FinishLogicalScopeMessage,
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(scopeName) &&
+                                                        properties[ScopeIdTracePropertyName].Equals(properties[ScopeIdPropertyName]) &&
                                                         properties[nameof(scopeProperties.Key1)].Equals(scopeProperties.Key1) &&
                                                         properties[nameof(scopeProperties.key2)].Equals(scopeProperties.key2)
                 }
             };
 
-            using (var outerScope = _logger.BeginScope(scopeName, scopeProperties).WithProperties())
+            using (var outerScope = _logger.BeginScope(scopeName, scopeProperties))
             {
-                outerScopeId = outerScope.Properties["ScopeId"];
-                using (_logger.BeginScope(nestedScope, nestedScopeProperties).WithoutProperties())
+                outerScopeId = outerScope.ScopeId.ToString();
+                using (_logger.BeginScope(nestedScope, nestedScopeProperties, new ScopeConfiguration{IncludeProperties = false}))
                 {
-                    _logger.ExtendedDebug(message, loggerProperties);
+                    _logger.Extended(_logLevel, message, loggerProperties);
+                    _logger.Extended(_logLevel, message, loggerPropertiesTwo);
                 }
             }
 
-            var events = _events.Reverse().ToArray();
+            var events = _events.ToArray();
             for (int i = 0; i < events.Length; i++)
             {
                 var eventInfo = events[i];
@@ -438,273 +672,108 @@ namespace NLog.StructuredLogging.Json.Tests
             }
         }
 
-        //[Test]
-        //public void ExtendedDebug_WithProperties_PublicPropertiesAreInjected()
-        //{
-        //    _logger.ExtendedDebug("hello world", new { Key1 = "Value One", key2 = "Value Two" });
+        [Test]
+        public void When_ScopeProperties_NestedScope_InheritConfiguration()
+        {
+            const string scopeName = "empty scope";
+            const string nestedScope = "nested scope";
+            const string message = "hello world";
+            var scopeProperties = new { Key1 = "Value One", key2 = "Value Two" };
+            var nestedScopeProperties = new { NestedScopeProperty = "Value Four" };
+            var loggerProperties = new { LoggerProperty = "Value Three" };
+            var loggerPropertiesTwo = new { LoggerProperty = "Value Five" };
+            string outerScopeName = null;
 
-        //    var eventInfo = _events.Single();
-        //    Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Debug));
-        //    Assert.That(eventInfo.Properties, Is.Not.Empty);
-        //    Assert.That(eventInfo.Properties.Count(x => x.Key.Equals("Key1")), Is.EqualTo(1));
-        //    Assert.That(eventInfo.Properties["Key1"], Is.EqualTo("Value One"));
-        //    Assert.That(eventInfo.Properties.Count(x => x.Key.Equals("key2")), Is.EqualTo(1));
-        //    Assert.That(eventInfo.Properties["key2"], Is.EqualTo("Value Two"));
-        //    A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
-        //}
+            var expectedData = new[]
+            {
+                new ExpectedData
+                {
+                    LogLevel = LogLevel.Trace,
+                    Message = StartLogicalScopeMessage,
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(scopeName) &&
+                                                        properties[ScopeNameTracePropertyName].Equals(properties[ScopePropertyName]) &&
+                                                        !properties.ContainsKey(ScopeIdTracePropertyName) && 
+                                                        properties[nameof(scopeProperties.Key1)].Equals(scopeProperties.Key1) &&
+                                                        properties[nameof(scopeProperties.key2)].Equals(scopeProperties.key2)
+                },
+                new ExpectedData
+                {
+                    LogLevel = LogLevel.Trace,
+                    Message = StartLogicalScopeMessage,
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(nestedScope) &&
+                                                        properties[ScopeNameTracePropertyName].Equals($"{outerScopeName} -> {properties[ScopePropertyName]}") &&
+                                                        !properties.ContainsKey(ScopeIdTracePropertyName) &&
+                                                        properties[nameof(scopeProperties.Key1)].Equals(scopeProperties.Key1) &&
+                                                        properties[nameof(scopeProperties.key2)].Equals(scopeProperties.key2) &&
+                                                        properties[nameof(nestedScopeProperties.NestedScopeProperty)].Equals(nestedScopeProperties.NestedScopeProperty)
+                },
+                new ExpectedData
+                {
+                    LogLevel = _logLevel,
+                    Message = message,
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(nestedScope) &&
+                                                        properties[ScopeNameTracePropertyName].Equals($"{outerScopeName} -> {properties[ScopePropertyName]}") &&
+                                                        !properties.ContainsKey(ScopeIdTracePropertyName) &&
+                                                        properties[nameof(scopeProperties.Key1)].Equals(scopeProperties.Key1) &&
+                                                        properties[nameof(scopeProperties.key2)].Equals(scopeProperties.key2) &&
+                                                        properties[nameof(loggerProperties.LoggerProperty)].Equals(loggerProperties.LoggerProperty)
+                },
+                new ExpectedData
+                {
+                    LogLevel = _logLevel,
+                    Message = message,
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(nestedScope) &&
+                                                        properties[ScopeNameTracePropertyName].Equals($"{outerScopeName} -> {properties[ScopePropertyName]}") &&
+                                                        !properties.ContainsKey(ScopeIdTracePropertyName) &&
+                                                        properties[nameof(scopeProperties.Key1)].Equals(scopeProperties.Key1) &&
+                                                        properties[nameof(scopeProperties.key2)].Equals(scopeProperties.key2) &&
+                                                        properties[nameof(loggerPropertiesTwo.LoggerProperty)].Equals(loggerPropertiesTwo.LoggerProperty)
+                },
+                new ExpectedData
+                {
+                    LogLevel = LogLevel.Trace,
+                    Message = FinishLogicalScopeMessage,
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(nestedScope) &&
+                                                        properties[ScopeNameTracePropertyName].Equals($"{outerScopeName} -> {properties[ScopePropertyName]}") &&
+                                                        !properties.ContainsKey(ScopeIdTracePropertyName) &&
+                                                        properties[nameof(scopeProperties.Key1)].Equals(scopeProperties.Key1) &&
+                                                        properties[nameof(scopeProperties.key2)].Equals(scopeProperties.key2) &&
+                                                        properties[nameof(nestedScopeProperties.NestedScopeProperty)].Equals(nestedScopeProperties.NestedScopeProperty)
+                },
+                new ExpectedData
+                {
+                    LogLevel = LogLevel.Trace,
+                    Message = FinishLogicalScopeMessage,
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(scopeName) &&
+                                                        properties[ScopeNameTracePropertyName].Equals(properties[ScopePropertyName]) &&
+                                                        !properties.ContainsKey(ScopeIdTracePropertyName) &&
+                                                        properties[nameof(scopeProperties.Key1)].Equals(scopeProperties.Key1) &&
+                                                        properties[nameof(scopeProperties.key2)].Equals(scopeProperties.key2)
+                }
+            };
 
-        //[Test]
-        //public void ExtendedDebug_WithIndexerProperties_DoesNotThrow()
-        //{
-        //    var badData = new PropertiesWithIndexer
-        //    {
-        //        Foo = "test",
-        //        Bar = 42
-        //    };
-        //    _logger.ExtendedDebug("hello world", badData);
-        //    Assert.Pass("This checks that the method overloads are able to cope with a object with an indexer property being passed to the logger");
-        //}
+            using (var outerScope = _logger.BeginScope(scopeName, scopeProperties, 
+                new ScopeConfiguration{IncludeScopeIdTrace = false}))
+            {
+                outerScopeName = outerScope.Scope;
+                using (_logger.BeginScope(nestedScope, nestedScopeProperties, 
+                    new ScopeConfiguration{InheritConfiguration = true}))
+                {
+                    _logger.Extended(_logLevel, message, loggerProperties);
+                    _logger.Extended(_logLevel, message, loggerPropertiesTwo);
+                }
+            }
 
-        //[Test]
-        //public void ExtendedInfo_NoProperties_NoPropertiesSet()
-        //{
-        //    _logger.ExtendedInfo("hello world", null);
+            var events = _events.ToArray();
+            for (int i = 0; i < events.Length; i++)
+            {
+                var eventInfo = events[i];
+                var expected = expectedData[i];
 
-        //    var eventInfo = _events.Single();
-        //    Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Info));
-        //    Assert.That(eventInfo.Properties, Is.Empty);
-        //}
-
-        //[Test]
-        //public void ExtendedInfo_WithProperties_PublicPropertiesAreInjected()
-        //{
-        //    _logger.ExtendedInfo("hello world", new { Key1 = "Value One", key2 = "Value Two" });
-
-        //    var eventInfo = _events.Single();
-        //    Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Info));
-        //    Assert.That(eventInfo.Properties, Is.Not.Empty);
-        //    Assert.That(eventInfo.Properties.Count(x => x.Key.Equals("Key1")), Is.EqualTo(1));
-        //    Assert.That(eventInfo.Properties["Key1"], Is.EqualTo("Value One"));
-        //    Assert.That(eventInfo.Properties.Count(x => x.Key.Equals("key2")), Is.EqualTo(1));
-        //    Assert.That(eventInfo.Properties["key2"], Is.EqualTo("Value Two"));
-        //    A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
-        //}
-
-        //[Test]
-        //public void ExtendedInfo_WithDictionary_ValuesAreInjected()
-        //{
-        //    var props = new Dictionary<string, object>
-        //        {
-        //            { "Key1", "Value One" },
-        //            { "key2", "Value Two" }
-        //        };
-
-        //    _logger.ExtendedInfo("hello world", props);
-
-        //    var eventInfo = _events.Single();
-        //    Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Info));
-        //    Assert.That(eventInfo.Properties, Is.Not.Empty);
-        //    Assert.That(eventInfo.Properties.Count(x => x.Key.Equals("Key1")), Is.EqualTo(1));
-        //    Assert.That(eventInfo.Properties["Key1"], Is.EqualTo("Value One"));
-        //    Assert.That(eventInfo.Properties.Count(x => x.Key.Equals("key2")), Is.EqualTo(1));
-        //    Assert.That(eventInfo.Properties["key2"], Is.EqualTo("Value Two"));
-        //    A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
-        //}
-
-        //[Test]
-        //public void ExtendedInfo_WithIndexerProperties_DoesNotThrow()
-        //{
-        //    var badData = new PropertiesWithIndexer
-        //    {
-        //        Foo = "test",
-        //        Bar = 42
-        //    };
-        //    _logger.ExtendedInfo("hello world", badData);
-        //    Assert.Pass("This checks that the method overloads are able to cope with a object with an indexer property being passed to the logger");
-        //}
-
-        //[Test]
-        //public void ExtendedWarn_NoProperties_NoPropertiesSet()
-        //{
-        //    _logger.ExtendedWarn("hello world", null);
-
-        //    var eventInfo = _events.Single();
-        //    Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Warn));
-        //    Assert.That(eventInfo.Properties, Is.Empty);
-        //}
-
-        //[Test]
-        //public void ExtendedWarn_WithIndexerProperties_DoesNotThrow()
-        //{
-        //    var badData = new PropertiesWithIndexer
-        //    {
-        //        Foo = "test",
-        //        Bar = 42
-        //    };
-        //    _logger.ExtendedWarn("hello world", badData);
-        //    Assert.Pass("This checks that the method overloads are able to cope with a object with an indexer property being passed to the logger");
-        //}
-
-        //[Test]
-        //public void ExtendedError_NoProperties_NoPropertiesSet()
-        //{
-        //    _logger.ExtendedError("hello world", null);
-
-        //    var eventInfo = _events.Single();
-        //    Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Error));
-        //    Assert.That(eventInfo.Properties, Is.Empty);
-        //    A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
-        //}
-
-        //[Test]
-        //public void ExtendedError_WithProperties_PublicPropertiesAreInjected()
-        //{
-        //    _logger.ExtendedError("hello world", new { Key1 = "Value One", key2 = "Value Two" });
-
-        //    var eventInfo = _events.Single();
-        //    Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Error));
-        //    Assert.That(eventInfo.Properties, Is.Not.Empty);
-        //    Assert.That(eventInfo.Properties.Count(x => x.Key.Equals("Key1")), Is.EqualTo(1));
-        //    Assert.That(eventInfo.Properties["Key1"], Is.EqualTo("Value One"));
-        //    Assert.That(eventInfo.Properties.Count(x => x.Key.Equals("key2")), Is.EqualTo(1));
-        //    Assert.That(eventInfo.Properties["key2"], Is.EqualTo("Value Two"));
-        //    A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
-        //}
-
-        //[Test]
-        //public void ExtendedError_WithIndexerProperties_DoesNotThrow()
-        //{
-        //    var badData = new PropertiesWithIndexer
-        //    {
-        //        Foo = "test",
-        //        Bar = 42
-        //    };
-        //    _logger.ExtendedError("hello world", badData);
-        //    Assert.Pass("This checks that the method overloads are able to cope with a object with an indexer property being passed to the logger");
-        //}
-
-        //[Test]
-        //public void ExtendedException_NoProperties()
-        //{
-        //    _logger.ExtendedException(new Exception("example exception"), "hello world", new {});
-
-        //    var eventInfo = _events.Single();
-
-        //    Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Error));
-
-        //    Assert.That(eventInfo.Exception, Is.Not.Null);
-        //    Assert.That(eventInfo.Exception.Message, Is.EqualTo("example exception"));
-
-        //    A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
-        //}
-
-        //[Test]
-        //public void ExtendedException_NullProperties()
-        //{
-        //    _logger.ExtendedException(new Exception("example exception"), "hello world", null);
-
-        //    var eventInfo = _events.Single();
-
-        //    Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Error));
-
-        //    Assert.That(eventInfo.Exception, Is.Not.Null);
-        //    Assert.That(eventInfo.Exception.Message, Is.EqualTo("example exception"));
-
-        //    A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
-        //}
-
-        //[Test]
-        //public void ExtendedException_ImplicitNullProperties()
-        //{
-        //    _logger.ExtendedException(new Exception("example exception"), "hello world");
-
-        //    var eventInfo = _events.Single();
-
-        //    Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Error));
-
-        //    Assert.That(eventInfo.Exception, Is.Not.Null);
-        //    Assert.That(eventInfo.Exception.Message, Is.EqualTo("example exception"));
-
-        //    A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
-        //}
-
-        //[Test]
-        //public void ExtendedException_NoProperties_OnlyExceptionTrackingPropertiesAreSet()
-        //{
-        //    _logger.ExtendedException(new Exception("example exception"), "hello world", new { });
-
-        //    var eventInfo = _events.Single();
-
-        //    Assert.That(eventInfo.Properties.Count, Is.EqualTo(2));
-        //    Assert.That(eventInfo.Properties["ExceptionIndex"], Is.EqualTo(1));
-        //    Assert.That(eventInfo.Properties["ExceptionCount"], Is.EqualTo(1));
-        //    Assert.That(eventInfo.Properties.ContainsKey("ExceptionTag"), Is.False);
-        //}
-
-        //[Test]
-        //public void ExtendedException_WithProperties_PublicPropertiesAreInjected()
-        //{
-        //    _logger.ExtendedException(new Exception("example exception"), "hello world", new { Key1 = "Value One", key2 = "Value Two" });
-
-        //    var eventInfo = _events.Single();
-
-        //    Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Error));
-
-        //    Assert.That(eventInfo.Properties, Is.Not.Empty);
-        //    Assert.That(eventInfo.Properties.Count(x => x.Key.Equals("Key1")), Is.EqualTo(1));
-        //    Assert.That(eventInfo.Properties["Key1"], Is.EqualTo("Value One"));
-        //    Assert.That(eventInfo.Properties.Count(x => x.Key.Equals("key2")), Is.EqualTo(1));
-        //    Assert.That(eventInfo.Properties["key2"], Is.EqualTo("Value Two"));
-
-        //    Assert.That(eventInfo.Exception, Is.Not.Null);
-        //    Assert.That(eventInfo.Exception.Message, Is.EqualTo("example exception"));
-        //    A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
-        //}
-
-        //[Test]
-        //public void ExtendedException_WithDictionaryProperties()
-        //{
-        //    var logProperties = new Dictionary<object, object>
-        //    {
-        //        {"Key1", "Value One"},
-        //        {"key2", 2}
-        //    };
-
-        //    _logger.ExtendedException(new Exception("example exception"), "hello world", logProperties);
-
-        //    var eventInfo = _events.Single();
-
-        //    Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Error));
-
-        //    Assert.That(eventInfo.Properties, Is.Not.Empty);
-        //    Assert.That(eventInfo.Properties.Count(x => x.Key.Equals("Key1")), Is.EqualTo(1));
-        //    Assert.That(eventInfo.Properties["Key1"], Is.EqualTo("Value One"));
-        //    Assert.That(eventInfo.Properties.Count(x => x.Key.Equals("key2")), Is.EqualTo(1));
-        //    Assert.That(eventInfo.Properties["key2"], Is.EqualTo(2));
-
-        //    Assert.That(eventInfo.Exception, Is.Not.Null);
-
-        //    Assert.That(eventInfo.Exception.Message, Is.EqualTo("example exception"));
-        //    A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
-        //}
-
-        //[Test]
-        //public void ExtendedExceptionWithStringOnlyDoesNotThrow()
-        //{
-        //    _logger.ExtendedException(new Exception(), null, "boom!");
-        //    Assert.Pass("This checks that the method overloads are able to cope with a string being passed as logProperties, since string >> object");
-        //}
-
-        //[Test]
-        //public void ExtendedException_WithIndexerProperties_DoesNotThrow()
-        //{
-        //    var badData = new PropertiesWithIndexer
-        //    {
-        //            Foo = "test",
-        //            Bar = 42
-        //        };
-        //    _logger.ExtendedException(new Exception(), "test", badData);
-        //    Assert.Pass("This checks that the method overloads are able to cope with a object with an indexer property being passed to the logger");
-        //}
+                Assert.That(eventInfo.Level, Is.EqualTo(expected.LogLevel));
+                Assert.That(expected.PropertiesPredicate(eventInfo.Properties));
+                Assert.AreEqual(eventInfo.FormattedMessage, expected.Message);
+            }
+        }        
     }    
 }

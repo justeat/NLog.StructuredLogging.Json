@@ -145,23 +145,32 @@ namespace NLog.StructuredLogging.Json
         {
             var nestedContexts = NestedDiagnosticsLogicalContext.GetAllObjects();
             var topScope = nestedContexts?.FirstOrDefault() as NestedContext;
-            if(topScope == null) return;
+            if (topScope == null)
+            {
+                return;
+            }
             
             log.Properties.Add(nameof(topScope.Scope), topScope.Scope);
-            log.Properties.Add(nameof(topScope.ScopeId), topScope.ScopeId.ToString());            
+            log.Properties.Add(nameof(topScope.ScopeId), topScope.ScopeId.ToString());
 
-            if(topScope.ScopeConfiguration.IncludeScopeIdTrace)
+            if (topScope.ScopeConfiguration.IncludeScopeIdTrace)
+            {
                 log.Properties.Add(nameof(topScope.ScopeIdTrace), topScope.ScopeIdTrace);
+            }
 
             if (topScope.ScopeConfiguration.IncludeScopeNameTrace)
+            {
                 log.Properties.Add(nameof(topScope.ScopeNameTrace), topScope.ScopeNameTrace);
+            }
 
             var properties = topScope.GetOrCalculateProperties(calculatedContext =>
             {
                 foreach (NestedContext context in nestedContexts)
                 {
                     if (!context.ScopeConfiguration.IncludeProperties)
+                    {
                         continue;
+                    }
 
                     foreach (var property in context.Properties)
                     {

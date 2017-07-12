@@ -82,13 +82,21 @@ namespace NLog.StructuredLogging.Json
 
         private string GetScopeTrace()
         {
-            if (!ScopeConfiguration.IncludeScopeIdTrace) return null;
+            if (!ScopeConfiguration.IncludeScopeIdTrace)
+            {
+                return null;
+            }
+
             return _parentScope == null ? $"{ScopeId}" : $"{_parentScope.ScopeIdTrace} -> {ScopeId}";
         }
 
         private string GetScopeNameTrace()
         {
-            if (!ScopeConfiguration.IncludeScopeNameTrace) return null;
+            if (!ScopeConfiguration.IncludeScopeNameTrace)
+            {
+                return null;
+            }
+
             return _parentScope == null ? $"{Scope}" : $"{_parentScope.ScopeNameTrace} -> {Scope}";
         }
 

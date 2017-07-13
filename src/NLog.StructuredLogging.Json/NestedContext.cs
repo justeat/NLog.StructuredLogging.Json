@@ -13,24 +13,19 @@ namespace NLog.StructuredLogging.Json
         private readonly NestedContext _parentScope;
         private readonly Dictionary<string, object> _properties;
         private CalculatedContext _calculatedLogProperties;
-        private readonly Dictionary<string, object> _logProperties;
 
         public Guid ScopeId { get; }
         public string Scope { get; }
         public string ScopeIdTrace { get; }
         public string ScopeNameTrace { get; }
-        public ScopeConfiguration ScopeConfiguration { get; private set; }
         public IReadOnlyDictionary<string, object> Properties => _properties;
 
 
-        public NestedContext(ILogger logger, string scope, IDictionary<string, object> properties,
-            ScopeConfiguration configuration = null)
+        public NestedContext(ILogger logger, string scope, IDictionary<string, object> properties)
         {
             _logger = logger;
 
             _parentScope = GetParentScope();
-
-            CreateScopeConfiguration(configuration);
 
             ScopeId = Guid.NewGuid();
             Scope = scope;
@@ -41,24 +36,27 @@ namespace NLog.StructuredLogging.Json
 
             _disposable = NestedDiagnosticsLogicalContext.Push(this);
 
-            _logProperties = ScopeConfiguration.IncludeProperties ? null : _properties;
-
-            _logger.Extended(LogLevel.Trace, "Start logical scope", _logProperties);            
+            _logger.Extended(LogLevel.Trace, "Start logical scope", null);
         }
 
         public void Dispose()
         {
-            _logger.Extended(LogLevel.Trace, "Finish logical scope", _logProperties);
+            _logger.Extended(LogLevel.Trace, "Finish logical scope", null);
 
             _disposable?.Dispose();
 
             _properties.Clear();
+            _calculatedLogProperties.Clear();
 
             GC.SuppressFinalize(this);
         }
 
         public IEnumerable<KeyValuePair<string, object>> GetOrCalculateProperties(Action<CalculatedContext> action)
         {
+            /*
+             * This is used to calculate properties that would be logged only once for each scope
+             */
+
             if (_calculatedLogProperties == null)
             {
                 lock (_lock)
@@ -74,7 +72,7 @@ namespace NLog.StructuredLogging.Json
             return _calculatedLogProperties;
         }
 
-        private NestedContext GetParentScope()
+        private static NestedContext GetParentScope()
         {
             var allObjects = NestedDiagnosticsLogicalContext.GetAllObjects();
             return allObjects?.FirstOrDefault() as NestedContext;
@@ -82,47 +80,12 @@ namespace NLog.StructuredLogging.Json
 
         private string GetScopeTrace()
         {
-            if (!ScopeConfiguration.IncludeScopeIdTrace)
-            {
-                return null;
-            }
-
             return _parentScope == null ? $"{ScopeId}" : $"{_parentScope.ScopeIdTrace} -> {ScopeId}";
         }
 
         private string GetScopeNameTrace()
         {
-            if (!ScopeConfiguration.IncludeScopeNameTrace)
-            {
-                return null;
-            }
-
             return _parentScope == null ? $"{Scope}" : $"{_parentScope.ScopeNameTrace} -> {Scope}";
-        }
-
-        private void CreateScopeConfiguration(ScopeConfiguration configuration)
-        {
-            if (configuration == null)
-            {
-                ScopeConfiguration = new ScopeConfiguration();
-            }
-            else if(configuration.InheritConfiguration)
-            {
-                WithInheritedConfiguration();
-            }
-            else
-            {
-                ScopeConfiguration = new ScopeConfiguration(configuration);
-            }            
-        }
-
-        private void WithInheritedConfiguration()
-        {
-            var parentScopeScopeConfiguration = _parentScope?.ScopeConfiguration;
-            if (parentScopeScopeConfiguration != null)
-            {
-                ScopeConfiguration = new ScopeConfiguration(parentScopeScopeConfiguration);
-            }
         }
 
         internal class CalculatedContext : IEnumerable<KeyValuePair<string, object>>
@@ -132,6 +95,8 @@ namespace NLog.StructuredLogging.Json
             public void Add(string key, object obj) => _properties.Add(key, obj);
 
             public bool Contains(string key) => _properties.ContainsKey(key);
+
+            public void Clear() => _properties.Clear();
 
             public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
             {

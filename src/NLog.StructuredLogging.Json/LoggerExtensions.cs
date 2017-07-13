@@ -1,9 +1,9 @@
-﻿﻿using System;
- using System.Collections;
- using System.Diagnostics;
- using System.Linq;
- using System.Reflection;
- using NLog.StructuredLogging.Json.Helpers;
+﻿using System;
+using System.Collections;
+using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
+using NLog.StructuredLogging.Json.Helpers;
 
 namespace NLog.StructuredLogging.Json
 {
@@ -29,12 +29,14 @@ namespace NLog.StructuredLogging.Json
             Extended(logger, LogLevel.Error, message, logProperties, null);
         }
 
-        public static void ExtendedException(this ILogger logger, Exception ex, string message, object logProperties = null)
+        public static void ExtendedException(this ILogger logger, Exception ex, string message,
+            object logProperties = null)
         {
             Extended(logger, LogLevel.Error, message, logProperties, ex);
         }
 
-        public static void Extended(this ILogger logger, LogLevel logLevel, string message, object logProperties, Exception ex = null)
+        public static void Extended(this ILogger logger, LogLevel logLevel, string message, object logProperties,
+            Exception ex = null)
         {
             if (ex == null)
             {
@@ -57,15 +59,16 @@ namespace NLog.StructuredLogging.Json
             }
         }
 
-        public static INestedContext BeginScope(this ILogger logger, string scopeName, object logProps = null, ScopeConfiguration configuration = null)
+        public static INestedContext BeginScope(this ILogger logger, string scopeName, object logProps = null)
         {
             var properties = ObjectToDictionaryConverter.Convert(logProps);
-            return new NestedContext(logger, scopeName, properties, configuration);
+            return new NestedContext(logger, scopeName, properties);
         }
 
-        private static void ExtendedWithException(ILogger logger, LogLevel logLevel, string message, object logProperties,
+        private static void ExtendedWithException(ILogger logger, LogLevel logLevel, string message,
+            object logProperties,
             Exception ex, int exceptionIndex, int exceptionCount, string tag)
-        {            
+        {
             var log = new LogEventInfo(logLevel, logger.Name, message);
             TransferDataObjectToLogEventProperties(log, logProperties);
             TransferContextDataToLogEventProperties(log);
@@ -106,7 +109,7 @@ namespace NLog.StructuredLogging.Json
 
             if (IsDictionary(logProperties))
             {
-                var dict = (IDictionary)logProperties;
+                var dict = (IDictionary) logProperties;
 
                 foreach (var key in dict.Keys)
                 {
@@ -144,34 +147,21 @@ namespace NLog.StructuredLogging.Json
         private static void TransferScopeDataToLogEventProperties(LogEventInfo log)
         {
             var nestedContexts = NestedDiagnosticsLogicalContext.GetAllObjects();
-            var topScope = nestedContexts?.FirstOrDefault() as NestedContext;
-            if (topScope == null)
+            var currentContext = nestedContexts?.FirstOrDefault() as NestedContext;
+            if (currentContext == null)
             {
                 return;
             }
-            
-            log.Properties.Add(nameof(topScope.Scope), topScope.Scope);
-            log.Properties.Add(nameof(topScope.ScopeId), topScope.ScopeId.ToString());
 
-            if (topScope.ScopeConfiguration.IncludeScopeIdTrace)
-            {
-                log.Properties.Add(nameof(topScope.ScopeIdTrace), topScope.ScopeIdTrace);
-            }
+            log.Properties.Add(nameof(currentContext.Scope), currentContext.Scope);
+            log.Properties.Add(nameof(currentContext.ScopeId), currentContext.ScopeId.ToString());
+            log.Properties.Add(nameof(currentContext.ScopeIdTrace), currentContext.ScopeIdTrace);
+            log.Properties.Add(nameof(currentContext.ScopeNameTrace), currentContext.ScopeNameTrace);
 
-            if (topScope.ScopeConfiguration.IncludeScopeNameTrace)
-            {
-                log.Properties.Add(nameof(topScope.ScopeNameTrace), topScope.ScopeNameTrace);
-            }
-
-            var properties = topScope.GetOrCalculateProperties(calculatedContext =>
+            var properties = currentContext.GetOrCalculateProperties(calculatedContext =>
             {
                 foreach (NestedContext context in nestedContexts)
-                {
-                    if (!context.ScopeConfiguration.IncludeProperties)
-                    {
-                        continue;
-                    }
-
+                {                    
                     foreach (var property in context.Properties)
                     {
                         var key = property.Key;
@@ -202,7 +192,7 @@ namespace NLog.StructuredLogging.Json
                 {
                     log.Properties.Add(key, property.Value);
                 }
-            }            
+            }
         }
 
         private static readonly TypeInfo DictType = typeof(IDictionary).GetTypeInfo();
@@ -210,6 +200,6 @@ namespace NLog.StructuredLogging.Json
         private static bool IsDictionary(object logProperties)
         {
             return DictType.IsAssignableFrom(logProperties.GetType().GetTypeInfo());
-        }        
+        }
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace NLog.StructuredLogging.Json
 {
-    public interface INestedContext : IDisposable
+    public interface IScope : IDisposable
     {
         Guid ScopeId { get; }
         string Scope { get; }

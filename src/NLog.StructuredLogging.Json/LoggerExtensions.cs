@@ -38,6 +38,11 @@ namespace NLog.StructuredLogging.Json
         public static void Extended(this ILogger logger, LogLevel logLevel, string message, object logProperties,
             Exception ex = null)
         {
+            if (logger == null)
+            {
+                throw new ArgumentNullException(nameof(logger));
+            }
+
             if (ex == null)
             {
                 ExtendedWithException(logger, logLevel, message, logProperties, null, 0, 0, null);
@@ -59,10 +64,10 @@ namespace NLog.StructuredLogging.Json
             }
         }
 
-        public static INestedContext BeginScope(this ILogger logger, string scopeName, object logProps = null)
+        public static IScope BeginScope(this ILogger logger, string scopeName, object logProps = null)
         {
             var properties = ObjectToDictionaryConverter.Convert(logProps);
-            return new NestedContext(logger, scopeName, properties);
+            return new InternalScope(logger, scopeName, properties);
         }
 
         private static void ExtendedWithException(ILogger logger, LogLevel logLevel, string message,
@@ -146,45 +151,24 @@ namespace NLog.StructuredLogging.Json
 
         private static void TransferScopeDataToLogEventProperties(LogEventInfo log)
         {
-            var nestedContexts = NestedDiagnosticsLogicalContext.GetAllObjects();
-            var currentContext = nestedContexts?.FirstOrDefault() as NestedContext;
-            if (currentContext == null)
+            var allScopes = NestedDiagnosticsLogicalContext.GetAllObjects();
+            var currentScope = allScopes?.FirstOrDefault() as InternalScope;
+            if (currentScope == null)
             {
                 return;
             }
 
-            log.Properties.Add(nameof(currentContext.Scope), currentContext.Scope);
-            log.Properties.Add(nameof(currentContext.ScopeId), currentContext.ScopeId.ToString());
-            log.Properties.Add(nameof(currentContext.ScopeIdTrace), currentContext.ScopeIdTrace);
-            log.Properties.Add(nameof(currentContext.ScopeNameTrace), currentContext.ScopeNameTrace);
+            log.Properties.Add(nameof(currentScope.Scope), currentScope.Scope);
+            log.Properties.Add(nameof(currentScope.ScopeTrace), currentScope.ScopeTrace);
+            log.Properties.Add(nameof(currentScope.ScopeId), currentScope.ScopeId.ToString());
+            log.Properties.Add(nameof(currentScope.ScopeIdTrace), currentScope.ScopeIdTrace);
 
-            var properties = currentContext.GetOrCalculateProperties(calculatedContext =>
-            {
-                foreach (NestedContext context in nestedContexts)
-                {                    
-                    foreach (var property in context.Properties)
-                    {
-                        var key = property.Key;
-                        if (calculatedContext.Contains(key))
-                        {
-                            key = "nested_" + key;
-                        }
-
-                        // to omit multiple nesting
-                        if (!calculatedContext.Contains(key))
-                        {
-                            calculatedContext.Add(key, property.Value);
-                        }
-                    }
-                }
-            });
-
-            foreach (var property in properties)
+            foreach (var property in currentScope.Properties)
             {
                 var key = property.Key;
                 if (log.Properties.ContainsKey(key))
                 {
-                    key = "log_nested_context_" + key;
+                    key = "log_scope_" + key;
                 }
 
                 // to omit multiple nesting

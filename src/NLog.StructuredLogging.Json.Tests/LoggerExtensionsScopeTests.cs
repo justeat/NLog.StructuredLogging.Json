@@ -54,6 +54,21 @@ namespace NLog.StructuredLogging.Json.Tests
         }
 
         [Test]
+        public void Should_Fail_If_Logger_Is_Null()
+        {
+            ILogger nullLogger = null;
+            var exeption = Assert.Throws<ArgumentNullException>(() => nullLogger.BeginScope("should fail"));
+            Assert.AreEqual("logger", exeption.ParamName);
+        }
+
+        [Test]
+        public void Should_Fail_If_Scope_Name_Is_Null()
+        {
+            var exeption = Assert.Throws<ArgumentNullException>(() => _logger.BeginScope(null));
+            Assert.AreEqual("scopeName", exeption.ParamName);
+        }
+
+        [Test]
         public void Should_Not_Attach_Scope_Properties_If_Log_Is_Out_Of_Scope()
         {
             const string scopeName = "empty scope";

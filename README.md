@@ -265,35 +265,6 @@ And in properties we get something like this:
   // secondScopeProps go here
   // thirdScopeProps
 ```
-#### Scope configuration
-Multiple parameters are available:
-- IncludeProperties : defines if scope properties should be attached to inner elements (default: `true`)
-- IncludeScopeNameTrace : defines if `ScopeNameTrace` property should be provided (default: `true`)
-- IncludeScopeIdTrace : defines if `ScopeIdTrace` property should be provided (default: `true`)
-- InheritConfiguration : defines if nested scope should inherit configuration of outer scope (default: `false`)
-##### Scope configuration via code
-`BeginScope` has overload with `ScopeConfiguration` parameter:
-```csharp
-using(Logger.BeginScope("scope", properties, new ScopeConfiguration{ ... }))
-{
-    ...
-}
-```
-
-##### Scope configuration via nlog.config
-Configuration via `nlog.config` variables also available:
-```xml
-<nlog xmlns="http://www.nlog-project.org/schemas/NLog.xsd"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ... >
-    
-  <variable name = "include_scope_properties" value="true"/>
-  <variable name = "inherit_scope_configuration" value="false"/>
-  <variable name = "include_scope_name_trace" value="true"/>
-  <variable name = "include_scope_id_trace" value="true"/>
-  
-  ...
-</nlog>
-```
 
 ### Logging additional json properties
 

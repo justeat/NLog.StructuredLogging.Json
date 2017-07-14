@@ -19,7 +19,7 @@ namespace NLog.StructuredLogging.Json.Helpers
         {
             if (obj == null)
             {
-                return new Dictionary<string, object>();
+                return null;
             }
 
             var dictionary = obj as Dictionary<string, object>;

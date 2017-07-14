@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using NLog.StructuredLogging.Json.Helpers;
 
 namespace NLog.StructuredLogging.Json
@@ -67,7 +66,7 @@ namespace NLog.StructuredLogging.Json
         public static IScope BeginScope(this ILogger logger, string scopeName, object logProps = null)
         {
             var properties = ObjectToDictionaryConverter.Convert(logProps);
-            return new InternalScope(logger, scopeName, properties);
+            return new Scope(logger, scopeName, properties);
         }
 
         private static void ExtendedWithException(ILogger logger, LogLevel logLevel, string message,
@@ -102,32 +101,17 @@ namespace NLog.StructuredLogging.Json
 
         private static void TransferDataObjectToLogEventProperties(LogEventInfo log, object logProperties)
         {
-            if (logProperties == null)
+            if (logProperties == null || logProperties is string)
             {
                 return;
-            }
-
-            if (logProperties is string)
+            }            
+            
+            var properties = logProperties as IDictionary ?? 
+                ObjectToDictionaryConverter.Convert(logProperties);
+            
+            foreach (var key in properties.Keys)
             {
-                return;
-            }
-
-            if (IsDictionary(logProperties))
-            {
-                var dict = (IDictionary) logProperties;
-
-                foreach (var key in dict.Keys)
-                {
-                    log.Properties.Add(key, dict[key]);
-                }
-            }
-            else
-            {
-                var logPropertiesDictionary = ObjectToDictionaryConverter.Convert(logProperties);
-                foreach (var pair in logPropertiesDictionary)
-                {
-                    log.Properties.Add(pair.Key, pair.Value);
-                }
+                log.Properties.Add(key, properties[key]);
             }
         }
 
@@ -152,13 +136,14 @@ namespace NLog.StructuredLogging.Json
         private static void TransferScopeDataToLogEventProperties(LogEventInfo log)
         {
             var allScopes = NestedDiagnosticsLogicalContext.GetAllObjects();
-            var currentScope = allScopes?.FirstOrDefault() as InternalScope;
+            var currentScope = allScopes?.FirstOrDefault() as Scope;
             if (currentScope == null)
             {
                 return;
             }
 
-            log.Properties.Add(nameof(currentScope.Scope), currentScope.Scope);
+            const string scopePropertyName = "Scope";
+            log.Properties.Add(scopePropertyName, currentScope.ScopeName);
             log.Properties.Add(nameof(currentScope.ScopeTrace), currentScope.ScopeTrace);
             log.Properties.Add(nameof(currentScope.ScopeId), currentScope.ScopeId.ToString());
             log.Properties.Add(nameof(currentScope.ScopeIdTrace), currentScope.ScopeIdTrace);
@@ -177,13 +162,6 @@ namespace NLog.StructuredLogging.Json
                     log.Properties.Add(key, property.Value);
                 }
             }
-        }
-
-        private static readonly TypeInfo DictType = typeof(IDictionary).GetTypeInfo();
-
-        private static bool IsDictionary(object logProperties)
-        {
-            return DictType.IsAssignableFrom(logProperties.GetType().GetTypeInfo());
-        }
-    }
+        }      
+    }    
 }

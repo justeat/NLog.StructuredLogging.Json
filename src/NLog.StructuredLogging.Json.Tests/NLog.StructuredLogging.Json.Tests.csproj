@@ -23,7 +23,7 @@
     <PackageReference Include="FakeItEasy" Version="3.4.2" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0"></PackageReference>
     <PackageReference Include="NUnit" Version="3.7.1" />
-	<PackageReference Include="NUnit3TestAdapter" Version="3.8.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.8.0" />
   </ItemGroup> 
   <ItemGroup>
     <ProjectReference Include="..\NLog.StructuredLogging.Json\NLog.StructuredLogging.Json.csproj" />

@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\..\NLog.StructuredLogging.Json.Common.props" />
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
     <TargetFrameworks>netcoreapp1.0;net462</TargetFrameworks>
   </PropertyGroup>
   <PropertyGroup>
@@ -22,8 +21,9 @@
   </ItemGroup> 
   <ItemGroup>
     <PackageReference Include="FakeItEasy" Version="3.4.2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0"></PackageReference>
     <PackageReference Include="NUnit" Version="3.7.1" />
-    <PackageReference Include="NUnitLite" Version="3.7.1" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.8.0" />
   </ItemGroup> 
   <ItemGroup>
     <ProjectReference Include="..\NLog.StructuredLogging.Json\NLog.StructuredLogging.Json.csproj" />

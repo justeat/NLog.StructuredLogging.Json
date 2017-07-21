@@ -14,7 +14,7 @@ pull_requests:
   do_not_increment_build_number: true
 test_script:
   - ps: $wc = New-Object 'System.Net.WebClient'
-  - .\src\NLog.StructuredLogging.Json.Tests\bin\Release\net462\NLog.StructuredLogging.Json.Tests.exe
+  - dotnet test .\src\NLog.StructuredLogging.Json.Tests\NLog.StructuredLogging.Json.Tests.csproj --configuration Debug --framework "netcoreapp1.0" --filter "TestCategory!=CallSite&TestCategory!=NotInNetCore"
   - ps: $wc.UploadFile("https://ci.appveyor.com/api/testresults/nunit3/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\TestResult.xml))
 after_build:
 - dotnet pack .\src\NLog.StructuredLogging.Json\NLog.StructuredLogging.Json.csproj -o ../../output --no-build

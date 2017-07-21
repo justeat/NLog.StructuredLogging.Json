@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Globalization;
 
 namespace NLog.StructuredLogging.Json.Helpers

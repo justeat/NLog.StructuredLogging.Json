@@ -1,10 +1,8 @@
-﻿﻿using System;
- using System.Collections;
- using System.Collections.Generic;
- using System.Diagnostics;
-﻿using System.Linq;
- using System.Reflection;
- using NLog.StructuredLogging.Json.Helpers;
+﻿using System;
+using System.Collections;
+using System.Diagnostics;
+using System.Linq;
+using NLog.StructuredLogging.Json.Helpers;
 
 namespace NLog.StructuredLogging.Json
 {
@@ -30,13 +28,20 @@ namespace NLog.StructuredLogging.Json
             Extended(logger, LogLevel.Error, message, logProperties, null);
         }
 
-        public static void ExtendedException(this ILogger logger, Exception ex, string message, object logProperties = null)
+        public static void ExtendedException(this ILogger logger, Exception ex, string message,
+            object logProperties = null)
         {
             Extended(logger, LogLevel.Error, message, logProperties, ex);
         }
 
-        public static void Extended(this ILogger logger, LogLevel logLevel, string message, object logProperties, Exception ex = null)
+        public static void Extended(this ILogger logger, LogLevel logLevel, string message, object logProperties,
+            Exception ex = null)
         {
+            if (logger == null)
+            {
+                throw new ArgumentNullException(nameof(logger));
+            }
+
             if (ex == null)
             {
                 ExtendedWithException(logger, logLevel, message, logProperties, null, 0, 0, null);
@@ -58,12 +63,20 @@ namespace NLog.StructuredLogging.Json
             }
         }
 
-        private static void ExtendedWithException(ILogger logger, LogLevel logLevel, string message, object logProperties,
+        public static IScope BeginScope(this ILogger logger, string scopeName, object logProps = null)
+        {
+            var properties = ObjectToDictionaryConverter.Convert(logProps);
+            return new Scope(logger, scopeName, properties);
+        }
+
+        private static void ExtendedWithException(ILogger logger, LogLevel logLevel, string message,
+            object logProperties,
             Exception ex, int exceptionIndex, int exceptionCount, string tag)
         {
             var log = new LogEventInfo(logLevel, logger.Name, message);
             TransferDataObjectToLogEventProperties(log, logProperties);
             TransferContextDataToLogEventProperties(log);
+            TransferScopeDataToLogEventProperties(log);
 
             if (ex != null)
             {
@@ -88,35 +101,17 @@ namespace NLog.StructuredLogging.Json
 
         private static void TransferDataObjectToLogEventProperties(LogEventInfo log, object logProperties)
         {
-            if (logProperties == null)
+            if (logProperties == null || logProperties is string)
             {
                 return;
-            }
-
-            if (logProperties is string)
+            }            
+            
+            var properties = logProperties as IDictionary ?? 
+                ObjectToDictionaryConverter.Convert(logProperties);
+            
+            foreach (var key in properties.Keys)
             {
-                return;
-            }
-
-            if (IsDictionary(logProperties))
-            {
-                var dict = (IDictionary)logProperties;
-
-                foreach (var key in dict.Keys)
-                {
-                    log.Properties.Add(key, dict[key]);
-                }
-            }
-            else
-            {
-                var props = logProperties.GetType()
-                    .GetProperties()
-                    .Where(p => p.GetIndexParameters().Length == 0);
-
-                foreach (var prop in props)
-                {
-                    log.Properties.Add(prop.Name, prop.GetValue(logProperties));
-                }
+                log.Properties.Add(key, properties[key]);
             }
         }
 
@@ -138,11 +133,35 @@ namespace NLog.StructuredLogging.Json
             }
         }
 
-        private static readonly TypeInfo DictType = typeof(IDictionary).GetTypeInfo();
-
-        private static bool IsDictionary(object logProperties)
+        private static void TransferScopeDataToLogEventProperties(LogEventInfo log)
         {
-            return DictType.IsAssignableFrom(logProperties.GetType().GetTypeInfo());
-        }
-    }
+            var allScopes = NestedDiagnosticsLogicalContext.GetAllObjects();
+            var currentScope = allScopes?.FirstOrDefault() as Scope;
+            if (currentScope == null)
+            {
+                return;
+            }
+
+            const string scopePropertyName = "Scope";
+            log.Properties.Add(scopePropertyName, currentScope.ScopeName);
+            log.Properties.Add(nameof(currentScope.ScopeTrace), currentScope.ScopeTrace);
+            log.Properties.Add(nameof(currentScope.ScopeId), currentScope.ScopeId.ToString());
+            log.Properties.Add(nameof(currentScope.ScopeIdTrace), currentScope.ScopeIdTrace);
+
+            foreach (var property in currentScope.Properties)
+            {
+                var key = property.Key;
+                if (log.Properties.ContainsKey(key))
+                {
+                    key = "log_scope_" + key;
+                }
+
+                // to omit multiple nesting
+                if (!log.Properties.ContainsKey(key))
+                {
+                    log.Properties.Add(key, property.Value);
+                }
+            }
+        }      
+    }    
 }

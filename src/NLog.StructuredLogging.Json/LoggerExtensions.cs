@@ -35,7 +35,7 @@ namespace NLog.StructuredLogging.Json
         }
 
         public static void Extended(this ILogger logger, LogLevel logLevel, string message, object logProperties,
-            Exception ex = null, string tag = "")
+            Exception ex = null, string exceptionTag = null)
         {
             if (logger == null)
             {
@@ -53,15 +53,15 @@ namespace NLog.StructuredLogging.Json
             else
             {
                 var allExceptions = ConvertException.ToList(ex);
-                if (string.IsNullOrEmpty(tag))
+                if (string.IsNullOrEmpty(exceptionTag))
                 {
-                    tag = Guid.NewGuid().ToString();
+                    exceptionTag = Guid.NewGuid().ToString();
                 }
 
                 for (var index = 0; index < allExceptions.Count; index++)
                 {
                     ExtendedWithException(logger, logLevel, message, logProperties,
-                        allExceptions[index], index + 1, allExceptions.Count, tag);
+                        allExceptions[index], index + 1, allExceptions.Count, exceptionTag);
                 }
             }
         }

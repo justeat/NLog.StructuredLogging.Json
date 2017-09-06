@@ -12,7 +12,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
   </ItemGroup> 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-    <PackageReference Include="NLog" Version="5.0.0-beta09" />
+    <PackageReference Include="NLog" Version="5.0.0-beta10" />
  <PackageReference Include="System.Reflection.Extensions" Version="4.3.0" />
  <PackageReference Include="System.Security.Cryptography.Algorithms" Version="4.3.0" />
   </ItemGroup> 

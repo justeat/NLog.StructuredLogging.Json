@@ -1,4 +1,4 @@
-﻿using NLog.Config;
+using NLog.Config;
 using NLog.Layouts;
 using NLog.Targets;
 using NLog.Time;
@@ -57,6 +57,67 @@ namespace NLog.StructuredLogging.Json.Tests.JsonWithProperties
             var output = target.Logs[0];
             output.ShouldBe(expectedOutput);
         }
+
+        [Test]
+        public void MachineNameInPropertyIsRendered()
+        {
+            const string targetName = "6ccc930b-111c-4df3-8b15-3d5668ea6f00";
+
+            var layout = new JsonWithPropertiesLayout();
+            layout.Properties.Add(new StructuredLoggingProperty("machinename", "${machinename}"));
+
+            var target = new MemoryTarget
+            {
+                Name = targetName,
+                Layout = layout
+            };
+
+            SimpleConfigurator.ConfigureForTargetLogging(target, LogLevel.Trace);
+
+            TimeSource.Current = new FakeTimeSource();
+            var logger = LogManager.GetCurrentClassLogger();
+
+            var logEvent = new LogEventInfo(LogLevel.Trace, LoggerName, TestMessage);
+            logger.Log(logEvent);
+
+            Assert.That(target.Logs.Count, Is.EqualTo(1));
+
+            var output = target.Logs[0];
+            Assert.That(output, Does.Contain("\"machinename\":\""));
+            Assert.That(output, Does.Not.Contain("${machinename}"));
+        }
+
+        [Test, Ignore("Not working")]
+        public void VarInPropertyIsRendered()
+        {
+            const string targetName = "18831108-76ba-417a-a92a-eb1bbf0738de";
+
+            var layout = new JsonWithPropertiesLayout();
+            layout.Properties.Add(new StructuredLoggingProperty("foo", "${var:foo}"));
+
+            var target = new MemoryTarget
+            {
+                Name = targetName,
+                Layout = layout
+            };
+
+            SimpleConfigurator.ConfigureForTargetLogging(target, LogLevel.Trace);
+            LogManager.Configuration.Variables.Add("foo", "fooVarValue");
+
+            TimeSource.Current = new FakeTimeSource();
+            var logger = LogManager.GetCurrentClassLogger();
+
+            var logEvent = new LogEventInfo(LogLevel.Trace, LoggerName, TestMessage);
+            logger.Log(logEvent);
+
+            Assert.That(target.Logs.Count, Is.EqualTo(1));
+
+            var output = target.Logs[0];
+            Assert.That(output, Does.Contain("\"foo\":\""));
+            Assert.That(output, Does.Contain("fooVarValue"));
+            Assert.That(output, Does.Not.Contain("${var:foo}"));
+        }
+
 
         [Test]
         public void PropertyRenderFailure()

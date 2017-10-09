@@ -89,7 +89,7 @@ function DotNetTest {
     param([string]$Project)
 
     if ($DisableCodeCoverage -eq $true) {
-        & $dotnet test $Project --output $OutputPath --framework $framework
+        & $dotnet test $Project --output $OutputPath --framework $framework -v=d
     }
     else {
 

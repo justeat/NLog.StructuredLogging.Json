@@ -26,7 +26,6 @@
     <PackageReference Include="NUnit3TestAdapter" Version="3.8.0" />
     <!-- Workaround for https://github.com/nunit/nunit3-vs-adapter/issues/325 -->
     <PackageReference Include="Mono.Cecil" Version="0.10.0-beta6" />
-    <PackageReference Include="OpenCover" Version="4.6.519" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NLog.StructuredLogging.Json\NLog.StructuredLogging.Json.csproj" />

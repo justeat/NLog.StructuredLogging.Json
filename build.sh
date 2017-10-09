@@ -52,5 +52,5 @@ fi
 dotnet build ./src/NLog.StructuredLogging.Json/NLog.StructuredLogging.Json.csproj --output $artifacts --configuration $configuration --framework "netstandard2.0" || exit 1
 
 if [ $skipTests == 0 ]; then
-    dotnet test ./src/NLog.StructuredLogging.Json.Tests/NLog.StructuredLogging.Json.Tests.csproj --configuration Debug --framework "netcoreapp1.0" --filter "TestCategory!=CallSite&TestCategory!=NotInNetCore" || exit 1
+    dotnet test ./src/NLog.StructuredLogging.Json.Tests/NLog.StructuredLogging.Json.Tests.csproj --configuration Debug --framework "netcoreapp2.0" --filter "TestCategory!=CallSite&TestCategory!=NotInNetCore" || exit 1
 fi

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Newtonsoft.Json.Linq;
@@ -42,9 +42,7 @@ namespace NLog.StructuredLogging.Json.Tests
         [MethodImpl(MethodImplOptions.NoInlining)]
         private void ThisNameWillNotApppearinTheCallSite(LogEventInfo logEvt)
         {
-            #if NET462
             logEvt.SetStackTrace(new StackTrace(1), 0);
-            #endif
         }
 
         [Test]
@@ -60,7 +58,6 @@ namespace NLog.StructuredLogging.Json.Tests
         }
 
         [Test]
-        [Category("CallSite")]
         public void WhenConverted_TheResultProducesCallSiteInJson()
         {
             const string expectedPrefix =

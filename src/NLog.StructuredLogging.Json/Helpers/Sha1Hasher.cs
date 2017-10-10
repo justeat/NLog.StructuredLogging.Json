@@ -1,4 +1,4 @@
-﻿using System.Security.Cryptography;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace NLog.StructuredLogging.Json.Helpers
@@ -14,17 +14,10 @@ namespace NLog.StructuredLogging.Json.Helpers
 
             byte[] hash;
 
-#if NET452
-            using (var sha1 = new SHA1Managed())
-            {
-                hash = sha1.ComputeHash(Encoding.UTF8.GetBytes(input));
-            }
-#else
             using (var sha1 = SHA1.Create())
             {
                 hash = sha1.ComputeHash(Encoding.UTF8.GetBytes(input));
             }
-#endif
 
             var sb = new StringBuilder(hash.Length * 2);
 

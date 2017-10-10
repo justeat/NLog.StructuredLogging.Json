@@ -15,7 +15,6 @@ $libraryProject = Join-Path $solutionPath "src\NLog.StructuredLogging.Json\NLog.
 $testProject = Join-Path $solutionPath "src\NLog.StructuredLogging.Json.Tests\NLog.StructuredLogging.Json.Tests.csproj"
 
 $dotnetVersion = "2.0.0"
-$framework = "net462"
 
 if ($OutputPath -eq "") {
     $OutputPath = Join-Path "$(Convert-Path "$PSScriptRoot")" "artifacts"
@@ -87,7 +86,7 @@ function DotNetPack {
 function DotNetTest {
     param([string]$Project)
 
-    & $dotnet test $Project --output $OutputPath --framework $framework
+    & $dotnet test $Project --output $OutputPath --framework net462
 
     if ($LASTEXITCODE -ne 0) {
         throw "dotnet test failed with exit code $LASTEXITCODE"

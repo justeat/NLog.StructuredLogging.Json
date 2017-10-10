@@ -18,5 +18,8 @@
   </ItemGroup> 
    <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
     <PackageReference Include="NLog" Version="4.4.10" />
-  </ItemGroup> 
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\AssemblyVersion.cs" />
+  </ItemGroup>
 </Project>

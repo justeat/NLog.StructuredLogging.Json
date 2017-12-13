@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
-using System.Linq;
 
 namespace NLog.StructuredLogging.Json.Tests.EndToEnd
 {
@@ -126,13 +125,6 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
         private void ShouldHaveExpectedStacktrace(JObject obj)
         {
             obj.GetValue("ExceptionStackTrace").ToString().ShouldMatch("   at NLog.StructuredLogging.Json.Tests.EndToEnd.NestedExceptionEndToEndTests.PutStackTraceOnException");
-        }
-        private static void StringShouldStartWithOneOf(string value, params string[] targets)
-        {
-            var pass = targets.Any(t => value.StartsWith(t));
-
-            Assert.That(pass, Is.True,
-                "Got " + value + ", expected one of" + string.Join(",", targets));
         }
 
         [Test]

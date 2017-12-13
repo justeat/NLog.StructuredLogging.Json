@@ -5,6 +5,7 @@
 *.orig
 *.cache
 *.sublime-workspace
+.vs
 
 bin
 obj

@@ -1,8 +1,10 @@
-﻿using System;
+using System;
+using NLog.Config;
 using NLog.Layouts;
 
 namespace NLog.StructuredLogging.Json
 {
+    [NLogConfigurationItem]
     public class StructuredLoggingProperty
     {
         public StructuredLoggingProperty() {}

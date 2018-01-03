@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Diagnostics;
 using System.Linq;
@@ -93,11 +93,8 @@ namespace NLog.StructuredLogging.Json
                 }
             }
 
-#if NET452
             var stackTrace = new StackTrace(0);
             log.SetStackTrace(stackTrace, StackHelper.IndexOfFirstCallingMethod(stackTrace.GetFrames()));
-            // todo: There is still no netCore subsitiute for this!
-#endif
 
             logger.Log(log);
         }

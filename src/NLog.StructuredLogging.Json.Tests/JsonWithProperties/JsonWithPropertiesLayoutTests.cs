@@ -87,7 +87,7 @@ namespace NLog.StructuredLogging.Json.Tests.JsonWithProperties
             Assert.That(output, Does.Not.Contain("${machinename}"));
         }
 
-        [Test, Ignore("Not working")]
+        [Test]
         public void VarInPropertyIsRendered()
         {
             const string targetName = "18831108-76ba-417a-a92a-eb1bbf0738de";

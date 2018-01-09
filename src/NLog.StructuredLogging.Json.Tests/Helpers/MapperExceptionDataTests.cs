@@ -76,7 +76,7 @@ namespace NLog.StructuredLogging.Json.Tests.Helpers
             Assert.That(result.ContainsKey("data_name2"), Is.True);
 
             Assert.That(result["data_name1"], Is.EqualTo("test1"));
-            Assert.That(result["data_name2"], Is.EqualTo("test1"));
+            Assert.That(result["data_name2"], Is.EqualTo("test2"));
         }
 
         private static LogEventInfo MakeLogEventInfoWithException(Exception ex)

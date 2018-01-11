@@ -81,6 +81,13 @@ namespace NLog.StructuredLogging.Json.Helpers
 
         public static void HarvestStringToDictionary(IDictionary<string, object> dest, string key, string value, string keyPrefixWhenCollision)
         {
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                return;
+            }
+
+            key = SafeCharsInKey(key);
+
             if (!dest.ContainsKey(key))
             {
                 dest.Add(key, value);
@@ -92,6 +99,11 @@ namespace NLog.StructuredLogging.Json.Helpers
             {
                 dest.Add(prefixedKey, value);
             }
+        }
+
+        private static string SafeCharsInKey(string rawKey)
+        {
+            return rawKey.Replace('.', '_');
         }
     }
 }

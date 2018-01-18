@@ -98,9 +98,6 @@ if ($RestorePackages -eq $true) {
     DotNetRestore $solutionFile
 }
 
-Write-Host "Packaging solution..." -ForegroundColor Green
-
-DotNetPack $libraryProject
 
 if ($SkipTests -eq $false) {
     Write-Host "Running tests..." -ForegroundColor Green
@@ -110,3 +107,7 @@ if ($SkipTests -eq $false) {
 if ($PatchVersion -eq $true) {
     Set-Content ".\AssemblyVersion.cs" $assemblyVersion -Encoding utf8
 }
+
+Write-Host "Packaging solution..." -ForegroundColor Green
+DotNetPack $libraryProject
+

@@ -73,10 +73,10 @@ function DotNetPack {
     param([string]$Project)
 
     if ($VersionSuffix) {
-        & $dotnet pack $Project --output $OutputPath --configuration $Configuration --version-suffix "$VersionSuffix"  
+        & $dotnet pack $Project --output $OutputPath --configuration $Configuration --no-build --version-suffix "$VersionSuffix"  
     }
     else {
-        & $dotnet pack $Project --output $OutputPath --configuration $Configuration
+        & $dotnet pack $Project --output $OutputPath --configuration $Configuration --no-build
     }
     if ($LASTEXITCODE -ne 0) {
         throw "dotnet pack failed with exit code $LASTEXITCODE"

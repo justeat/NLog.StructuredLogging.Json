@@ -1,6 +1,6 @@
 param(
     [Parameter(Mandatory = $false)][switch] $RestorePackages,
-    [Parameter(Mandatory = $false)][string] $Configuration = "Debug",
+    [Parameter(Mandatory = $false)][string] $Configuration = "Release",
     [Parameter(Mandatory = $false)][string] $VersionSuffix = "",
     [Parameter(Mandatory = $false)][string] $OutputPath = "",
     [Parameter(Mandatory = $false)][switch] $PatchVersion,

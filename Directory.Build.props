@@ -2,7 +2,6 @@
   <PropertyGroup>
     <authors>JUST EAT Tech team</authors>
     <owners>JustEat UK Plc</owners>
-    <Company>Just Eat</Company>
     <description>Structured logging with NLog. Generates log entries as JSON.</description>
     <Copyright>Copyright (c) Just Eat 2015-$([System.DateTime]::Now.ToString(yyyy))</Copyright>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>

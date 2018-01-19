@@ -73,10 +73,10 @@ function DotNetPack {
     param([string]$Project)
 
     if ($VersionSuffix) {
-        & $dotnet pack $Project --output $OutputPath --configuration $Configuration --version-suffix "$VersionSuffix" --include-symbols --include-source
+        & $dotnet pack $Project --output $OutputPath --configuration $Configuration --version-suffix "$VersionSuffix" --include-symbols
     }
     else {
-        & $dotnet pack $Project --output $OutputPath --configuration $Configuration --include-symbols --include-source
+        & $dotnet pack $Project --output $OutputPath --configuration $Configuration --include-symbols
     }
     if ($LASTEXITCODE -ne 0) {
         throw "dotnet pack failed with exit code $LASTEXITCODE"
@@ -98,9 +98,6 @@ if ($RestorePackages -eq $true) {
     DotNetRestore $solutionFile
 }
 
-Write-Host "Packaging solution..." -ForegroundColor Green
-
-DotNetPack $libraryProject
 
 if ($SkipTests -eq $false) {
     Write-Host "Running tests..." -ForegroundColor Green
@@ -110,3 +107,7 @@ if ($SkipTests -eq $false) {
 if ($PatchVersion -eq $true) {
     Set-Content ".\AssemblyVersion.cs" $assemblyVersion -Encoding utf8
 }
+
+Write-Host "Packaging solution..." -ForegroundColor Green
+DotNetPack $libraryProject
+

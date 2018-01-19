@@ -9,7 +9,7 @@
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageIconUrl>https://avatars3.githubusercontent.com/u/1516790?s=200</PackageIconUrl>
     <PackageProjectUrl>https://github.com/justeat/NLog.StructuredLogging.Json</PackageProjectUrl>
-    <PackageLicenseUrl>$(PackageProjectUrl)/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseUrl>$(PackageProjectUrl)/blob/master/LICENCE</PackageLicenseUrl>
     <PackageReleaseNotes>$(PackageProjectUrl)/releases</PackageReleaseNotes>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageTags>nlog;logging;json;kibana;elk;structured-logging;structured-logs</PackageTags>

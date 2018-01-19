@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="..\..\NLog.StructuredLogging.Json.Common.props" />
   <PropertyGroup>
     <TargetFrameworks>netcoreapp2.0;net462</TargetFrameworks>
   </PropertyGroup>

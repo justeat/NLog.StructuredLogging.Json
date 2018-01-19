@@ -14,7 +14,7 @@ $solutionFile = Join-Path $solutionPath "NLog.StructuredLogging.Json.sln"
 $libraryProject = Join-Path $solutionPath "src\NLog.StructuredLogging.Json\NLog.StructuredLogging.Json.csproj"
 $testProject = Join-Path $solutionPath "src\NLog.StructuredLogging.Json.Tests\NLog.StructuredLogging.Json.Tests.csproj"
 
-$dotnetVersion = "2.0.0"
+$dotnetVersion = "2.1.4"
 
 if ($OutputPath -eq "") {
     $OutputPath = Join-Path "$(Convert-Path "$PSScriptRoot")" "artifacts"

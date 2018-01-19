@@ -1,26 +1,29 @@
-﻿<Project>
+<Project>
   <PropertyGroup>
-    <Authors>Just Eat</Authors>
-    <Company>Just Eat</Company>
+    <authors>JUST EAT Tech team</authors>
+    <owners>JustEat UK Plc</owners>
+    <description>Structured logging with NLog. Generates log entries as JSON.</description>
     <Copyright>Copyright (c) Just Eat 2015-$([System.DateTime]::Now.ToString(yyyy))</Copyright>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageIconUrl>https://avatars3.githubusercontent.com/u/1516790?s=200</PackageIconUrl>
     <PackageProjectUrl>https://github.com/justeat/NLog.StructuredLogging.Json</PackageProjectUrl>
-    <PackageLicenseUrl>$(PackageProjectUrl)/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseUrl>$(PackageProjectUrl)/blob/master/LICENCE</PackageLicenseUrl>
     <PackageReleaseNotes>$(PackageProjectUrl)/releases</PackageReleaseNotes>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageTags>nlog;logging;json;kibana;elk;structured-logging</PackageTags>
+    <PackageTags>nlog;logging;json;kibana;elk;structured-logging;structured-logs</PackageTags>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>$(PackageProjectUrl).git</RepositoryUrl>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <CLSCompliant>true</CLSCompliant>
+    <ComVisible>false</ComVisible>
   </PropertyGroup>
   <PropertyGroup>
     <Major>2</Major>
     <Minor>0</Minor>
     <Revision>0</Revision>
-	
+
     <BuildNumber Condition=" '$(APPVEYOR_BUILD_NUMBER)' != '' ">$(APPVEYOR_BUILD_NUMBER)</BuildNumber>
     <BuildNumber Condition=" '$(BUILD_NUMBER)' != '' ">$(BUILD_NUMBER)</BuildNumber>
     <BuildNumber Condition=" '$(BuildNumber)' == '' ">0</BuildNumber>
@@ -36,4 +39,4 @@
     <InformationalVersion>$(Major).$(Minor).$(Revision)$(BuildSuffix)</InformationalVersion>
     <PackageVersion>$(Major).$(Minor).$(Revision)$(BuildSuffix)</PackageVersion>
   </PropertyGroup>
-</Project>
+  </Project>

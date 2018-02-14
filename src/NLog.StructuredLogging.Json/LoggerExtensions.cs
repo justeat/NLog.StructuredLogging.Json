@@ -135,8 +135,7 @@ namespace NLog.StructuredLogging.Json
 
         private static void TransferScopeDataToLogEventProperties(LogEventInfo log)
         {
-            var allScopes = NestedDiagnosticsLogicalContext.GetAllObjects();
-            var currentScope = allScopes?.FirstOrDefault() as Scope;
+            var currentScope = NestedDiagnosticsLogicalContext.PeekObject() as Scope;
             if (currentScope == null)
             {
                 return;

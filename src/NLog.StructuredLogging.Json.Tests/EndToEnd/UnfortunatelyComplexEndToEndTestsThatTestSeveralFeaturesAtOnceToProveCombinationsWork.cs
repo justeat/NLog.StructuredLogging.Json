@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -37,14 +37,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
 
         protected virtual IDictionary<string,string> GivenAttributesNotYetAssertable()
         {
-            var result = new Dictionary<string, string>();
-
-            if (!Platform.HasCallSite)
-            {
-                result.Add("CallSite", "Cannot yet generate CallSite in dotNet core");
-            }
-
-            return result;
+            return new Dictionary<string, string>();
         }
 
         protected virtual IList<string> GivenAttributesOnLogEvent()
@@ -152,10 +145,7 @@ With lots of possibly bad things in it";
             yield return new JsonAttribute("ProcessId", "${processid}");
             yield return new JsonAttribute("ThreadId", "${threadid}");
             yield return new JsonAttribute("Parameters", "");
-            if (Platform.HasCallSite)
-            {
-                yield return new JsonAttribute("CallSite", "${callsite}");
-            }
+            yield return new JsonAttribute("CallSite", "${callsite}");
             yield return new JsonAttribute("PropertyOne", "one");
             yield return new JsonAttribute("PropertyTwo", "2");
             yield return new JsonAttribute("Iteration", "1");
@@ -343,7 +333,6 @@ With lots of possibly bad things in it";
         }
 
         [Test]
-        [Category("CallSite")]
         public void ShouldHaveLoggedCallSite()
         {
             foreach (var line in Result)

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using NLog.StructuredLogging.Json.Helpers;
 using NUnit.Framework;
 
@@ -44,6 +44,39 @@ namespace NLog.StructuredLogging.Json.Tests.Helpers
 
             Assert.That(result["ExKey1"], Is.EqualTo("valueOverrridenInProperties"));
             Assert.That(result["ExKey2"], Is.EqualTo("value2"));
+        }
+
+        [Test]
+        public void When_ExceptionDataKeyContainDots()
+        {
+            var logEventInfo = MakeLogEventInfoWithException(ExceptionWithData());
+            logEventInfo.Properties.Clear();
+            logEventInfo.Properties.Add("data.name1", "test1");
+            var result = Mapper.ToDictionary(logEventInfo);
+
+            Assert.That(result.ContainsKey("data.name1"), Is.False);
+            Assert.That(result.ContainsKey("data_name1"), Is.True);
+
+            Assert.That(result["data_name1"], Is.EqualTo("test1"));
+        }
+
+        [Test]
+        public void When_ExceptionDataKeysContainDots()
+        {
+            var logEventInfo = MakeLogEventInfoWithException(ExceptionWithData());
+            logEventInfo.Properties.Clear();
+            logEventInfo.Properties.Add("data.name1", "test1");
+            logEventInfo.Properties.Add("data.name2", "test2");
+
+            var result = Mapper.ToDictionary(logEventInfo);
+
+            Assert.That(result.ContainsKey("data.name1"), Is.False);
+            Assert.That(result.ContainsKey("data.name2"), Is.False);
+            Assert.That(result.ContainsKey("data_name1"), Is.True);
+            Assert.That(result.ContainsKey("data_name2"), Is.True);
+
+            Assert.That(result["data_name1"], Is.EqualTo("test1"));
+            Assert.That(result["data_name2"], Is.EqualTo("test2"));
         }
 
         private static LogEventInfo MakeLogEventInfoWithException(Exception ex)

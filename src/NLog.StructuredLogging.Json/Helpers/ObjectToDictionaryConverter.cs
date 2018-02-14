@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -41,11 +41,7 @@ namespace NLog.StructuredLogging.Json.Helpers
         public class DictionaryConverter
         {
             private static readonly MethodInfo MethodInfo = typeof(Dictionary<string, object>)
-#if NET452
                 .GetMethod("Add", BindingFlags.Public | BindingFlags.Instance, null, new[] { typeof(string), typeof(object) }, null);
-#else
-                .GetMethod("Add", new[] {typeof(string), typeof(object)});
-#endif
 
             private readonly Func<object, Dictionary<string, object>> _parser;
 

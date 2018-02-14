@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -85,10 +85,7 @@ namespace NLog.StructuredLogging.Json
             Add("ProcessId", "${processid}");
             Add("ThreadId", "${threadid}");
 
-            if (Platform.HasCallSite)
-            {
-                Add("CallSite", "${callsite}");
-            }
+            Add("CallSite", "${callsite}");
 
             Add("Exception", "${exception:format=ToString}");
             Add("ExceptionType", "${exception:format=ShortType}");

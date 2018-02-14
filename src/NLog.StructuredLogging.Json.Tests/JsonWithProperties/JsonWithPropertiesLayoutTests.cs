@@ -1,4 +1,5 @@
-﻿using NLog.Config;
+using System;
+using NLog.Config;
 using NLog.Layouts;
 using NLog.Targets;
 using NLog.Time;
@@ -22,8 +23,6 @@ namespace NLog.StructuredLogging.Json.Tests.JsonWithProperties
         [Test]
         public void PropertiesAreAppendedToJsonOutput()
         {
-            const string targetName = "60DDC370-0F37-4072-B006-18C2FEBEC06F";
-
             var layout = new JsonWithPropertiesLayout();
             layout.Properties.Add(new StructuredLoggingProperty("One", new SimpleLayout(TestProperties.One)));
             layout.Properties.Add(new StructuredLoggingProperty("Two", new SimpleLayout(TestProperties.Two.ToString())));
@@ -31,7 +30,7 @@ namespace NLog.StructuredLogging.Json.Tests.JsonWithProperties
 
             var target = new MemoryTarget
             {
-                Name = targetName,
+                Name = Guid.NewGuid().ToString(),
                 Layout = layout
             };
 
@@ -59,17 +58,155 @@ namespace NLog.StructuredLogging.Json.Tests.JsonWithProperties
         }
 
         [Test]
+        public void MachineNameInPropertyIsRendered()
+        {
+            var layout = new JsonWithPropertiesLayout();
+            layout.Properties.Add(new StructuredLoggingProperty("machinename", "${machinename}"));
+
+            var target = new MemoryTarget
+            {
+                Name = Guid.NewGuid().ToString(),
+                Layout = layout
+            };
+
+            SimpleConfigurator.ConfigureForTargetLogging(target, LogLevel.Trace);
+
+            TimeSource.Current = new FakeTimeSource();
+            var logger = LogManager.GetCurrentClassLogger();
+
+            var logEvent = new LogEventInfo(LogLevel.Trace, LoggerName, TestMessage);
+            logger.Log(logEvent);
+
+            Assert.That(target.Logs.Count, Is.EqualTo(1));
+
+            var output = target.Logs[0];
+            Assert.That(output, Does.Contain("\"machinename\":\""));
+            Assert.That(output, Does.Not.Contain("${machinename}"));
+        }
+
+        [Test]
+        public void VarInPropertyIsRendered()
+        {
+            var layout = new JsonWithPropertiesLayout();
+            layout.Properties.Add(new StructuredLoggingProperty("key1", "${var:foo}"));
+
+            var target = new MemoryTarget
+            {
+                Name = Guid.NewGuid().ToString(),
+                Layout = layout
+            };
+
+            var fooValue = Guid.NewGuid().ToString();
+
+            SimpleConfigurator.ConfigureForTargetLogging(target, LogLevel.Trace);
+            LogManager.Configuration.Variables.Add("foo", fooValue);
+
+            TimeSource.Current = new FakeTimeSource();
+            var logger = LogManager.GetCurrentClassLogger();
+
+            var logEvent = new LogEventInfo(LogLevel.Trace, LoggerName, TestMessage);
+            logger.Log(logEvent);
+
+            Assert.That(target.Logs.Count, Is.EqualTo(1));
+
+            var output = target.Logs[0];
+
+            Assert.That(output, Does.Contain(fooValue));
+            Assert.That(output, Does.Contain($"\"key1\":\"{fooValue}\""));
+
+            Assert.That(output, Does.Not.Contain("var:"));
+            Assert.That(output, Does.Not.Contain("${:"));
+            Assert.That(output, Does.Not.Contain("foo"));
+        }
+
+        [Test]
+        public void VarsInPropertyAreRendered()
+        {
+
+            var layout = new JsonWithPropertiesLayout();
+            layout.Properties.Add(new StructuredLoggingProperty("key1", "${var:foo}"));
+            layout.Properties.Add(new StructuredLoggingProperty("key2", "${var:bar}"));
+
+            var target = new MemoryTarget
+            {
+                Name = Guid.NewGuid().ToString(),
+                Layout = layout
+            };
+
+            var fooValue = Guid.NewGuid().ToString();
+            var barValue = Guid.NewGuid().ToString();
+
+            SimpleConfigurator.ConfigureForTargetLogging(target, LogLevel.Trace);
+            LogManager.Configuration.Variables.Add("foo", fooValue);
+            LogManager.Configuration.Variables.Add("bar", barValue);
+
+            TimeSource.Current = new FakeTimeSource();
+            var logger = LogManager.GetCurrentClassLogger();
+
+            var logEvent = new LogEventInfo(LogLevel.Trace, LoggerName, TestMessage);
+            logger.Log(logEvent);
+
+            Assert.That(target.Logs.Count, Is.EqualTo(1));
+
+            var output = target.Logs[0];
+
+            Assert.That(output, Does.Contain(fooValue));
+            Assert.That(output, Does.Contain(barValue));
+
+            Assert.That(output, Does.Contain($"\"key1\":\"{fooValue}\""));
+            Assert.That(output, Does.Contain($"\"key2\":\"{barValue}\""));
+
+            Assert.That(output, Does.Not.Contain("var:"));
+            Assert.That(output, Does.Not.Contain("${:"));
+            Assert.That(output, Does.Not.Contain("foo"));
+            Assert.That(output, Does.Not.Contain("bar"));
+        }
+
+        [Test]
+        public void VarNotFoundIsNotRendered()
+        {
+
+            var layout = new JsonWithPropertiesLayout();
+            layout.Properties.Add(new StructuredLoggingProperty("key1", "${var:nosuchvar}"));
+
+            var target = new MemoryTarget
+            {
+                Name = Guid.NewGuid().ToString(),
+                Layout = layout
+            };
+
+            var fooValue = Guid.NewGuid().ToString();
+
+            SimpleConfigurator.ConfigureForTargetLogging(target, LogLevel.Trace);
+            LogManager.Configuration.Variables.Add("foo", fooValue);
+
+            TimeSource.Current = new FakeTimeSource();
+            var logger = LogManager.GetCurrentClassLogger();
+
+            var logEvent = new LogEventInfo(LogLevel.Trace, LoggerName, TestMessage);
+            logger.Log(logEvent);
+
+            Assert.That(target.Logs.Count, Is.EqualTo(1));
+
+            var output = target.Logs[0];
+
+            Assert.That(output, Does.Not.Contain("key1"));
+            Assert.That(output, Does.Not.Contain("var:"));
+            Assert.That(output, Does.Not.Contain("${:"));
+            Assert.That(output, Does.Not.Contain("nosuchvar"));
+            Assert.That(output, Does.Not.Contain(fooValue));
+        }
+
+        [Test]
         public void PropertyRenderFailure()
         {
-            const string targetName = "0255b1aa-8d55-4163-878c-e003431a4796";
-
             var layout = new JsonWithPropertiesLayout();
             layout.Properties.Add(new StructuredLoggingProperty("One", new FailingLayout()));
             layout.Properties.Add(new StructuredLoggingProperty("Two", new SimpleLayout(TestProperties.Two.ToString())));
 
             var target = new MemoryTarget
             {
-                Name = targetName,
+                Name = Guid.NewGuid().ToString(),
                 Layout = layout
             };
 
@@ -98,8 +235,6 @@ namespace NLog.StructuredLogging.Json.Tests.JsonWithProperties
         [Test]
         public void WhenPropertyNamesAreDuplicated()
         {
-            const string targetName = "650b6a6b-b913-4b36-b594-e9073baf66da";
-
             var layout = new JsonWithPropertiesLayout();
             layout.Properties.Add(new StructuredLoggingProperty("duplicate", new SimpleLayout("value1")));
             layout.Properties.Add(new StructuredLoggingProperty("duplicate", new SimpleLayout("value2")));
@@ -107,7 +242,7 @@ namespace NLog.StructuredLogging.Json.Tests.JsonWithProperties
 
             var target = new MemoryTarget
             {
-                Name = targetName,
+                Name = Guid.NewGuid().ToString(),
                 Layout = layout
             };
 

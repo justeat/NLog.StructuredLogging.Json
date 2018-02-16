@@ -1,6 +1,5 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace NLog.StructuredLogging.Json
 {
@@ -78,8 +77,7 @@ namespace NLog.StructuredLogging.Json
 
         private static Scope GetParentScope()
         {
-            var allObjects = NestedDiagnosticsLogicalContext.GetAllObjects();
-            return allObjects?.FirstOrDefault() as Scope;
+            return NestedDiagnosticsLogicalContext.PeekObject() as Scope;
         }
 
         private string GetScopeTrace() => _parentScope == null ? $"{ScopeId}" : $"{_parentScope.ScopeIdTrace} -> {ScopeId}";

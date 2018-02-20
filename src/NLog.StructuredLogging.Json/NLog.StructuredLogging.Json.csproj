@@ -9,7 +9,7 @@
   </ItemGroup> 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
-     <PackageReference Include="NLog" Version="4.5.0-rc05" />
+     <PackageReference Include="NLog" Version="4.5.0-rc06" />
      <PackageReference Include="SourceLink.Embed.AllSourceFiles" Version="2.8.0" />
   </ItemGroup> 
  </Project>

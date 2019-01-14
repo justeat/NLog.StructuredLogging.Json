@@ -4,7 +4,7 @@ root=$(cd "$(dirname "$0")"; pwd -P)
 artifacts=$root/artifacts
 configuration=Release
 
-export CLI_VERSION="2.1.4"
+export CLI_VERSION="2.1.500"
 export DOTNET_INSTALL_DIR="$root/.dotnetcli"
 export PATH="$DOTNET_INSTALL_DIR:$PATH"
 
@@ -17,4 +17,4 @@ fi
 dotnet restore NLog.StructuredLogging.Json.sln --verbosity minimal || exit 1
 dotnet build src/NLog.StructuredLogging.Json/NLog.StructuredLogging.Json.csproj --output $artifacts --configuration $configuration --framework "netstandard2.0" || exit 1
 
-dotnet test ./src/NLog.StructuredLogging.Json.Tests/NLog.StructuredLogging.Json.Tests.csproj --configuration Debug --framework "netcoreapp2.0" --filter "TestCategory!=NotInNetCore" || exit 1
+dotnet test ./src/NLog.StructuredLogging.Json.Tests/NLog.StructuredLogging.Json.Tests.csproj --configuration Debug --framework "netcoreapp2.1" --filter "TestCategory!=NotInNetCore" || exit 1

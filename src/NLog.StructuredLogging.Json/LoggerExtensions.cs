@@ -8,22 +8,22 @@ namespace NLog.StructuredLogging.Json
 {
     public static class LoggerExtensions
     {
-        public static void ExtendedDebug(this ILogger logger, string message, object logProperties)
+        public static void ExtendedDebug(this ILogger logger, string message, object logProperties = null)
         {
             Extended(logger, LogLevel.Debug, message, logProperties, null);
         }
 
-        public static void ExtendedInfo(this ILogger logger, string message, object logProperties)
+        public static void ExtendedInfo(this ILogger logger, string message, object logProperties = null)
         {
             Extended(logger, LogLevel.Info, message, logProperties, null);
         }
 
-        public static void ExtendedWarn(this ILogger logger, string message, object logProperties)
+        public static void ExtendedWarn(this ILogger logger, string message, object logProperties = null)
         {
             Extended(logger, LogLevel.Warn, message, logProperties, null);
         }
 
-        public static void ExtendedError(this ILogger logger, string message, object logProperties)
+        public static void ExtendedError(this ILogger logger, string message, object logProperties = null)
         {
             Extended(logger, LogLevel.Error, message, logProperties, null);
         }
@@ -104,11 +104,11 @@ namespace NLog.StructuredLogging.Json
             if (logProperties == null || logProperties is string)
             {
                 return;
-            }            
-            
-            var properties = logProperties as IDictionary ?? 
+            }
+
+            var properties = logProperties as IDictionary ??
                 ObjectToDictionaryConverter.Convert(logProperties);
-            
+
             foreach (var key in properties.Keys)
             {
                 log.Properties.Add(key, properties[key]);
@@ -161,6 +161,6 @@ namespace NLog.StructuredLogging.Json
                     log.Properties.Add(key, property.Value);
                 }
             }
-        }      
-    }    
+        }
+    }
 }

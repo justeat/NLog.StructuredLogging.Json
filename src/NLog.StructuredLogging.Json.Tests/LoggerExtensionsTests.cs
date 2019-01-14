@@ -35,6 +35,16 @@ namespace NLog.StructuredLogging.Json.Tests
         }        
 
         [Test]
+        public void ExtendedDebug_ImplicitNoProperties_NoPropertiesSet()
+        {
+            _logger.ExtendedDebug("hello world");
+
+            var eventInfo = _events.Single();
+            Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Debug));
+            Assert.That(eventInfo.Properties, Is.Empty);
+        }
+
+        [Test]
         public void ExtendedDebug_WithProperties_PublicPropertiesAreInjected()
         {
             _logger.ExtendedDebug("hello world", new { Key1 = "Value One", key2 = "Value Two" });
@@ -65,6 +75,16 @@ namespace NLog.StructuredLogging.Json.Tests
         public void ExtendedInfo_NoProperties_NoPropertiesSet()
         {
             _logger.ExtendedInfo("hello world", null);
+
+            var eventInfo = _events.Single();
+            Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Info));
+            Assert.That(eventInfo.Properties, Is.Empty);
+        }
+
+        [Test]
+        public void ExtendedInfo_ImplicitNoProperties_NoPropertiesSet()
+        {
+            _logger.ExtendedInfo("hello world");
 
             var eventInfo = _events.Single();
             Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Info));
@@ -130,6 +150,16 @@ namespace NLog.StructuredLogging.Json.Tests
         }
 
         [Test]
+        public void ExtendedWarn_ImplicitNoProperties_NoPropertiesSet()
+        {
+            _logger.ExtendedWarn("hello world");
+
+            var eventInfo = _events.Single();
+            Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Warn));
+            Assert.That(eventInfo.Properties, Is.Empty);
+        }
+
+        [Test]
         public void ExtendedWarn_WithIndexerProperties_DoesNotThrow()
         {
             var badData = new PropertiesWithIndexer
@@ -145,6 +175,17 @@ namespace NLog.StructuredLogging.Json.Tests
         public void ExtendedError_NoProperties_NoPropertiesSet()
         {
             _logger.ExtendedError("hello world", null);
+
+            var eventInfo = _events.Single();
+            Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Error));
+            Assert.That(eventInfo.Properties, Is.Empty);
+            A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
+        }
+
+        [Test]
+        public void ExtendedError_ImplicitNoProperties_NoPropertiesSet()
+        {
+            _logger.ExtendedError("hello world");
 
             var eventInfo = _events.Single();
             Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Error));

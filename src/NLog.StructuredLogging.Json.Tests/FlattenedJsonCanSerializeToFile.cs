@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.IO;
+using System.Text;
 using Newtonsoft.Json.Linq;
 using NLog.Config;
 using NLog.Targets;
@@ -24,7 +25,8 @@ namespace NLog.StructuredLogging.Json.Tests
                     Hello = "Hello",
                     SomeText = "this is some, text. It has! punctation?",
                     ANumber = 42,
-                    Sometime = new DateTime(2017, 4, 5, 6, 7, 8, DateTimeKind.Utc)                    
+                    Sometime = new DateTime(2017, 4, 5, 6, 7, 8, DateTimeKind.Utc),
+                    TextWithUnicode = "Unicode text: ß ðá åö лиц 我们 거리"
                 });
 
             LogManager.Flush();
@@ -50,9 +52,18 @@ namespace NLog.StructuredLogging.Json.Tests
             Assert.That(json.GetValue("SomeText"), Is.Not.Null);
             Assert.That(json.GetValue("ANumber"), Is.Not.Null);
             Assert.That(json.GetValue("Sometime"), Is.Not.Null);
+            Assert.That(json.GetValue("TextWithUnicode"), Is.Not.Null);
 
             // but not true for any old string
             Assert.That(json.GetValue("noSuchProp12345asdfg"), Is.Null);
+
+            AssertHasCorrectValuesInLogEntry(json);
+        }
+
+        private void AssertHasCorrectValuesInLogEntry(JObject json)
+        {
+            Assert.That(json.GetValue("TextWithUnicode").Value<string>(),
+                Is.EqualTo("Unicode text: ß ðá åö лиц 我们 거리"));
         }
 
         private static JObject ParseFile(string fileName)
@@ -81,7 +92,8 @@ namespace NLog.StructuredLogging.Json.Tests
             {
                 Name = $"test to file {fileName}",
                 FileName = fileName,
-                Layout = new FlattenedJsonLayout()
+                Layout = new FlattenedJsonLayout(),
+                Encoding = Encoding.UTF8
             };
 
             config.AddTarget(target);

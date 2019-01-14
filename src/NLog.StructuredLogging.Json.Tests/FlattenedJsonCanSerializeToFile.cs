@@ -62,6 +62,10 @@ namespace NLog.StructuredLogging.Json.Tests
 
         private void AssertHasCorrectValuesInLogEntry(JObject json)
         {
+            Assert.That(json.GetValue("Hello").Value<string>(),
+                Is.EqualTo("Hello"));
+            Assert.That(json.GetValue("SomeText").Value<string>(),
+                Is.EqualTo("this is some, text. It has! punctation?"));
             Assert.That(json.GetValue("TextWithUnicode").Value<string>(),
                 Is.EqualTo("Unicode text: ß ðá åö лиц 我们 거리"));
         }
@@ -93,7 +97,6 @@ namespace NLog.StructuredLogging.Json.Tests
                 Name = $"test to file {fileName}",
                 FileName = fileName,
                 Layout = new FlattenedJsonLayout(),
-                Encoding = Encoding.UTF8
             };
 
             config.AddTarget(target);

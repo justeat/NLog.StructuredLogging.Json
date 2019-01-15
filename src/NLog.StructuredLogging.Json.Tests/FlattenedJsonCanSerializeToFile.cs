@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Text;
 using Newtonsoft.Json.Linq;
 using NLog.Config;
 using NLog.Targets;
@@ -26,7 +25,7 @@ namespace NLog.StructuredLogging.Json.Tests
                     SomeText = "this is some, text. It has! punctation?",
                     ANumber = 42,
                     Sometime = new DateTime(2017, 4, 5, 6, 7, 8, DateTimeKind.Utc),
-                    TextWithUnicode = "Unicode text: ß ðá åö лиц 我们 거리"
+                    TextWithUnicode = "Unicode text: ß ðá åö лиц 我们 거리 αλεπού"
                 });
 
             LogManager.Flush();
@@ -67,7 +66,7 @@ namespace NLog.StructuredLogging.Json.Tests
             Assert.That(json.GetValue("SomeText").Value<string>(),
                 Is.EqualTo("this is some, text. It has! punctation?"));
             Assert.That(json.GetValue("TextWithUnicode").Value<string>(),
-                Is.EqualTo("Unicode text: ß ðá åö лиц 我们 거리"));
+                Is.EqualTo("Unicode text: ß ðá åö лиц 我们 거리 αλεπού"));
         }
 
         private static JObject ParseFile(string fileName)

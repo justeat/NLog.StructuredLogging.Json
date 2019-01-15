@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Text;
 using Newtonsoft.Json.Linq;
 using NLog.Config;
 using NLog.Targets;
@@ -96,6 +97,7 @@ namespace NLog.StructuredLogging.Json.Tests
                 Name = $"test to file {fileName}",
                 FileName = fileName,
                 Layout = new FlattenedJsonLayout(),
+                Encoding = Encoding.UTF8
             };
 
             config.AddTarget(target);

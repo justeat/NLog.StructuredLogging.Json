@@ -11,10 +11,7 @@ namespace NLog.StructuredLogging.Json
 
         public StructuredLoggingProperty(string name, Layout layout)
         {
-            if (layout == null)
-            {
-                throw new ArgumentNullException("layout");
-            }
+            Layout = layout ?? throw new ArgumentNullException(nameof(layout));
 
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -22,7 +19,6 @@ namespace NLog.StructuredLogging.Json
             }
 
             Name = name;
-            Layout = layout;
         }
 
         public string Name { get; set; }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace NLog.StructuredLogging.Json
 {
-    internal class Scope : IScope
+    internal sealed class Scope : IScope
     {
         private readonly ILogger _logger;
         private readonly IDisposable _disposable;

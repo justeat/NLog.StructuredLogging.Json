@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 
 namespace NLog.StructuredLogging.Json.Tests
 {
+    [Serializable]
     public class LoggingException : Exception
     {
         public LoggingException()
@@ -9,6 +10,10 @@ namespace NLog.StructuredLogging.Json.Tests
         }
 
         public LoggingException(string message) : base(message)
+        {
+        }
+
+        public LoggingException(string message, Exception innerException) : base(message, innerException)
         {
         }
     }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using Newtonsoft.Json.Linq;
 using NLog.Config;
@@ -41,18 +41,18 @@ namespace NLog.StructuredLogging.Json.Tests
             Assert.That(json.HasValues);
 
             // standard props should be present
-            Assert.That(json.GetValue("Message"), Is.Not.Null);
-            Assert.That(json.GetValue("TimeStamp"), Is.Not.Null);
-            Assert.That(json.GetValue("Level"), Is.Not.Null);
+            Assert.That(json.GetValue("Message", StringComparison.OrdinalIgnoreCase), Is.Not.Null);
+            Assert.That(json.GetValue("TimeStamp", StringComparison.OrdinalIgnoreCase), Is.Not.Null);
+            Assert.That(json.GetValue("Level", StringComparison.OrdinalIgnoreCase), Is.Not.Null);
 
             // custom props should be present
-            Assert.That(json.GetValue("Hello"), Is.Not.Null);
-            Assert.That(json.GetValue("SomeText"), Is.Not.Null);
-            Assert.That(json.GetValue("ANumber"), Is.Not.Null);
-            Assert.That(json.GetValue("Sometime"), Is.Not.Null);
+            Assert.That(json.GetValue("Hello", StringComparison.OrdinalIgnoreCase), Is.Not.Null);
+            Assert.That(json.GetValue("SomeText", StringComparison.OrdinalIgnoreCase), Is.Not.Null);
+            Assert.That(json.GetValue("ANumber", StringComparison.OrdinalIgnoreCase), Is.Not.Null);
+            Assert.That(json.GetValue("Sometime", StringComparison.OrdinalIgnoreCase), Is.Not.Null);
 
             // but not true for any old string
-            Assert.That(json.GetValue("noSuchProp12345asdfg"), Is.Null);
+            Assert.That(json.GetValue("noSuchProp12345asdfg", StringComparison.OrdinalIgnoreCase), Is.Null);
         }
 
         private static JObject ParseFile(string fileName)

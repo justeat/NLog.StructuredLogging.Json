@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using NUnit.Framework;
 
 namespace NLog.StructuredLogging.Json.Tests.EndToEnd

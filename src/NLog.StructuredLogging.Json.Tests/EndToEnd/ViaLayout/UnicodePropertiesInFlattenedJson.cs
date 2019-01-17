@@ -2,7 +2,7 @@ using NLog.Layouts;
 
 namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
 {
-    public class DateTimePropertiesInFlattenedJson : DateTimePropertiesAreSerialised
+    public class UnicodePropertiesInFlattenedJson : UnicodePropertiesAreSerialised
     {
         protected override Layout GivenLayout()
         {

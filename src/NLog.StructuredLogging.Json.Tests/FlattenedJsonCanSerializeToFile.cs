@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Text;
 using Newtonsoft.Json.Linq;
 using NLog.Config;
 using NLog.Targets;
@@ -24,7 +25,8 @@ namespace NLog.StructuredLogging.Json.Tests
                     Hello = "Hello",
                     SomeText = "this is some, text. It has! punctation?",
                     ANumber = 42,
-                    Sometime = new DateTime(2017, 4, 5, 6, 7, 8, DateTimeKind.Utc)                    
+                    Sometime = new DateTime(2017, 4, 5, 6, 7, 8, DateTimeKind.Utc),
+                    TextWithUnicode = "Unicode text: ß ðá åö лиц 我们 거리 αλεπού"
                 });
 
             LogManager.Flush();
@@ -41,18 +43,31 @@ namespace NLog.StructuredLogging.Json.Tests
             Assert.That(json.HasValues);
 
             // standard props should be present
-            Assert.That(json.GetValue("Message", StringComparison.OrdinalIgnoreCase), Is.Not.Null);
-            Assert.That(json.GetValue("TimeStamp", StringComparison.OrdinalIgnoreCase), Is.Not.Null);
-            Assert.That(json.GetValue("Level", StringComparison.OrdinalIgnoreCase), Is.Not.Null);
+            Assert.That(json.GetValue("Message"), Is.Not.Null);
+            Assert.That(json.GetValue("TimeStamp"), Is.Not.Null);
+            Assert.That(json.GetValue("Level"), Is.Not.Null);
 
             // custom props should be present
-            Assert.That(json.GetValue("Hello", StringComparison.OrdinalIgnoreCase), Is.Not.Null);
-            Assert.That(json.GetValue("SomeText", StringComparison.OrdinalIgnoreCase), Is.Not.Null);
-            Assert.That(json.GetValue("ANumber", StringComparison.OrdinalIgnoreCase), Is.Not.Null);
-            Assert.That(json.GetValue("Sometime", StringComparison.OrdinalIgnoreCase), Is.Not.Null);
+            Assert.That(json.GetValue("Hello"), Is.Not.Null);
+            Assert.That(json.GetValue("SomeText"), Is.Not.Null);
+            Assert.That(json.GetValue("ANumber"), Is.Not.Null);
+            Assert.That(json.GetValue("Sometime"), Is.Not.Null);
+            Assert.That(json.GetValue("TextWithUnicode"), Is.Not.Null);
 
             // but not true for any old string
-            Assert.That(json.GetValue("noSuchProp12345asdfg", StringComparison.OrdinalIgnoreCase), Is.Null);
+            Assert.That(json.GetValue("noSuchProp12345asdfg"), Is.Null);
+
+            AssertHasCorrectValuesInLogEntry(json);
+        }
+
+        private void AssertHasCorrectValuesInLogEntry(JObject json)
+        {
+            Assert.That(json.GetValue("Hello").Value<string>(),
+                Is.EqualTo("Hello"));
+            Assert.That(json.GetValue("SomeText").Value<string>(),
+                Is.EqualTo("this is some, text. It has! punctation?"));
+            Assert.That(json.GetValue("TextWithUnicode").Value<string>(),
+                Is.EqualTo("Unicode text: ß ðá åö лиц 我们 거리 αλεπού"));
         }
 
         private static JObject ParseFile(string fileName)
@@ -81,7 +96,8 @@ namespace NLog.StructuredLogging.Json.Tests
             {
                 Name = $"test to file {fileName}",
                 FileName = fileName,
-                Layout = new FlattenedJsonLayout()
+                Layout = new FlattenedJsonLayout(),
+                Encoding = Encoding.UTF8
             };
 
             config.AddTarget(target);

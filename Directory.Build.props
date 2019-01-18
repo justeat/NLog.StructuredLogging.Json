@@ -17,7 +17,8 @@
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>$(PackageProjectUrl).git</RepositoryUrl>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <LangVersion>latest</LangVersion>
     <CLSCompliant>true</CLSCompliant>
     <ComVisible>false</ComVisible>
   </PropertyGroup>
-  </Project>
+</Project>

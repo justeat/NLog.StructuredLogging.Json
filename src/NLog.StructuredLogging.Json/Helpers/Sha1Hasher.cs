@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -5,6 +6,7 @@ namespace NLog.StructuredLogging.Json.Helpers
 {
     internal static class Sha1Hasher
     {
+#pragma warning disable CA5350
         public static string Hash(string input)
         {
             if (string.IsNullOrWhiteSpace(input))
@@ -23,7 +25,7 @@ namespace NLog.StructuredLogging.Json.Helpers
 
             foreach (var b in hash)
             {
-                sb.Append(b.ToString("x2"));
+                sb.Append(b.ToString("x2", CultureInfo.InvariantCulture));
             }
 
             return sb.ToString();

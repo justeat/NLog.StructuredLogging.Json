@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using NLog.StructuredLogging.Json.Helpers;
 
@@ -127,7 +128,7 @@ namespace NLog.StructuredLogging.Json
 
                 if (!log.Properties.ContainsKey(key))
                 {
-                    var value = MappedDiagnosticsLogicalContext.Get(contextItemName);
+                    var value = MappedDiagnosticsLogicalContext.Get(contextItemName, CultureInfo.InvariantCulture);
                     log.Properties.Add(key, value);
                 }
             }

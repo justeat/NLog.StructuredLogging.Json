@@ -34,7 +34,7 @@ namespace NLog.StructuredLogging.Json.Helpers
         }
     }
 
-    public class DictionaryConverter
+    public sealed class DictionaryConverter
     {
         private static readonly MethodInfo MethodInfo = typeof(Dictionary<string, object>)
             .GetMethod("Add", BindingFlags.Public | BindingFlags.Instance, null, new[] { typeof(string), typeof(object) }, null);

@@ -15,21 +15,19 @@ namespace NLog.StructuredLogging.Json.Helpers
             {
                 {"TimeStamp", timestampUtcIso8601 },
                 {"Level", source.Level.ToString()},
-                {"LoggerName", source.LoggerName},
+                {"LoggerName", source.LoggerName}
             };
 
-            if (string.Equals(source.Message, source.FormattedMessage, StringComparison.Ordinal))
-            {
-                result.Add("Message", source.Message);
-                if (source.Parameters != null)
-                {
-                    result.Add("Parameters", string.Join(",", source.Parameters.Select(Convert.ValueAsString)));
-                }
-            }
-            else
+            var hasTemplate = !string.Equals(source.Message, source.FormattedMessage, StringComparison.Ordinal);
+
+            if (hasTemplate)
             {
                 result.Add("Message", source.FormattedMessage);
                 result.Add("MessageTemplate", source.Message);
+            }
+            else
+            {
+                result.Add("Message", source.Message);
             }
 
             if (source.Exception != null)
@@ -39,6 +37,11 @@ namespace NLog.StructuredLogging.Json.Helpers
                 result.Add("ExceptionMessage", source.Exception.Message);
                 result.Add("ExceptionStackTrace", source.Exception.StackTrace);
                 result.Add("ExceptionFingerprint", ConvertException.ToFingerprint(source.Exception));
+            }
+
+            if (!hasTemplate && source.Parameters != null)
+            {
+                result.Add("Parameters", string.Join(",", source.Parameters.Select(Convert.ValueAsString)));
             }
 
             if (source.StackTrace != null)

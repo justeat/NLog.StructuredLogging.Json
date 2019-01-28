@@ -15,8 +15,17 @@ namespace NLog.StructuredLogging.Json.Helpers
                 {"TimeStamp", timestampUtcIso8601 },
                 {"Level", source.Level.ToString()},
                 {"LoggerName", source.LoggerName},
-                {"Message", source.FormattedMessage}
             };
+
+            if (string.Equals(source.Message, source.FormattedMessage))
+            {
+                result.Add("Message", source.Message);
+            }
+            else
+            {
+                result.Add("Message", source.FormattedMessage);
+                result.Add("MessageTemplate", source.Message);
+            }
 
             if (source.Exception != null)
             {

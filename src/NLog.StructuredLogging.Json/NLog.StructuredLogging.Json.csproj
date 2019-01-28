@@ -11,5 +11,9 @@
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
      <PackageReference Include="NLog" Version="4.5.0" />
      <PackageReference Include="SourceLink.Embed.AllSourceFiles" Version="2.8.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.3" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.CodeQuality.Analyzers" Version="2.6.3" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.NetCore.Analyzers" Version="2.6.3" PrivateAssets="All" />
+    <PackageReference Include="Text.Analyzers" Version="2.6.3" PrivateAssets="All" />
   </ItemGroup>
  </Project>

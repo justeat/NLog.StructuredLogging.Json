@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace NLog.StructuredLogging.Json.Helpers
                 {"LoggerName", source.LoggerName},
             };
 
-            if (string.Equals(source.Message, source.FormattedMessage))
+            if (string.Equals(source.Message, source.FormattedMessage, StringComparison.Ordinal))
             {
                 result.Add("Message", source.Message);
             }

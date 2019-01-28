@@ -21,6 +21,10 @@ namespace NLog.StructuredLogging.Json.Helpers
             if (string.Equals(source.Message, source.FormattedMessage, StringComparison.Ordinal))
             {
                 result.Add("Message", source.Message);
+                if (source.Parameters != null)
+                {
+                    result.Add("Parameters", string.Join(",", source.Parameters.Select(Convert.ValueAsString)));
+                }
             }
             else
             {
@@ -35,11 +39,6 @@ namespace NLog.StructuredLogging.Json.Helpers
                 result.Add("ExceptionMessage", source.Exception.Message);
                 result.Add("ExceptionStackTrace", source.Exception.StackTrace);
                 result.Add("ExceptionFingerprint", ConvertException.ToFingerprint(source.Exception));
-            }
-
-            if (source.Parameters != null)
-            {
-                result.Add("Parameters", string.Join(",", source.Parameters.Select(Convert.ValueAsString)));
             }
 
             if (source.StackTrace != null)

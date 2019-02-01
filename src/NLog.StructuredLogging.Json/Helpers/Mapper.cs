@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,9 +15,20 @@ namespace NLog.StructuredLogging.Json.Helpers
             {
                 {"TimeStamp", timestampUtcIso8601 },
                 {"Level", source.Level.ToString()},
-                {"LoggerName", source.LoggerName},
-                {"Message", source.FormattedMessage}
+                {"LoggerName", source.LoggerName}
             };
+
+            var hasTemplate = !string.Equals(source.Message, source.FormattedMessage, StringComparison.Ordinal);
+
+            if (hasTemplate)
+            {
+                result.Add("Message", source.FormattedMessage);
+                result.Add("MessageTemplate", source.Message);
+            }
+            else
+            {
+                result.Add("Message", source.Message);
+            }
 
             if (source.Exception != null)
             {
@@ -27,7 +39,7 @@ namespace NLog.StructuredLogging.Json.Helpers
                 result.Add("ExceptionFingerprint", ConvertException.ToFingerprint(source.Exception));
             }
 
-            if (source.Parameters != null)
+            if (!hasTemplate && source.Parameters != null)
             {
                 result.Add("Parameters", string.Join(",", source.Parameters.Select(Convert.ValueAsString)));
             }

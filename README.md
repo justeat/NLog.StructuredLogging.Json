@@ -34,10 +34,12 @@ When we want to query Kibana for all messages related to this order, we also hav
 When logging with StructuredLogging.Json, the data is written as Json with extra fields containing any data that you add to the log entry. So the log line written by NLog might be e.g.:
 
 ```json
-{"TimeStamp":"2016-09-21T08:11:23.483Z","Level":"Info","LoggerName":"Acme.WebApp.OrderController",
+{
+"TimeStamp":"2016-09-21T08:11:23.483Z","Level":"Info","LoggerName":"Acme.WebApp.OrderController",
 "Message":"Order resent to partner","CallSite":"Acme.WebApp.OrderController.ResendOrder",
 "OrderId":"1234","PartnerId":"4567",
-"NewState":"Sent","SendDate":"2016-09-21T08:11:23.456Z"}
+"NewState":"Sent","SendDate":"2016-09-21T08:11:23.456Z"
+}
 ````
 
 This is well formatted for sending to Kibana.
@@ -142,9 +144,11 @@ logger.ExtendedInfo("Order received", null);
 logger.ExtendedInfo("Order received");
 ```
 
+The last is prefered as it is simplest.
+
 ### Logging data from exceptions
 
-If exceptions are logged with `ExtendedException` then the name-value pairs in [the exception's data collection](https://msdn.microsoft.com/en-us/library/system.exception.data.aspx) are recorded.
+If exceptions are logged with `ExtendedException`, then the name-value pairs in [the exception's data collection](https://msdn.microsoft.com/en-us/library/system.exception.data.aspx) are recorded.
 
 e.g. where we do:
 
@@ -216,7 +220,7 @@ and typed as a `Dictionary<string, object>`.
 Add a value to the MDLC like this:
 
 ```csharp
-   MappedDiagnosticsLogicalContext.Set("ConversationId", conversationId);
+MappedDiagnosticsLogicalContext.Set("ConversationId", conversationId);
 ```
 
 This value will then be attached to all logging that happens afterwards in the same logical thread of execution, even after `await` statements that change the actual thread.
@@ -392,7 +396,7 @@ When sending logs to the ELK stack, the field names are parsed, and some charact
 
 ## Compatibility with the `ILogger` abstraction
 
-From version 3.0.0, this library is fully compatible with the `ILogger` abstraction in [Microsoft.Extensions.Logging.Abstractions](https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions) and [message templates used therein](https://messagetemplates.org/).
+From version `3.0.0`, this library is fully compatible with the `ILogger` abstraction in [Microsoft.Extensions.Logging.Abstractions](https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions) and [message templates used therein](https://messagetemplates.org/).
 
 This is useful if you use libraries that need an `ILogger` implementation (such as JustSaying V6) and want the output to go to structured JSON files.
 

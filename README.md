@@ -89,9 +89,9 @@ Install-Package NLog.StructuredLogging.Json
 
 ### Update your NLog config so you write out JSON with properties
 
-NLog needs to write to JSON using the `structuredlogging.json` layout renderer.<br />
-The `structuredlogging.json` layout renderer is declared in this project.<br />
-Any DLLs that start with NLog. are automatically loaded by NLog at runtime in your app.<br />
+NLog needs to write to JSON using the `structuredlogging.json` layout renderer.
+The `structuredlogging.json` layout renderer is declared in this project.
+Any DLLs that start with NLog. are automatically loaded by NLog at runtime in your app.
 [Copy and replace your nlog.config with this example nlog.config in your solution](Examples/nlog.config)
 
 ## Usage

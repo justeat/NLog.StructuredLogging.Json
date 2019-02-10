@@ -1,5 +1,4 @@
-NLog.StructuredLogging.Json
-=======================
+# NLog.StructuredLogging.Json
 
 [![NuGet version](https://buildstats.info/nuget/NLog.StructuredLogging.Json?includePreReleases=false)](http://www.nuget.org/packages/NLog.StructuredLogging.Json)
 
@@ -17,13 +16,13 @@ These can .e.g. be sent to [Kibana](https://www.elastic.co/products/kibana) over
 
 for each `LogEventInfo` message, render one JSON object with any parameters as properties.
 
-## What problems does this solve?
+## What problems does this solve
 
 ### Structured logging
 
 When logging without StructuredLogging.Json, the "Message" field is used to hold unstructured data, e.g.:
 
-```
+```text
 @LogType: nlog
 Level: Warn
 Message: Order 1234 resent to Partner 4567
@@ -69,7 +68,6 @@ No need for a custom nxlog configuration file, and no need to specify all the co
 4. Add additional properties when you log
 
 ### Update the dependencies
-------------------------------------------
 
 - Ensure you have version of NLog >= 4.5.0 (assembly version 4.0.0.0 - remember to update any redirects)
 - Ensure you have version of Newtonsoft.Json >= 9.0.1
@@ -80,19 +78,19 @@ Update-Package Newtonsoft.Json
 ```
 
 ### Install the `NLog.StructuredLogging.Json` package from NuGet
-----------------------------------------
+
 Make sure the DLL is copied to your output folder
 
 ```powershell
 Install-Package NLog.StructuredLogging.Json
 ```
 
-###  Update your NLog config so you write out JSON with properties
-----------------------------------------------------------------
+### Update your NLog config so you write out JSON with properties
+
 NLog needs to write to JSON using the `structuredlogging.json` layout renderer.<br />
 The `structuredlogging.json` layout renderer is declared in this project.<br />
 Any DLLs that start with NLog. are automatically loaded by NLog at runtime in your app.<br />
-* [Copy and replace your nlog.config with this example nlog.config in your solution](Examples/nlog.config)
+[Copy and replace your nlog.config with this example nlog.config in your solution](Examples/nlog.config)
 
 ## Usage
 
@@ -154,7 +152,7 @@ e.g. where we do:
 var restaurant = _restaurantService.GetRestaurant(restaurantId);
 if (restaurant == null)
 {
-	throw new RestaurantNotFoundException();
+  throw new RestaurantNotFoundException();
 }
 ```
 
@@ -254,6 +252,7 @@ Each scope has start and end logs. And in properties we get something like this:
   // innerLogProps go here
   // firstScopeProps go here
 ```
+
 - For second message:
 
 ```javascript
@@ -390,6 +389,43 @@ We support `ExtendedException` which uses `LogLevel.Error`, `ExtendedError`, `Ex
 #### Field naming and special characters
 
 When sending logs to the ELK stack, the field names are parsed, and some characters such as '.' have special meaning. So don't use them unless you know how they will be interpreted by the back end.
+
+## Compatibility with the `ILogger` abstraction
+
+From version 3.0.0, this library is fully compatible with the `ILogger` abstraction in [Microsoft.Extensions.Logging.Abstractions](https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions) and [message templates used therein](https://messagetemplates.org/).
+
+This is useful if you use libraries that need an `ILogger` implementation (such as JustSaying V6) and want the output to go to structured JSON files.
+
+How to ensure that you can use `ILogger` with this library's JSON formatted output:
+
+- Make sure that you use the [`NLog`](https://www.nuget.org/packages/NLog/) package at version `4.5.0` or later.
+- Make sure that you use the [`NLog.StructuredLogging.Json`](https://www.nuget.org/packages/NLog.StructuredLogging.Json/) package at version `3.0.0` or later.
+- Install the NLog package for `ILogger` compatibility - [NLog.Web.AspNetCore](https://www.nuget.org/packages/NLog.Web.AspNetCore) or [NLog.Extensions.Logging](https://www.nuget.org/packages/NLog.Extensions.Logging).
+- [Follow the instructions there to set it up](https://github.com/NLog/NLog.Web/wiki/Getting-started-with-ASP.NET-Core-2#4-update-programcs).
+- Log using [message templates](https://messagetemplates.org/).
+
+### ILogger example
+
+When `_logger` is an `ILogger` instance set up as above, and the code is:
+
+```csharp
+_logger.LogInformation("Templated information for order {OrderId} at {CustomProperty}",
+    12345, DateTime.UtcNow);
+```
+
+The log entry will be like this:
+
+```json
+{
+  "TimeStamp":"2019-01-29T11:12:46.609Z",
+  "Level":"Info",
+  "LoggerName":"LogDemo.HomeController",
+  "Message":"Templated information for order 12345 at 01/29/2019 11:12:46",
+  "MessageTemplate":"Templated information for order {OrderId} at {CustomProperty}",
+  "OrderId": 12345,
+  "CustomProperty":"2019-01-29T11:12:46.6210834Z"
+}
+```
 
 ## Contributors
 

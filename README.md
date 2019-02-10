@@ -1,7 +1,6 @@
 NLog.StructuredLogging.Json
 =======================
 
-
 [![NuGet version](https://buildstats.info/nuget/NLog.StructuredLogging.Json?includePreReleases=false)](http://www.nuget.org/packages/NLog.StructuredLogging.Json)
 
 | | Linux | Windows |
@@ -9,14 +8,12 @@ NLog.StructuredLogging.Json
 | **Build Status** | [![Build status](https://img.shields.io/travis/justeat/NLog.StructuredLogging.Json/master.svg)](https://travis-ci.org/justeat/NLog.StructuredLogging.Json) | [![Build status](https://img.shields.io/appveyor/ci/justeattech/nlog-structuredlogging-json/master.svg)](https://ci.appveyor.com/project/justeattech/nlog-structuredlogging-json) |
 | **Build History** | [![Build history](https://buildstats.info/travisci/chart/justeat/NLog.StructuredLogging.Json?branch=master&includeBuildsFromPullRequest=false)](https://travis-ci.org/justeat/NLog.StructuredLogging.Json) |  [![Build history](https://buildstats.info/appveyor/chart/justeattech/nlog-structuredlogging-json?branch=master&includeBuildsFromPullRequest=false)](https://ci.appveyor.com/project/justeattech/nlog-structuredlogging-json) |
 
-
 [![Join the chat at https://gitter.im/justeat/NLog.StructuredLogging.Json](https://badges.gitter.im/justeat/NLog.StructuredLogging.Json.svg)](https://gitter.im/justeat/NLog.StructuredLogging.Json?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
 
 ## What
 
 Structured logging with [NLog](http://nlog-project.org/). Generates log entries as JSON.
-These can .e.g. be sent to [Kibana](https://www.elastic.co/products/kibana) over [NXLog](http://nxlog.org/). 
+These can .e.g. be sent to [Kibana](https://www.elastic.co/products/kibana) over [NXLog](http://nxlog.org/).
 
 for each `LogEventInfo` message, render one JSON object with any parameters as properties.
 
@@ -56,14 +53,12 @@ PartnerId: 4567
 NewState: Sent
 ```
 
-
 This makes it much easier to search Kibana for the exact message text and see all the times that this log statement was fired, across time.
 We can also very easily search for all the different log messages related to a particular orderId, partnerId, or any other fields that can be logged.
 
 ### Simpler, more flexible logging configuration
 
 No need for a custom nxlog configuration file, and no need to specify all the columns used.
-
 
 ## How to get it
 
@@ -73,13 +68,11 @@ No need for a custom nxlog configuration file, and no need to specify all the co
 3. Update your NLog config so you write out JSON with properties
 4. Add additional properties when you log
 
-
 ### Update the dependencies
 ------------------------------------------
 
-- Ensure you have version of NLog >= 4.3.0 (assembly version 4.0.0.0 - remember to update any redirects)
+- Ensure you have version of NLog >= 4.5.0 (assembly version 4.0.0.0 - remember to update any redirects)
 - Ensure you have version of Newtonsoft.Json >= 9.0.1
-
 
 ```
 Update-Package NLog
@@ -121,8 +114,8 @@ logger.ExtendedException(ex, "Error sending order to Restaurant", new { OrderId 
 
 ```
 
-The last parameter can be a Dictionary of names and values, or an anonymous object. 
-If an anonymous object is supplied, the property names and values on this object become field names and corresponding values as shown above. 
+The last parameter can be a Dictionary of names and values, or an anonymous object.
+If an anonymous object is supplied, the property names and values on this object become field names and corresponding values as shown above.
 
 Example of using a dictionary:
 
@@ -161,31 +154,32 @@ We can improve on this with:
 var restaurant = _restaurantService.GetRestaurant(restaurantId);
 if (restaurant == null)
 {
-	var ex = RestaurantNotFoundException();
-	ex.Data.Add("RestaurantId", restaurantId);
-	throw ex;
+  var ex = RestaurantNotFoundException();
+  ex.Data.Add("RestaurantId", restaurantId);
+  throw ex;
 }
 ```
+
 This is useful where the exception is caught and logged by a global "catch-all" exception handler which will have no knowledge of the context in which the exception was thrown.
 
 Use the exception's `Data` collection rather than adding properties to exception types to store values.
 
 The best practices and pitfalls below also apply to exception data, as these values are serialised in the same way to the same destination.
 
-### Logging inner exceptions 
+### Logging inner exceptions
 
-You do not need to explicitly log inner exceptions, or exceptions contained in an `AggregateException`. They are automatically logged in both cases. 
+You do not need to explicitly log inner exceptions, or exceptions contained in an `AggregateException`. They are automatically logged in both cases.
 Each inner exception is logged as a separate log entry, so that the inner exceptions can be searched for all the usual fields such as `ExceptionMessage` or `ExceptionType`.
 
 When an exception has one or more inner exceptions, some extra fields are logged: `ExceptionIndex`, `ExceptionCount` and `ExceptionTag`.
 
- * ExceptionCount: Tells you have many exceptions were logged together.
- * ExceptionIndex: This exception's index in the grouping.
- * ExceptionTag: a unique guid identifier that is generated and applied to the exceptions in the group. Searching for this guid should show you all the grouped exceptions and nothing else.
- 
+  - ExceptionCount: Tells you have many exceptions were logged together.
+  - ExceptionIndex: This exception's index in the grouping.
+  - ExceptionTag: a unique guid identifier that is generated and applied to the exceptions in the group. Searching for this guid should show you all the grouped exceptions and nothing else.
+
  e.g. logging an exception with 2 inner exceptions might produce these log entries:
- 
- ````
+
+ ```
 ExceptionMessage: "Outer message"
 ExceptionType: "ArgumentException"
 ExceptionIndex: 1
@@ -207,11 +201,12 @@ ExceptionTag: "6fc5d910-3335-4eba-89fd-f9229e4a29b3"
 
 ### Logging data from context
 
-Properties are also read from the [Mapped Diagnostic Logical Context](https://github.com/NLog/NLog/wiki/MDLC-Layout-Renderer).  
+Properties are also read from the [Mapped Diagnostic Logical Context](https://github.com/NLog/NLog/wiki/MDLC-Layout-Renderer).
 This is an NLog class, and [the data is stored on the logical call context](https://github.com/NLog/NLog/blob/2f5e3cced2fb1e56846e68e260c28c7d237bccfb/src/NLog/MappedDiagnosticsLogicalContext.cs#L67)
 and typed as a `Dictionary<string, object>`.
 
 Add a value to the MDLC like this:
+
 ```csharp
    MappedDiagnosticsLogicalContext.Set("ConversationId", conversationId);
 ```
@@ -221,6 +216,7 @@ This value will then be attached to all logging that happens afterwards in the s
 ### Logical scopes
 
 To provide your logs with more logical context information you can use `BeginScope` extension.
+
 ```csharp
 using(Logger.BeginScope("first scope description", firstScopeProps)) // first scope, Guid 5D646242-C5A3-4FA0-9A7A-779ED5EA56E2
 {
@@ -235,9 +231,11 @@ using(Logger.BeginScope("first scope description", firstScopeProps)) // first sc
   }
 }
 ```
-Each scope has start and end logs. 
-And in properties we get something like this:
+
+Each scope has start and end logs. And in properties we get something like this:
+
 - For first message:
+
 ```javascript
   "Scope":"first scope description",
   "ScopeId":"5D646242-C5A3-4FA0-9A7A-779ED5EA56E2", // first scope GUID
@@ -247,6 +245,7 @@ And in properties we get something like this:
   // firstScopeProps go here
 ```
 - For second message:
+
 ```javascript
   "Scope":"second scope description",
   "ScopeId":"74253AC8-11BB-4CBD-B68D-ED966DBDB478", // second scope GUID
@@ -255,6 +254,7 @@ And in properties we get something like this:
   // firstScopeProps go here
   // secondScopeProps go here
 ```
+
 - For third message:
 ```javascript
   "Scope":"third scope description",
@@ -269,14 +269,14 @@ And in properties we get something like this:
 ### Logging additional json properties
 
 You can add context to your log events by using the `JsonWithProperties` layout instead of the `structuredlogging.json` layout renderer.
-The example below shows how you can log the machine name and component version with each log event. 
+The example below shows how you can log the machine name and component version with each log event.
 
 ````xml
 <target name="MyTarget"
        xsi:type="file"
        fileName="MyFilePath"
        encoding="utf-8">
-  <layout xsi:type="JsonWithProperties">    
+  <layout xsi:type="JsonWithProperties">
     <property name="MachineName" layout="${machinename}" />
     <property name="ComponentVersion" layout="1.0.0.0" />
   </layout>
@@ -290,7 +290,6 @@ logger.ExtendedInfo("Order sent to partner", new { OrderId = 1234, RestaurantId 
 ````
 
 might result in output similar to:
-
 
 ````json
 {"TimeStamp":"2016-09-21T08:11:23.483Z","Level":"Info","LoggerName":"Acme.WebApp.OrderController",
@@ -334,7 +333,6 @@ _logger.ExtendedInfo("This text is the message", new { QueueMessageData = someDa
 ```
 
 
-
 #### No format strings
 
 Don't do this:
@@ -373,24 +371,19 @@ _logger.ExtendedInfo("Order saved", new { OrderDetails = orderDetails });
 
 The `orderDetails` object will be serialised with `ToString()`. Unless this method is overridden in the OrderDetails type declaration, it will not produce any useful output. And if it is overridden, we only get one key-value pair, when instead the various values such as `OrderId` are better logged in separate fields.
 
-
 #### Only some log levels are supported
 
+We support `ExtendedException` which uses `LogLevel.Error`, `ExtendedError`, `ExtendedWarn`, `ExtendedInfo` and `ExtendedDebug`. Other log levels could be added if need be, but we don't believe that fine-grained log levels add a lot of value.
 
-We support `ExtendedException` which uses `LogLevel.Error`, `ExtendedError`, `ExtendedWarn`, `ExtendedInfo` and `ExtendedDebug`. Other log levels could be added if need be, but we don't believe that fine-grained log levels add a lot of value.  
-
- The model where log messages are discarded immediately based on configuration, chiefly based on log level, is one that we can leave behind. All messages of every level are sent to kibana for later processing. Filtering is best done after the fact when investigating an error. Log level is a field that can be searched or filtered on, but is far from the only important one. 
+ The model where log messages are discarded immediately based on configuration, chiefly based on log level, is one that we can leave behind. All messages of every level are sent to kibana for later processing. Filtering is best done after the fact when investigating an error. Log level is a field that can be searched or filtered on, but is far from the only important one.
 
 #### Field naming and special characters
 
-When sending logs to the ELK stack, the field names are parsed, and some characters such as '.' have special meaning. So don't use them unless you know how they will be interpreted by the back end. 
-
+When sending logs to the ELK stack, the field names are parsed, and some characters such as '.' have special meaning. So don't use them unless you know how they will be interpreted by the back end.
 
 ## Contributors
 
 Started for JustEat Technology by Alexander Williamson in 2015.
 
-
-And then battle-tested in production with code and fixes from: 
-Jaimal Chohan, Jeremy Clayden, Andy Garner, Kenny Hung, Henry Keen, Payman Labbaf, João Lebre, Peter Mounce, Simon Ness, Mykola Shestopal, Anthony Steele.
-
+And then battle-tested in production with code and fixes from:
+Jaimal Chohan, Jeremy Clayden, Oleh Formaniuk, Andy Garner, Kenny Hung, Henry Keen, Payman Labbaf, João Lebre, Chris Mannix, Peter Mounce, Simon Ness, Mykola Shestopal, Anthony Steele.

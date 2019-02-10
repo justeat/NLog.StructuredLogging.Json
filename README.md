@@ -33,7 +33,8 @@ When we want to query Kibana for all occurrences of this log message, we have to
 When we want to query Kibana for all messages related to this order, we also have to do partial string matching on the message as the orderId is embedded in the message.
 
 When logging with StructuredLogging.Json, the data is written as Json with extra fields containing any data that you add to the log entry. So the log line written by NLog might be e.g.:
-````json
+
+```json
 {"TimeStamp":"2016-09-21T08:11:23.483Z","Level":"Info","LoggerName":"Acme.WebApp.OrderController",
 "Message":"Order resent to partner","CallSite":"Acme.WebApp.OrderController.ResendOrder",
 "OrderId":"1234","PartnerId":"4567",
@@ -44,7 +45,7 @@ This is well formatted for sending to Kibana.
 
 In Kibana you get:
 
-```
+```text
 @LogType: nlog
 Level: Warn
 Message: Order resent to partner
@@ -62,7 +63,6 @@ No need for a custom nxlog configuration file, and no need to specify all the co
 
 ## How to get it
 
-
 1. Update the dependencies as below
 2. Install the `NLog.StructuredLogging.Json` package from NuGet
 3. Update your NLog config so you write out JSON with properties
@@ -74,7 +74,7 @@ No need for a custom nxlog configuration file, and no need to specify all the co
 - Ensure you have version of NLog >= 4.5.0 (assembly version 4.0.0.0 - remember to update any redirects)
 - Ensure you have version of Newtonsoft.Json >= 9.0.1
 
-```
+```powershell
 Update-Package NLog
 Update-Package Newtonsoft.Json
 ```
@@ -83,7 +83,7 @@ Update-Package Newtonsoft.Json
 ----------------------------------------
 Make sure the DLL is copied to your output folder
 
-```
+```powershell
 Install-Package NLog.StructuredLogging.Json
 ```
 
@@ -98,7 +98,7 @@ Any DLLs that start with NLog. are automatically loaded by NLog at runtime in yo
 
 Use the log properties to add extra fields to the JSON. You can add any contextual data values here:
 
-```c#
+```csharp
 using NLog.StructuredLogging.Json;
 
 ...
@@ -119,11 +119,11 @@ If an anonymous object is supplied, the property names and values on this object
 
 Example of using a dictionary:
 
-```c#
+```csharp
 var logProperties = new Dictionary<string, object>
 {
-	{"orderId", 1234 },
-	{"customerId", 3456 }
+  {"orderId", 1234 },
+  {"customerId", 3456 }
 };
 
 if (partner != null)
@@ -132,6 +132,16 @@ if (partner != null)
 }
 
 logger.ExtendedInfo("Order received", logProperties);
+```
+
+### Structured logging without additional properties
+
+You might still want the json output and context information when there are no additional properties to log. In this case, all of the following are equivalent:
+
+```csharp
+logger.ExtendedInfo("Order received", new {});
+logger.ExtendedInfo("Order received", null);
+logger.ExtendedInfo("Order received");
 ```
 
 ### Logging data from exceptions
@@ -173,13 +183,13 @@ Each inner exception is logged as a separate log entry, so that the inner except
 
 When an exception has one or more inner exceptions, some extra fields are logged: `ExceptionIndex`, `ExceptionCount` and `ExceptionTag`.
 
-  - ExceptionCount: Tells you have many exceptions were logged together.
-  - ExceptionIndex: This exception's index in the grouping.
-  - ExceptionTag: a unique guid identifier that is generated and applied to the exceptions in the group. Searching for this guid should show you all the grouped exceptions and nothing else.
+- ExceptionCount: Tells you have many exceptions were logged together.
+- ExceptionIndex: This exception's index in the grouping.
+- ExceptionTag: a unique guid identifier that is generated and applied to the exceptions in the group. Searching for this guid should show you all the grouped exceptions and nothing else.
 
  e.g. logging an exception with 2 inner exceptions might produce these log entries:
 
- ```
+ ```text
 ExceptionMessage: "Outer message"
 ExceptionType: "ArgumentException"
 ExceptionIndex: 1
@@ -197,7 +207,7 @@ ExceptionType: "NotImplementedException"
 ExceptionIndex: 3
 ExceptionCount: 3
 ExceptionTag: "6fc5d910-3335-4eba-89fd-f9229e4a29b3"
-````
+```
 
 ### Logging data from context
 
@@ -256,6 +266,7 @@ Each scope has start and end logs. And in properties we get something like this:
 ```
 
 - For third message:
+
 ```javascript
   "Scope":"third scope description",
   "ScopeId":"0721B91D-4764-4693-99D9-1AF4B63463A0", // third scope GUID
@@ -331,7 +342,6 @@ Do not add a timestamp at all, this is done automatically, and find a name for t
 ```csharp
 _logger.ExtendedInfo("This text is the message", new { QueueMessageData = someData } );`
 ```
-
 
 #### No format strings
 

@@ -426,7 +426,7 @@ The log entry will be like this:
   "LoggerName":"LogDemo.HomeController",
   "Message":"Templated information for order 12345 at 01/29/2019 11:12:46",
   "MessageTemplate":"Templated information for order {OrderId} at {CustomProperty}",
-  "OrderId": 12345,
+  "OrderId": "12345",
   "CustomProperty":"2019-01-29T11:12:46.6210834Z"
 }
 ```

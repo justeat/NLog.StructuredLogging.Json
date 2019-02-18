@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using NLog.StructuredLogging.Json.Helpers;
@@ -21,7 +21,7 @@ namespace NLog.StructuredLogging.Json.Tests.Helpers
         [Test]
         public void WhenConverted_TheRightNumberOfItemsAreReturned()
         {
-            Assert.That(_result.Count, Is.EqualTo(12));
+            Assert.That(_result.Count, Is.EqualTo(13));
         }
 
         [Test]
@@ -50,9 +50,11 @@ namespace NLog.StructuredLogging.Json.Tests.Helpers
             Assert.False(_result.Keys.Contains("Properties"));
             Assert.True(_result.Keys.Contains("PropertyOne"));
             Assert.True(_result.Keys.Contains("PropertyTwo"));
+            Assert.True(_result.Keys.Contains("PropertyThree"));
 
             Assert.That(_result["PropertyOne"], Is.EqualTo("This value is in property one"));
-            Assert.That(_result["PropertyTwo"], Is.EqualTo("2"));
+            Assert.That(_result["PropertyTwo"], Is.EqualTo(2));
+            Assert.That(_result["PropertyThree"], Is.EqualTo(true));
         }
 
         [Test]
@@ -71,8 +73,11 @@ namespace NLog.StructuredLogging.Json.Tests.Helpers
                 Level = LogLevel.Error,
                 LoggerName = "ExampleLoggerName",
                 Message = "Example Message",
-                Parameters = new object[] { "One", 1234 },
-                Properties = { { "PropertyOne", "This value is in property one" }, { "PropertyTwo", 2 } },
+                Parameters = new object[] {"One", 1234},
+                Properties =
+                {
+                    {"PropertyOne", "This value is in property one"}, {"PropertyTwo", 2}, {"PropertyThree", true}
+                },
                 TimeStamp = new DateTime(2014, 1, 2, 3, 4, 5, 6),
             };
         }

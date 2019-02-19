@@ -65,8 +65,15 @@ function DotNetBuild {
 function DotNetTestFullFramework {
   param([string]$Project)
     Write-Host "Testing $Project on .NET full framework..." -ForegroundColor Green
-    DotNetBuild $project $Configuration "net471"
-    & $dotnet test $Project --framework net471
+
+    if ($installDotNetSdk -eq $true) {
+        $dotnetPath = $dotnet
+    }
+    else {
+        $dotnetPath = (Get-Command "dotnet.exe").Source
+    }
+
+    & $dotnetPath test $Project --framework net471
   }
 
 function DotNetTestWithCoverage {
@@ -102,8 +109,6 @@ function DotNetTestWithCoverage {
         -register:user `
         -skipautoprops `
         `"-filter:+[NLog.StructuredLogging.Json.Tests*]*`"
-
-    DotNetBuild $project $Configuration "netcoreapp2.1"
 
     & $dotnet `
         $reportGeneratorPath `

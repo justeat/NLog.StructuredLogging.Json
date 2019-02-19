@@ -63,6 +63,12 @@ function DotNetBuild {
     }
 }
 
+function DotNetTestFullFrameWork {
+  param([string]$Project)
+  Write-Host "Testing $Project on full framework..." -ForegroundColor Green
+  & $dotnet test $Project --framework net471
+  }
+
 function DotNetTest {
     param([string]$Project)
     if ($DisableCodeCoverage -eq $true) {
@@ -143,6 +149,7 @@ ForEach ($project in $projects) {
 if ($RunTests -eq $true) {
     Write-Host "Testing $($testProjects.Count) project(s)..." -ForegroundColor Green
     ForEach ($project in $testProjects) {
+        DotNetTestFullFrameWork $project
         DotNetTest $project
     }
 }

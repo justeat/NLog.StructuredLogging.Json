@@ -2,8 +2,7 @@ param(
     [Parameter(Mandatory = $false)][string] $Configuration = "Release",
     [Parameter(Mandatory = $false)][string] $OutputPath = "",
     [Parameter(Mandatory = $false)][bool]   $RunTests = $true,
-    [Parameter(Mandatory = $false)][bool]   $CreatePackages = $true,
-    [Parameter(Mandatory = $false)][switch] $DisableCodeCoverage
+    [Parameter(Mandatory = $false)][bool]   $CreatePackages = $true
 )
 
 $ErrorActionPreference = "Stop"
@@ -63,57 +62,52 @@ function DotNetBuild {
     }
 }
 
-function DotNetTestFullFrameWork {
+function DotNetTestFullFramework {
   param([string]$Project)
   Write-Host "Testing $Project on full framework..." -ForegroundColor Green
   & $dotnet test $Project --framework net471
   }
 
-function DotNetTest {
-    param([string]$Project)
-    if ($DisableCodeCoverage -eq $true) {
-        & $dotnet test $Project --output $OutputPath
+function DotNetTestWithCoverage {
+    if ($installDotNetSdk -eq $true) {
+        $dotnetPath = $dotnet
     }
     else {
-
-        if ($installDotNetSdk -eq $true) {
-            $dotnetPath = $dotnet
-        }
-        else {
-            $dotnetPath = (Get-Command "dotnet.exe").Source
-        }
-
-        $nugetPath = Join-Path $env:USERPROFILE ".nuget\packages"
-
-        $openCoverVersion = "4.7.922"
-        $openCoverPath = Join-Path $nugetPath "OpenCover\$openCoverVersion\tools\OpenCover.Console.exe"
-
-        $reportGeneratorVersion = "4.0.11"
-        $reportGeneratorPath = Join-Path $nugetPath "ReportGenerator\$reportGeneratorVersion\tools\netcoreapp2.0\ReportGenerator.dll"
-
-        $coverageOutput = Join-Path $OutputPath "code-coverage.xml"
-        $reportOutput = Join-Path $OutputPath "coverage"
-
-        & $openCoverPath `
-            `"-target:$dotnetPath`" `
-            `"-targetargs:test $Project --output $OutputPath`" `
-            -output:$coverageOutput `
-            `"-excludebyattribute:System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage*`" `
-            -hideskipped:All `
-            -mergebyhash `
-            -mergeoutput `
-            -oldstyle `
-            -register:user `
-            -skipautoprops `
-            `"-filter:+[NLog.StructuredLogging.Json.Tests*]*`"
-
-        & $dotnet `
-            $reportGeneratorPath `
-            `"-reports:$coverageOutput`" `
-            `"-targetdir:$reportOutput`" `
-            -reporttypes:HTML`;Cobertura `
-            -verbosity:Warning
+        $dotnetPath = (Get-Command "dotnet.exe").Source
     }
+
+    $nugetPath = Join-Path $env:USERPROFILE ".nuget\packages"
+
+    $openCoverVersion = "4.7.922"
+    $openCoverPath = Join-Path $nugetPath "OpenCover\$openCoverVersion\tools\OpenCover.Console.exe"
+
+    $reportGeneratorVersion = "4.0.11"
+    $reportGeneratorPath = Join-Path $nugetPath "ReportGenerator\$reportGeneratorVersion\tools\netcoreapp2.0\ReportGenerator.dll"
+
+    $coverageOutput = Join-Path $OutputPath "code-coverage.xml"
+    $reportOutput = Join-Path $OutputPath "coverage"
+
+    & $openCoverPath `
+        `"-target:$dotnetPath`" `
+        `"-targetargs:test $Project --output $OutputPath`" `
+        -output:$coverageOutput `
+        `"-excludebyattribute:System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage*`" `
+        -hideskipped:All `
+        -mergebyhash `
+        -mergeoutput `
+        -oldstyle `
+        -register:user `
+        -skipautoprops `
+        `"-filter:+[NLog.StructuredLogging.Json.Tests*]*`"
+
+    DotNetBuild $project $Configuration "netcoreapp2.1"
+
+    & $dotnet `
+        $reportGeneratorPath `
+        `"-reports:$coverageOutput`" `
+        `"-targetdir:$reportOutput`" `
+        -reporttypes:HTML`;Cobertura `
+        -verbosity:Warning
 
     if ($LASTEXITCODE -ne 0) {
         throw "dotnet test failed with exit code $LASTEXITCODE"
@@ -149,8 +143,8 @@ ForEach ($project in $projects) {
 if ($RunTests -eq $true) {
     Write-Host "Testing $($testProjects.Count) project(s)..." -ForegroundColor Green
     ForEach ($project in $testProjects) {
-        DotNetTestFullFrameWork $project
-        DotNetTest $project
+        DotNetTestFullFramework $project
+        DotNetTestWithCoverage $project
     }
 }
 

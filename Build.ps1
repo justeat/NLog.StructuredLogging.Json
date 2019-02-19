@@ -123,21 +123,21 @@ function DotNetPack {
 }
 
 $projects = @(
-    (Join-Path $solutionPath "src\JustEat.StatsD\JustEat.StatsD.csproj")
+    (Join-Path $solutionPath "src\NLog.StructuredLogging.Json\NLog.StructuredLogging.Json.csproj")
 )
 
 $testProjects = @(
-    (Join-Path $solutionPath "tests\JustEat.StatsD.Tests\JustEat.StatsD.Tests.csproj")
+    (Join-Path $solutionPath "src\NLog.StructuredLogging.Json.Tests\NLog.StructuredLogging.Json.Tests.csproj")
 )
 
 $packageProjects = @(
-    (Join-Path $solutionPath "src\JustEat.StatsD\JustEat.StatsD.csproj")
+    (Join-Path $solutionPath "src\NLog.StructuredLogging.Json\NLog.StructuredLogging.Json.csproj")
 )
 
 Write-Host "Building $($projects.Count) projects..." -ForegroundColor Green
 ForEach ($project in $projects) {
     DotNetBuild $project $Configuration "netstandard2.0"
-    DotNetBuild $project $Configuration "net451"
+    DotNetBuild $project $Configuration "net452"
 }
 
 if ($RunTests -eq $true) {

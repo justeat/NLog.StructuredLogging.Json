@@ -99,7 +99,7 @@ function DotNetTestWithCoverage {
 
     & $openCoverPath `
         `"-target:$dotnetPath`" `
-        `"-targetargs:test $Project --output $OutputPath`" `
+        `"-targetargs:test $Project --output $OutputPath --framework netcoreapp2.1`" `
         -output:$coverageOutput `
         `"-excludebyattribute:System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage*`" `
         -hideskipped:All `

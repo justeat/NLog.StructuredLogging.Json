@@ -108,7 +108,7 @@ function DotNetTestWithCoverage {
         -oldstyle `
         -register:user `
         -skipautoprops `
-        `"-filter:+[NLog.StructuredLogging.Json.Tests*]*`"
+        `"-filter:+[NLog.StructuredLogging.Json]* -[*Test*]*`"
 
     & $dotnet `
         $reportGeneratorPath `

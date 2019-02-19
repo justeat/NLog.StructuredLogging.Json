@@ -151,8 +151,8 @@ ForEach ($project in $projects) {
 if ($RunTests -eq $true) {
     Write-Host "Testing $($testProjects.Count) project(s)..." -ForegroundColor Green
     ForEach ($project in $testProjects) {
-        DotNetTestFullFramework $project
         DotNetTestWithCoverage $project
+        DotNetTestFullFramework $project
     }
 }
 

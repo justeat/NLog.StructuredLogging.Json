@@ -20,6 +20,6 @@ after_build:
 pull_requests:
   do_not_increment_build_number: true
 artifacts:
-- path: 'output\*.nupkg'
+- path: 'artifacts\*.nupkg'
   name: Nuget
 test: off

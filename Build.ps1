@@ -64,11 +64,14 @@ function DotNetBuild {
 
 function DotNetTestFullFramework {
   param([string]$Project)
-  Write-Host "Testing $Project on full framework..." -ForegroundColor Green
-  & $dotnet test $Project --framework net471
+    Write-Host "Testing $Project on .NET full framework..." -ForegroundColor Green
+    DotNetBuild $project $Configuration "net471"
+    & $dotnet test $Project --framework net471
   }
 
 function DotNetTestWithCoverage {
+    Write-Host "Testing $Project on .NET Core with coverage..." -ForegroundColor Green
+
     if ($installDotNetSdk -eq $true) {
         $dotnetPath = $dotnet
     }

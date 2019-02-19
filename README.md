@@ -9,6 +9,8 @@
 
 [![Join the chat at https://gitter.im/justeat/NLog.StructuredLogging.Json](https://badges.gitter.im/justeat/NLog.StructuredLogging.Json.svg)](https://gitter.im/justeat/NLog.StructuredLogging.Json?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
+[![codecov](https://codecov.io/gh/justeat/NLog.StructuredLogging.Json/branch/master/graph/badge.svg)](https://codecov.io/gh/justeat/NLog.StructuredLogging.Json) |
+
 ## What
 
 Structured logging with [NLog](http://nlog-project.org/). Generates log entries as JSON.

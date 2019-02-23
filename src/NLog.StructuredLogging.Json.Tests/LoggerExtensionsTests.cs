@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,7 +56,7 @@ namespace NLog.StructuredLogging.Json.Tests
             Assert.That(eventInfo.Properties["Key1"], Is.EqualTo("Value One"));
             Assert.That(eventInfo.Properties.Count(x => x.Key.Equals("key2")), Is.EqualTo(1));
             Assert.That(eventInfo.Properties["key2"], Is.EqualTo("Value Two"));
-            A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
+            A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(1, Times.Exactly);
         }
 
         [Test]
@@ -103,7 +103,7 @@ namespace NLog.StructuredLogging.Json.Tests
             Assert.That(eventInfo.Properties["Key1"], Is.EqualTo("Value One"));
             Assert.That(eventInfo.Properties.Count(x => x.Key.Equals("key2")), Is.EqualTo(1));
             Assert.That(eventInfo.Properties["key2"], Is.EqualTo("Value Two"));
-            A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
+            A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(1, Times.Exactly);
         }
 
         [Test]
@@ -124,7 +124,7 @@ namespace NLog.StructuredLogging.Json.Tests
             Assert.That(eventInfo.Properties["Key1"], Is.EqualTo("Value One"));
             Assert.That(eventInfo.Properties.Count(x => x.Key.Equals("key2")), Is.EqualTo(1));
             Assert.That(eventInfo.Properties["key2"], Is.EqualTo("Value Two"));
-            A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
+            A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(1, Times.Exactly);
         }
 
         [Test]
@@ -179,7 +179,7 @@ namespace NLog.StructuredLogging.Json.Tests
             var eventInfo = _events.Single();
             Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Error));
             Assert.That(eventInfo.Properties, Is.Empty);
-            A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
+            A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(1, Times.Exactly);
         }
 
         [Test]
@@ -190,7 +190,7 @@ namespace NLog.StructuredLogging.Json.Tests
             var eventInfo = _events.Single();
             Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Error));
             Assert.That(eventInfo.Properties, Is.Empty);
-            A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
+            A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(1, Times.Exactly);
         }
 
         [Test]
@@ -205,7 +205,7 @@ namespace NLog.StructuredLogging.Json.Tests
             Assert.That(eventInfo.Properties["Key1"], Is.EqualTo("Value One"));
             Assert.That(eventInfo.Properties.Count(x => x.Key.Equals("key2")), Is.EqualTo(1));
             Assert.That(eventInfo.Properties["key2"], Is.EqualTo("Value Two"));
-            A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
+            A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(1, Times.Exactly);
         }
 
         [Test]
@@ -232,7 +232,7 @@ namespace NLog.StructuredLogging.Json.Tests
             Assert.That(eventInfo.Exception, Is.Not.Null);
             Assert.That(eventInfo.Exception.Message, Is.EqualTo("example exception"));
 
-            A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
+            A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(1, Times.Exactly);
         }
 
         [Test]
@@ -247,7 +247,7 @@ namespace NLog.StructuredLogging.Json.Tests
             Assert.That(eventInfo.Exception, Is.Not.Null);
             Assert.That(eventInfo.Exception.Message, Is.EqualTo("example exception"));
 
-            A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
+            A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(1, Times.Exactly);
         }
 
         [Test]
@@ -262,7 +262,7 @@ namespace NLog.StructuredLogging.Json.Tests
             Assert.That(eventInfo.Exception, Is.Not.Null);
             Assert.That(eventInfo.Exception.Message, Is.EqualTo("example exception"));
 
-            A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
+            A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(1, Times.Exactly);
         }
 
         [Test]
@@ -295,7 +295,7 @@ namespace NLog.StructuredLogging.Json.Tests
 
             Assert.That(eventInfo.Exception, Is.Not.Null);
             Assert.That(eventInfo.Exception.Message, Is.EqualTo("example exception"));
-            A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
+            A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(1, Times.Exactly);
         }
 
         [Test]
@@ -322,7 +322,7 @@ namespace NLog.StructuredLogging.Json.Tests
             Assert.That(eventInfo.Exception, Is.Not.Null);
 
             Assert.That(eventInfo.Exception.Message, Is.EqualTo("example exception"));
-            A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(Repeated.Exactly.Once);
+            A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored)).MustHaveHappened(1, Times.Exactly);
         }
 
         [Test]

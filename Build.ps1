@@ -123,7 +123,9 @@ function DotNetTestWithCoverage {
 }
 
 function DotNetPack {
-    param([string]$Project, [string]$Configuration)
+    param([string]$Project)
+        Write-Host "Packing project $Project"
+
     & $dotnet pack $Project --output $OutputPath --configuration $Configuration --include-symbols --include-source
     if ($LASTEXITCODE -ne 0) {
         throw "dotnet pack failed with exit code $LASTEXITCODE"
@@ -159,6 +161,6 @@ if ($RunTests -eq $true) {
 if ($CreatePackages -eq $true) {
     Write-Host "Creating $($packageProjects.Count) package(s)..." -ForegroundColor Green
     ForEach ($project in $packageProjects) {
-        DotNetPack $project $Configuration
+        DotNetPack $project
     }
 }

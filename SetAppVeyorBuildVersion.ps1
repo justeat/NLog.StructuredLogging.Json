@@ -40,4 +40,6 @@ if ($versionSuffix -ne $null) {
   $version = $versionPrefix
 }
 
+Write-Host "Version is $version" -ForegroundColor Green
+
 Update-AppveyorBuild -Version "$version"

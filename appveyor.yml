@@ -1,5 +1,5 @@
 image: Visual Studio 2017
-version: 3.0.{build}
+version: 4.0.{build}
 configuration: Release
 environment:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true

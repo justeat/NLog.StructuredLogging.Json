@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json.Linq;
@@ -56,8 +56,8 @@ With lots of possibly bad things in it";
                 Level = LogLevel.Error,
                 LoggerName = "ExampleLoggerName",
                 Message = Message,
-                Parameters = new object[] { "One", 1234 },
-                Properties = { { "PropertyOne", "one" }, { "PropertyTwo", 2 } },
+                Parameters = new object[] {"One", 1234},
+                Properties = {{"PropertyOne", "one"}, {"PropertyTwo", 2}, {"PropertyThree", true}},
                 TimeStamp = new DateTime(2014, 1, 2, 3, 4, 5, 623, DateTimeKind.Utc)
             };
 
@@ -96,7 +96,7 @@ With lots of possibly bad things in it";
                 "\"ExceptionMessage\":\"Outer Exception\"," +
                 "\"ExceptionStackTrace\":null," +
                 "\"ExceptionFingerprint\":\"55179621c796d669d13aee15725c01ba4524b44f\"," +
-                "\"Parameters\":\"One,1234\",\"PropertyOne\":\"one\",\"PropertyTwo\":\"2\"}";
+                "\"Parameters\":\"One,1234\",\"PropertyOne\":\"one\",\"PropertyTwo\":2,\"PropertyThree\":true}";
 
 
             Assert.That(Result, Is.EqualTo(expected));

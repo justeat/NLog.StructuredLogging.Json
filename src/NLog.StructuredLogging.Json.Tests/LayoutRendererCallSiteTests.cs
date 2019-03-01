@@ -17,7 +17,6 @@ namespace NLog.StructuredLogging.Json.Tests
         [SetUp]
         public void SetUp()
         {
-
             LogEvent = new LogEventInfo
             {
                 Exception = new Exception(),

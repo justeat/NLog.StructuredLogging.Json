@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Net;
 
 namespace NLog.StructuredLogging.Json.Helpers
 {
@@ -59,7 +61,10 @@ namespace NLog.StructuredLogging.Json.Helpers
             return result;
         }
 
-        public static void HarvestToDictionary(IDictionary<object, object> source, IDictionary<string, object> dest, string keyPrefixWhenCollision)
+        public static void HarvestToDictionary(
+        IDictionary<object, object> source,
+        IDictionary<string, object> dest,
+        string keyPrefixWhenCollision)
         {
             if (source == null)
             {
@@ -68,7 +73,15 @@ namespace NLog.StructuredLogging.Json.Helpers
 
             foreach (var property in source)
             {
-                HarvestToDictionary(dest, property.Key.ToString(), property.Value, keyPrefixWhenCollision);
+                if (property.Value.IsNonStringValueType())
+                {
+                    HarvestToDictionary(dest, property.Key.ToString(), property.Value, keyPrefixWhenCollision);
+                }
+                else
+                {
+                    var valueAsString = Convert.ValueAsString(property.Value);
+                    HarvestStringToDictionary(dest, property.Key.ToString(), valueAsString, keyPrefixWhenCollision);
+                }
             }
         }
 
@@ -81,17 +94,23 @@ namespace NLog.StructuredLogging.Json.Helpers
 
             foreach (DictionaryEntry property in source)
             {
-                HarvestToDictionary(dest, property.Key.ToString(), property.Value, keyPrefixWhenCollision);
+                if (property.Value.IsNonStringValueType())
+                {
+                    HarvestToDictionary(dest, property.Key.ToString(), property.Value, keyPrefixWhenCollision);
+                }
+                else
+                {
+                    var valueAsString = Convert.ValueAsString(property.Value);
+                    HarvestStringToDictionary(dest, property.Key.ToString(), valueAsString, keyPrefixWhenCollision);
+                }
             }
         }
 
-        private static void HarvestToDictionary(IDictionary<string, object> dest, string key, object value, string keyPrefixWhenCollision)
-        {
-            var valueAsString = Convert.ValueAsString(value);
-            HarvestStringToDictionary(dest, key, valueAsString, keyPrefixWhenCollision);
-        }
-
-        public static void HarvestStringToDictionary(IDictionary<string, object> dest, string key, string value, string keyPrefixWhenCollision)
+        private static void HarvestToDictionary(
+            IDictionary<string, object> dest,
+            string key,
+            object value,
+            string keyPrefixWhenCollision)
         {
             if (string.IsNullOrWhiteSpace(key))
             {
@@ -113,9 +132,19 @@ namespace NLog.StructuredLogging.Json.Helpers
             }
         }
 
+        public static void HarvestStringToDictionary(
+            IDictionary<string, object> dest,
+            string key,
+            string value,
+            string keyPrefixWhenCollision)
+        {
+            HarvestToDictionary(dest, key, value, keyPrefixWhenCollision);
+        }
+
         private static string SafeCharsInKey(string rawKey)
         {
             return rawKey.Replace('.', '_');
         }
     }
 }
+

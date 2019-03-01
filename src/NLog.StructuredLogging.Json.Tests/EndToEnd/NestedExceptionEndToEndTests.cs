@@ -30,6 +30,15 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
 
             testEx.Data.Add("ex_key_1", "ex_data_1");
             testEx.Data.Add("ex_key_2", "ex_data_2");
+            testEx.Data.Add("ex_key_3", 3);
+            testEx.Data.Add("ex_key_4", 4d);
+            testEx.Data.Add("ex_key_5", 5f);
+            testEx.Data.Add("ex_key_6", 6m);
+            testEx.Data.Add("ex_key_7", 7u);
+            testEx.Data.Add("ex_key_8", 8ul);
+            testEx.Data.Add("ex_key_9", (byte)9);
+            testEx.Data.Add("ex_key_10", (sbyte)10);
+            testEx.Data.Add("ex_key_11", true);
 
             return PutStackTraceOnException(testEx);
         }
@@ -50,7 +59,11 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
         {
             for (var i = 0; i < Iterations; i++)
             {
-                Sut.ExtendedException(_exception, Message, new { PropertyOne = "one", PropertyTwo = 2, Iteration = i });
+                Sut.ExtendedException(_exception, Message,
+                    new
+                    {
+                        PropertyOne = "one", PropertyTwo = 2, PropertyThree = true, Iteration = i
+                    });
             }
             LogManager.Flush();
             Result = LogManager.Configuration.LogMessage(TargetName);
@@ -145,6 +158,15 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
                 {
                     line.ShouldMatch(@"""ex_key_1"":""ex_data_1");
                     line.ShouldMatch(@"""ex_key_2"":""ex_data_2");
+                    line.ShouldMatch(@"""ex_key_3"":3");
+                    line.ShouldMatch(@"""ex_key_4"":4.0");
+                    line.ShouldMatch(@"""ex_key_5"":5.0");
+                    line.ShouldMatch(@"""ex_key_6"":6");
+                    line.ShouldMatch(@"""ex_key_7"":7");
+                    line.ShouldMatch(@"""ex_key_8"":8");
+                    line.ShouldMatch(@"""ex_key_9"":9");
+                    line.ShouldMatch(@"""ex_key_10"":10");
+                    line.ShouldMatch(@"""ex_key_11"":true");
                 }
             }
         }

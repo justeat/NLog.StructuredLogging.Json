@@ -25,7 +25,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
         {
             Assert.That(_output, Does.Contain("\"Message\":\"A message with 1 and \\\"two\\\" embedded\""));
             Assert.That(_output, Does.Contain("\"MessageTemplate\":\"A message with {PropA} and {PropB} embedded"));
-            Assert.That(_output, Does.Contain("\"PropA\":\"1"));
+            Assert.That(_output, Does.Contain("\"PropA\":1"));
             Assert.That(_output, Does.Contain("\"PropB\":\"two"));
             Assert.That(_output, Does.Not.Contain("Parameters"));
         }

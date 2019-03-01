@@ -51,11 +51,10 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
                 "Exception", "ExceptionType", "ExceptionMessage",
                 "ExceptionStackTrace", "ExceptionFingerprint",
                 "ExceptionIndex", "ExceptionCount",
-                "PropertyOne", "PropertyTwo", "Iteration",
-                "ex_key_1", "ex_key_2"
+                "PropertyOne", "PropertyTwo", "PropertyThree",
+                "Iteration", "ex_key_1", "ex_key_2"
             };
         }
-
         protected virtual string GivenMessage()
         {
             #region long message with edge cases and control chars
@@ -117,7 +116,11 @@ With lots of possibly bad things in it";
         {
             for (var i = 0; i < Iterations; i++)
             {
-                Sut.ExtendedException(_exception, Message, new {PropertyOne = "one", PropertyTwo = 2, Iteration = i});
+                Sut.ExtendedException(_exception, Message,
+                    new
+                    {
+                        PropertyOne = "one", PropertyTwo = 2, PropertyThree = true, Iteration = i
+                    });
             }
             LogManager.Flush();
             Result = LogManager.Configuration.LogMessage(TargetName);
@@ -147,15 +150,16 @@ With lots of possibly bad things in it";
             yield return new JsonAttribute("Parameters", "");
             yield return new JsonAttribute("CallSite", "${callsite}");
             yield return new JsonAttribute("PropertyOne", "one");
-            yield return new JsonAttribute("PropertyTwo", "2");
-            yield return new JsonAttribute("Iteration", "1");
+            yield return new JsonAttribute("PropertyTwo", "2", false);
+            yield return new JsonAttribute("PropertyThree", "true", false);
+            yield return new JsonAttribute("Iteration", "1", false);
             yield return new JsonAttribute("Exception", "${exception:format=ToString}");
             yield return new JsonAttribute("ExceptionType", "${exception:format=ShortType}");
             yield return new JsonAttribute("ExceptionMessage", "${exception:format=Message}");
             yield return new JsonAttribute("ExceptionStackTrace", "${exception:format=StackTrace}");
             yield return new JsonAttribute("ExceptionFingerprint", "${hasher:Inner=${exception:format=StackTrace}}");
-            yield return new JsonAttribute("ExceptionIndex", "1");
-            yield return new JsonAttribute("ExceptionCount", "1");
+            yield return new JsonAttribute("ExceptionIndex", "1", false);
+            yield return new JsonAttribute("ExceptionCount", "1", false);
             yield return new JsonAttribute("ex_key_1", "ex_data_1");
             yield return new JsonAttribute("ex_key_2", "ex_data_2");
         }
@@ -261,8 +265,7 @@ With lots of possibly bad things in it";
         private string AttributeMissingMessage(string prop)
         {
             var propName = _attributesNotYetAssertable.ContainsKey(prop) ? _attributesNotYetAssertable[prop] : prop;
-            return string.Format("The attribute {0} : '{1}' should be in attributes not assertable, or there's a test failure. Prefer making it assertable!",
-                prop, propName);
+            return $"The attribute {prop} : '{propName}' should be in attributes not assertable, or there's a test failure. Prefer making it assertable!";
         }
 
         [Test]
@@ -314,8 +317,9 @@ With lots of possibly bad things in it";
             foreach (var line in Result)
             {
                 line.ShouldMatch(@"PropertyOne"":""one""");
-                line.ShouldMatch(@"PropertyTwo"":""2""");
-                line.ShouldMatch(@"Iteration"":""\d+""");
+                line.ShouldMatch(@"PropertyTwo"":2");
+                line.ShouldMatch(@"PropertyThree"":true");
+                line.ShouldMatch(@"Iteration"":\d+");
             }
         }
 

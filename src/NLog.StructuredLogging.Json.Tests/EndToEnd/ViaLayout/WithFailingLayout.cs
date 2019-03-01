@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using NLog.Config;
 using NLog.Layouts;
 using NLog.StructuredLogging.Json.Tests.JsonWithProperties;
@@ -33,7 +33,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
             Assert.That(output, Does.StartWith(
                 "{\"success1\":\"success1\",\"TimeStamp\":\""));
             Assert.That(output, Does.EndWith(
-                "\"prop1\":\"value1s\",\"prop2s\":\"2\"}"));
+                "\"prop1\":\"value1s\",\"prop2s\":2}"));
         }
 
         [Test]
@@ -43,7 +43,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
 
             Assert.That(output, Does.Contain("\"Message\":\"test message\""));
             Assert.That(output, Does.Contain("\"flat1\":\"flat1\",\"TimeStamp\":\""));
-            Assert.That(output, Does.EndWith("\"prop1\":\"value1\",\"prop2\":\"2\"}"));
+            Assert.That(output, Does.EndWith("\"prop1\":\"value1\",\"prop2\":2}"));
         }
 
         [Test]
@@ -66,7 +66,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
 
             Assert.That(output, Does.Contain("\"Message\":\"test message\""));
             Assert.That(output, Does.Contain("\"flat1\":\"flat1\",\"TimeStamp\":\""));
-            Assert.That(output, Does.EndWith("\"prop1\":\"value1\",\"prop2\":\"2\"}"));
+            Assert.That(output, Does.EndWith("\"prop1\":\"value1\",\"prop2\":2}"));
         }
 
         [Test]
@@ -97,7 +97,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
             Assert.That(output, Does.StartWith(
                 "{\"duplicated\":\"value1\",\"attributes_duplicated\":\"value2\",\"TimeStamp\":\""));
             Assert.That(output, Does.EndWith(
-                "\"prop1\":\"value1\",\"prop2\":\"2\"}"));
+                "\"prop1\":\"value1\",\"prop2\":2}"));
         }
 
         private void GivenLoggingIsConfiguredForTest(Target target, bool layoutThrowsExceptions)

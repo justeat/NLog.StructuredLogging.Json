@@ -18,16 +18,23 @@ if ($env:APPVEYOR_PULL_REQUEST_NUMBER){
   $buildNumber += "-" + (Generate-RandomCharacters -Length 8)
 }
 
+
 if ($env:APPVEYOR_REPO_TAG -ne "true") {
-  if ($versionSuffix -ne "") {
+  if ($versionSuffix -ne $null) {
     $versionSuffix += "-build$buildNumber"
   }
-  if ($versionSuffix -eq "") {
+  else {
     $versionSuffix = "build$buildNumber"
   }
 }
+else {
+  if ($env:APPVEYOR_REPO_TAG_NAME.Contains("-")) {
+    $dashIndex = $env:APPVEYOR_REPO_TAG_NAME.IndexOf("-")
+    $versionSuffix = $env:APPVEYOR_REPO_TAG_NAME.Substring($dashIndex + 1)
+  }
+}
 
-if ($versionSuffix -ne "") {
+if ($versionSuffix -ne $null) {
   $version = "$versionPrefix-$versionSuffix"
 } else {
   $version = $versionPrefix

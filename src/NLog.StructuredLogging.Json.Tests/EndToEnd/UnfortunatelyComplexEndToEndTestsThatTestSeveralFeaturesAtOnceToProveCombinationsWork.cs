@@ -35,7 +35,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
             base.ModifyLoggingConfigurationBeforeCommit(nameOfTargetForSut, config);
         }
 
-        protected virtual IDictionary<string,string> GivenAttributesNotYetAssertable()
+        protected virtual IDictionary<string, string> GivenAttributesNotYetAssertable()
         {
             return new Dictionary<string, string>();
         }
@@ -119,7 +119,10 @@ With lots of possibly bad things in it";
                 Sut.ExtendedException(_exception, Message,
                     new
                     {
-                        PropertyOne = "one", PropertyTwo = 2, PropertyThree = true, Iteration = i
+                        PropertyOne = "one",
+                        PropertyTwo = 2,
+                        PropertyThree = true,
+                        Iteration = i
                     });
             }
             LogManager.Flush();

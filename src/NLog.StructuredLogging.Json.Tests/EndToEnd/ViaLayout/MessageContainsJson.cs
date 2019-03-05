@@ -7,7 +7,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
     {
         protected override string GivenMessage()
         {
-            return string.Format("json start {0} json end", JsonConvert.SerializeObject(new {foo = "bar", baz = new {wibble = "chip"}}));
+            return string.Format("json start {0} json end", JsonConvert.SerializeObject(new { foo = "bar", baz = new { wibble = "chip" } }));
         }
 
         protected override int GivenExpectedNumberBraces()
@@ -39,7 +39,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
             foreach (var line in Result)
             {
                 Assert.That(line.Length, Is.InRange(1000, 1600),
-                    "zzzzline start\n\n" +line + "\n\nzzzzzline end");
+                    "zzzzline start\n\n" + line + "\n\nzzzzzline end");
             }
         }
     }

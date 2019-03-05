@@ -24,14 +24,14 @@ namespace NLog.StructuredLogging.Json.Tests
         private readonly LogLevel _logLevel;
 
         private class ExpectedData
-        {            
+        {
             public LogLevel LogLevel { get; set; }
             public Predicate<IDictionary<object, object>> PropertiesPredicate { get; set; }
             public string Message { get; set; }
-        }        
+        }
 
         public LoggerExtensionsScopeTests(string logLevel)
-        {            
+        {
             _logLevel = LogLevel.FromString(logLevel);
         }
 
@@ -80,7 +80,7 @@ namespace NLog.StructuredLogging.Json.Tests
                 {
                     LogLevel = LogLevel.Trace,
                     Message = StartLogicalScopeMessage,
-                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(scopeName) &&                                                        
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(scopeName) &&
                                                         properties[ScopeIdTracePropertyName].Equals(properties[ScopeIdPropertyName])
                 },
                 new ExpectedData
@@ -100,7 +100,7 @@ namespace NLog.StructuredLogging.Json.Tests
 
             using (_logger.BeginScope(scopeName))
             {
-                
+
             }
 
             _logger.Extended(_logLevel, message, null);
@@ -114,7 +114,7 @@ namespace NLog.StructuredLogging.Json.Tests
                 Assert.That(eventInfo.Level, Is.EqualTo(expected.LogLevel));
                 Assert.That(expected.PropertiesPredicate(eventInfo.Properties));
                 Assert.AreEqual(eventInfo.FormattedMessage, expected.Message);
-            }                        
+            }
         }
 
         [Test]
@@ -130,7 +130,7 @@ namespace NLog.StructuredLogging.Json.Tests
                 {
                     LogLevel = LogLevel.Trace,
                     Message = StartLogicalScopeMessage,
-                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(scopeName) &&                                                        
+                    PropertiesPredicate = properties => properties[ScopePropertyName].Equals(scopeName) &&
                                                         properties[ScopeIdTracePropertyName].Equals(properties[ScopeIdPropertyName]) &&
                                                         properties[nameof(logProps.Key1)].Equals(logProps.Key1) &&
                                                         properties[nameof(logProps.key2)].Equals(logProps.key2)
@@ -224,7 +224,7 @@ namespace NLog.StructuredLogging.Json.Tests
                 Assert.That(expected.PropertiesPredicate(eventInfo.Properties));
                 Assert.AreEqual(eventInfo.FormattedMessage, expected.Message);
             }
-        }        
+        }
 
         [Test]
         public async Task When_Logging_Happens_In_Parallel()
@@ -232,7 +232,7 @@ namespace NLog.StructuredLogging.Json.Tests
             const string scopeName = "empty scope";
             const string message = "hello world";
             var logProps = new { Key1 = "Value One", key2 = "Value Two" };
-            var taskOneLogProps = new { Task = "one"};
+            var taskOneLogProps = new { Task = "one" };
             var taskTwoLogProps = new { Task = "two" };
 
             var expectedData = new[]
@@ -357,7 +357,7 @@ namespace NLog.StructuredLogging.Json.Tests
                                                         properties[nameof(logProps.Key1)].Equals(logProps.Key1) &&
                                                         properties[nameof(logProps.key2)].Equals(logProps.key2) &&
                                                         properties[nameof(taskTwoLogProps.Task)].Equals(taskTwoLogProps.Task)
-                },                
+                },
                 new ExpectedData
                 {
                     LogLevel = LogLevel.Trace,
@@ -391,14 +391,14 @@ namespace NLog.StructuredLogging.Json.Tests
             {
                 topScopeId = topScope.ScopeId;
                 var taskOne = Task.Run(() =>
-                {                    
+                {
                     using (_logger.BeginScope(nestedScopeForTaskOne))
                     {
                         _logger.Extended(_logLevel, message, taskOneLogProps);
                     }
                 });
                 var taskTwo = Task.Run(() =>
-                {                   
+                {
                     using (_logger.BeginScope(nestedScopeForTaskTwo))
                     {
                         _logger.Extended(_logLevel, message, taskTwoLogProps);
@@ -410,7 +410,7 @@ namespace NLog.StructuredLogging.Json.Tests
             var events = _events.ToArray();
             for (int i = 0; i < events.Length; i++)
             {
-                var eventInfo = events[i];                
+                var eventInfo = events[i];
                 var match = expectedData.SingleOrDefault(o =>
                 {
                     return o.LogLevel == eventInfo.Level &&
@@ -420,7 +420,7 @@ namespace NLog.StructuredLogging.Json.Tests
 
                 Assert.NotNull(match);
             }
-        }         
+        }
 
         [Test]
         public void Should_Attach_Scope_Properties_Along_With_LogProperties_To_Log()
@@ -428,7 +428,7 @@ namespace NLog.StructuredLogging.Json.Tests
             const string scopeName = "empty scope";
             const string message = "hello world";
             var scopeProperties = new { Key1 = "Value One", key2 = "Value Two" };
-            var loggerProperties = new {LoggerProperty = "Value Three"};
+            var loggerProperties = new { LoggerProperty = "Value Three" };
 
             var expectedData = new[]
             {
@@ -510,7 +510,7 @@ namespace NLog.StructuredLogging.Json.Tests
                                                         properties[ScopeIdTracePropertyName].Equals($"{outerScopeId} -> {properties[ScopeIdPropertyName]}") &&
                                                         properties[nameof(scopeProperties.Key1)].Equals(scopeProperties.Key1) &&
                                                         properties[nameof(scopeProperties.key2)].Equals(scopeProperties.key2) &&
-                                                        properties[nameof(nestedScopeProperties.NestedScopeProperty)].Equals(nestedScopeProperties.NestedScopeProperty)                               
+                                                        properties[nameof(nestedScopeProperties.NestedScopeProperty)].Equals(nestedScopeProperties.NestedScopeProperty)
                 },
                 new ExpectedData
                 {
@@ -575,6 +575,6 @@ namespace NLog.StructuredLogging.Json.Tests
                 Assert.That(expected.PropertiesPredicate(eventInfo.Properties));
                 Assert.AreEqual(eventInfo.FormattedMessage, expected.Message);
             }
-        }               
-    }    
+        }
+    }
 }

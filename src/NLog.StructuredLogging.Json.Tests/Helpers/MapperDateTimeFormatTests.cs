@@ -11,7 +11,7 @@ namespace NLog.StructuredLogging.Json.Tests.Helpers
         [Test]
         public void LocalDateTimeIsSerialisedAsIso8601()
         {
-            var dateValue = new DateTime(2016,1,30, 12,15,45);
+            var dateValue = new DateTime(2016, 1, 30, 12, 15, 45);
 
             var results = MakeMappedValues("dateValue", dateValue);
             var result = results["dateValue"];

@@ -12,7 +12,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ExceptionFingerprinting
 
         protected override void When()
         {
-            Sut.ExtendedInfo("foo", new {Bar = "baz"});
+            Sut.ExtendedInfo("foo", new { Bar = "baz" });
             var line = LogManager.Configuration.LogMessage(TargetName).First();
             Result = JObject.Parse(line);
         }

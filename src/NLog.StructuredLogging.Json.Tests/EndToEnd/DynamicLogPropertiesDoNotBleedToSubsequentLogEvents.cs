@@ -10,8 +10,8 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
 
         protected override void When()
         {
-            Sut.ExtendedInfo("message 1", new {foo = "bar", baz = "wibble"});
-            Sut.ExtendedInfo("message 2", new {oddness = true});
+            Sut.ExtendedInfo("message 1", new { foo = "bar", baz = "wibble" });
+            Sut.ExtendedInfo("message 2", new { oddness = true });
             var lines = LogManager.Configuration.LogMessage(TargetName);
             _m1 = JObject.Parse(lines[0]);
             _m2 = JObject.Parse(lines[1]);

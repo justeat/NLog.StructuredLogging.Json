@@ -65,7 +65,7 @@ namespace NLog.StructuredLogging.Json.Tests.Helpers
         [Test]
         public void MultipleParamTypesAreParsed()
         {
-            var input = new object[] {123, 34.4d, "sometext", false, ""};
+            var input = new object[] { 123, 34.4d, "sometext", false, "" };
             var actualParams = ProcessParams(input);
 
             Assert.That(actualParams, Is.EqualTo("123,34.4,sometext,False,"));

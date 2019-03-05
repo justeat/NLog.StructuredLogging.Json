@@ -12,7 +12,7 @@ namespace NLog.StructuredLogging.Json
 
         public string ScopeName { get; }
         public string ScopeTrace { get; }
-        public Guid ScopeId { get; }        
+        public Guid ScopeId { get; }
         public string ScopeIdTrace { get; }
         public IReadOnlyDictionary<string, object> Properties => _properties;
 
@@ -73,7 +73,7 @@ namespace NLog.StructuredLogging.Json
             }
 
             return properties;
-        }        
+        }
 
         private static Scope GetParentScope()
         {

@@ -19,7 +19,7 @@ namespace NLog.StructuredLogging.Json.Tests
             var fileLogger = GetFlattenedJsonFileLogger(fileName);
             Assert.That(fileLogger, Is.Not.Null);
 
-            fileLogger.ExtendedInfo("This is a test", 
+            fileLogger.ExtendedInfo("This is a test",
                 new
                 {
                     Hello = "Hello",

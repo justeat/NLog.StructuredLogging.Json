@@ -40,7 +40,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
 
             JToken log = JObject.Parse(_target.Logs[0]);
             string message = (string)log.SelectToken("Message");
-            string parameter = (string) log.SelectToken("Parameters");
+            string parameter = (string)log.SelectToken("Parameters");
 
             Assert.That(message, Is.EqualTo("log message With Extra String!! and with a "));
             Assert.That(parameter, Is.EqualTo("With Extra String!!,null"));

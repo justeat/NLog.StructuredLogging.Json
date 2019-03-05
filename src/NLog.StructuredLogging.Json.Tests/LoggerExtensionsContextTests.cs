@@ -130,7 +130,7 @@ namespace NLog.StructuredLogging.Json.Tests
             var tasks = new List<Task>();
             for (var i = 0; i < taskCount; i++)
             {
-               tasks.Add(LogSomethingAsync(i));
+                tasks.Add(LogSomethingAsync(i));
             }
 
             await Task.WhenAll(tasks);
@@ -156,7 +156,7 @@ namespace NLog.StructuredLogging.Json.Tests
 
         private void MethodThatDoesSomeLogging()
         {
-            var props = new { Key1 = "Value One"};
+            var props = new { Key1 = "Value One" };
             _logger.ExtendedInfo("hello world", props);
         }
 

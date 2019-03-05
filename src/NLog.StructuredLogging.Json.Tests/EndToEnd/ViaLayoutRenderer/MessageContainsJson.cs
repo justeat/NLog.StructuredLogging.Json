@@ -8,7 +8,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayoutRenderer
     {
         protected override string GivenMessage()
         {
-            return "json " + JsonConvert.SerializeObject(new {foo = "bar", baz = new {wibble = "chip"}});
+            return "json " + JsonConvert.SerializeObject(new { foo = "bar", baz = new { wibble = "chip" } });
         }
 
         protected override int GivenExpectedNumberBraces()

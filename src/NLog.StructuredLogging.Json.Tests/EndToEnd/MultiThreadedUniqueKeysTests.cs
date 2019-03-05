@@ -26,7 +26,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
 
             for (var i = 0; i < Threads; i++)
             {
-                var startIndex = i*Threads;
+                var startIndex = i * Threads;
                 var task = Task.Factory.StartNew(
                     async () => await LogSomeMessages(startIndex))
                     .Unwrap();
@@ -51,7 +51,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
         private void LogAMessage(int index)
         {
             var uniqueValue = Guid.NewGuid().ToString();
-            var messageType = index%4;
+            var messageType = index % 4;
             var messageText = "Test message type " + messageType + " with value " + uniqueValue;
 
             switch (messageType)

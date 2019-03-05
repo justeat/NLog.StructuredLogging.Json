@@ -7,7 +7,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayoutRenderer
     {
         protected override IDictionary<string, string> GivenAttributesNotYetAssertable()
         {
-            return new Dictionary<string,string>
+            return new Dictionary<string, string>
             {
                 {"ProcessId", "StructuredLoggingLayoutRenderer does not output this"},
                 {"ThreadId", "StructuredLoggingLayoutRenderer does not output this"}

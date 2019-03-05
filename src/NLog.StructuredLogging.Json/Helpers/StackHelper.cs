@@ -60,7 +60,7 @@ namespace NLog.StructuredLogging.Json.Helpers
 
         private static bool IsUserMethod(MethodBase method)
         {
-            return method.DeclaringType != typeof (LoggerExtensions);
+            return method.DeclaringType != typeof(LoggerExtensions);
         }
     }
 }

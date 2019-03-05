@@ -14,13 +14,13 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.LeniencyOfAttributeNames
         protected override void Given()
         {
             _exception = new Exception();
-            _exception.Data.Add("TimeStamp", new DateTime(2016,1,2));
+            _exception.Data.Add("TimeStamp", new DateTime(2016, 1, 2));
             base.Given();
         }
 
         protected override void When()
         {
-            Sut.ExtendedException(_exception, "foo", new {TimeStamp = new DateTime(2016,1,1)});
+            Sut.ExtendedException(_exception, "foo", new { TimeStamp = new DateTime(2016, 1, 1) });
             _result = JObject.Parse(LogManager.Configuration.LogMessage(TargetName).First());
         }
 

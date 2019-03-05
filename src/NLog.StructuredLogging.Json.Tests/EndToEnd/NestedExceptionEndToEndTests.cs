@@ -62,7 +62,10 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
                 Sut.ExtendedException(_exception, Message,
                     new
                     {
-                        PropertyOne = "one", PropertyTwo = 2, PropertyThree = true, Iteration = i
+                        PropertyOne = "one",
+                        PropertyTwo = 2,
+                        PropertyThree = true,
+                        Iteration = i
                     });
             }
             LogManager.Flush();

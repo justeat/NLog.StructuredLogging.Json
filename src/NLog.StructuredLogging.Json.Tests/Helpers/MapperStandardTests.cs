@@ -73,7 +73,7 @@ namespace NLog.StructuredLogging.Json.Tests.Helpers
                 Level = LogLevel.Error,
                 LoggerName = "ExampleLoggerName",
                 Message = "Example Message",
-                Parameters = new object[] {"One", 1234},
+                Parameters = new object[] { "One", 1234 },
                 Properties =
                 {
                     {"PropertyOne", "This value is in property one"}, {"PropertyTwo", 2}, {"PropertyThree", true}

@@ -7,7 +7,7 @@ namespace NLog.StructuredLogging.Json
     [NLogConfigurationItem]
     public class StructuredLoggingProperty
     {
-        public StructuredLoggingProperty() {}
+        public StructuredLoggingProperty() { }
 
         public StructuredLoggingProperty(string name, Layout layout)
         {

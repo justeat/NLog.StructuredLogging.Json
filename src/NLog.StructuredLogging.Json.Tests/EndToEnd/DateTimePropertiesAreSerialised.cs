@@ -10,12 +10,12 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
         protected override void When()
         {
             var logInfo = new
-                {
-                    DateTimeInLocal = new DateTime(2014, 1, 2, 3, 4, 5, DateTimeKind.Local),
-                    DateTimeInUtc = new DateTime(2014, 1, 2, 3, 4, 5, DateTimeKind.Utc),
-                    DateTimeOffsetInUtc = new DateTimeOffset(new DateTime(2014, 1, 2, 3, 4, 5), TimeSpan.Zero),
-                    DateTimeOffsetWithOffset = new DateTimeOffset(new DateTime(2014, 1, 2, 3, 4, 5), new TimeSpan(4, 0, 0))
-               };
+            {
+                DateTimeInLocal = new DateTime(2014, 1, 2, 3, 4, 5, DateTimeKind.Local),
+                DateTimeInUtc = new DateTime(2014, 1, 2, 3, 4, 5, DateTimeKind.Utc),
+                DateTimeOffsetInUtc = new DateTimeOffset(new DateTime(2014, 1, 2, 3, 4, 5), TimeSpan.Zero),
+                DateTimeOffsetWithOffset = new DateTimeOffset(new DateTime(2014, 1, 2, 3, 4, 5), new TimeSpan(4, 0, 0))
+            };
 
             Sut.ExtendedInfo("testMessage", logInfo);
             var lines = LogManager.Configuration.LogMessage(TargetName);

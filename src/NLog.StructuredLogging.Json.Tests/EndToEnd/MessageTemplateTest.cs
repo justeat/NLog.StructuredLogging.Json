@@ -12,7 +12,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd
             {
                 Level = LogLevel.Info,
                 Message = "A message with {PropA} and {PropB} embedded",
-                Parameters = new object[] {1, "two"}
+                Parameters = new object[] { 1, "two" }
             };
 
             Sut.Log(logInfo);

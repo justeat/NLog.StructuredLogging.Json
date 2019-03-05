@@ -56,8 +56,8 @@ With lots of possibly bad things in it";
                 Level = LogLevel.Error,
                 LoggerName = "ExampleLoggerName",
                 Message = Message,
-                Parameters = new object[] {"One", 1234},
-                Properties = {{"PropertyOne", "one"}, {"PropertyTwo", 2}, {"PropertyThree", true}},
+                Parameters = new object[] { "One", 1234 },
+                Properties = { { "PropertyOne", "one" }, { "PropertyTwo", 2 }, { "PropertyThree", true } },
                 TimeStamp = new DateTime(2014, 1, 2, 3, 4, 5, 623, DateTimeKind.Utc)
             };
 
@@ -86,13 +86,13 @@ With lots of possibly bad things in it";
         {
             var escapedLinebreak = (Environment.NewLine == "\n") ? "\\n" : "\\r\\n";
 
-            var expected = 
+            var expected =
                 "{\"TimeStamp\":\"2014-01-02T03:04:05.623Z\"," +
                 "\"Level\":\"Error\",\"LoggerName\":\"ExampleLoggerName\"," +
-                "\"Message\":\"\\r\\nThis is a message\\r\\n!\\\"£$%^&*\\r\\n\\r\\nWith lots of possibly bad things in it" + 
+                "\"Message\":\"\\r\\nThis is a message\\r\\n!\\\"£$%^&*\\r\\n\\r\\nWith lots of possibly bad things in it" +
                     "\\u0001\\u0002\\u0003\\u0004\\u0005\\u0006\\u0007\\b\\t\\u0010\\u0011\\u0012\\u0013\\u0014\\u0015\\u0016\\u0017\\u0018\\u0019\"," +
                 $"\"Exception\":\"System.Exception: Outer Exception ---> System.Exception: Inner Exception{escapedLinebreak}   --- End of inner exception stack trace ---\"," +
-                "\"ExceptionType\":\"Exception\","+
+                "\"ExceptionType\":\"Exception\"," +
                 "\"ExceptionMessage\":\"Outer Exception\"," +
                 "\"ExceptionStackTrace\":null," +
                 "\"ExceptionFingerprint\":\"55179621c796d669d13aee15725c01ba4524b44f\"," +

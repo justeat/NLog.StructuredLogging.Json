@@ -22,7 +22,7 @@ namespace NLog.StructuredLogging.Json.Tests
             A.CallTo(() => _logger.Name).Returns("FakeLogger");
             A.CallTo(() => _logger.Log(A<LogEventInfo>.Ignored))
                 .Invokes(x => _events.Add((LogEventInfo)x.Arguments[0]));
-        }        
+        }
 
         [Test]
         public void ExtendedDebug_NoProperties_NoPropertiesSet()
@@ -32,7 +32,7 @@ namespace NLog.StructuredLogging.Json.Tests
             var eventInfo = _events.Single();
             Assert.That(eventInfo.Level, Is.EqualTo(LogLevel.Debug));
             Assert.That(eventInfo.Properties, Is.Empty);
-        }        
+        }
 
         [Test]
         public void ExtendedDebug_ImplicitNoProperties_NoPropertiesSet()
@@ -223,7 +223,7 @@ namespace NLog.StructuredLogging.Json.Tests
         [Test]
         public void ExtendedException_NoProperties()
         {
-            _logger.ExtendedException(new Exception("example exception"), "hello world", new {});
+            _logger.ExtendedException(new Exception("example exception"), "hello world", new { });
 
             var eventInfo = _events.Single();
 
@@ -337,9 +337,9 @@ namespace NLog.StructuredLogging.Json.Tests
         {
             var badData = new PropertiesWithIndexer
             {
-                    Foo = "test",
-                    Bar = 42
-                };
+                Foo = "test",
+                Bar = 42
+            };
             _logger.ExtendedException(new Exception(), "test", badData);
             Assert.Pass("This checks that the method overloads are able to cope with a object with an indexer property being passed to the logger");
         }

@@ -116,7 +116,7 @@ namespace NLog.StructuredLogging.Json.Tests.Helpers
                 return ex;
             }
         }
-        
+
         private static Exception PutStackTraceOnExceptionGeneric<TObject>(Exception inputEx, bool secondLine, TObject message)
         {
             try

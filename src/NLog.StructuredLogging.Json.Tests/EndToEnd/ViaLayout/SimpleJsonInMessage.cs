@@ -28,7 +28,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
         {
             for (var i = 1; i <= _iterations; i++)
             {
-                _sut.ExtendedInfo(_message, new {prop1 = "value1", prop2 = 2, iteration = i});
+                _sut.ExtendedInfo(_message, new { prop1 = "value1", prop2 = 2, iteration = i });
             }
 
             LogManager.Flush();
@@ -44,14 +44,14 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayout
         {
             _iterations = 10;
             _message = string.Format("json start {0} json end",
-                JsonConvert.SerializeObject(new {foo = "bar", sub = new {sub1 = "value"}}));
+                JsonConvert.SerializeObject(new { foo = "bar", sub = new { sub1 = "value" } }));
             GivenLoggingIsConfiguredForTest(_name);
         }
 
         private void GivenLoggingIsConfiguredForTest(string name)
         {
-            ConfigurationItemFactory.Default.Layouts.RegisterDefinition("jsonwithproperties", typeof (JsonWithPropertiesLayout));
-            ConfigurationItemFactory.Default.Layouts.RegisterDefinition("flattenedjsonlayout", typeof (FlattenedJsonLayout));
+            ConfigurationItemFactory.Default.Layouts.RegisterDefinition("jsonwithproperties", typeof(JsonWithPropertiesLayout));
+            ConfigurationItemFactory.Default.Layouts.RegisterDefinition("flattenedjsonlayout", typeof(FlattenedJsonLayout));
             ConfigurationItemFactory.Default.LayoutRenderers.RegisterDefinition("structuredlogging.json", typeof(StructuredLoggingLayoutRenderer));
             ConfigurationItemFactory.Default.LayoutRenderers.RegisterDefinition("hasher", typeof(HasherLayoutRenderer));
             var config = LogManager.Configuration;

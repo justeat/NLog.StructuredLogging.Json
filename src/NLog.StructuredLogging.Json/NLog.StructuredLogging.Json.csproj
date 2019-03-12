@@ -16,6 +16,6 @@
     <PackageReference Include="Microsoft.NetCore.Analyzers" Version="2.6.3" PrivateAssets="All" />
     <PackageReference Include="Text.Analyzers" Version="2.6.3" PrivateAssets="All" />
     <PackageReference Include="OpenCover" Version="4.7.922" PrivateAssets="All" />
-    <PackageReference Include="ReportGenerator" Version="4.0.11" PrivateAssets="All" />
+    <PackageReference Include="ReportGenerator" Version="4.0.15" PrivateAssets="All" />
   </ItemGroup>
  </Project>

@@ -3,6 +3,9 @@
     <OutputType>Library</OutputType>
     <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
   </PropertyGroup>
+  <PropertyGroup>
+    <NoWarn>1701;1702;CA1031</NoWarn>
+  </PropertyGroup>
    <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
@@ -11,10 +14,9 @@
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
      <PackageReference Include="NLog" Version="4.5.0" />
      <PackageReference Include="SourceLink.Embed.AllSourceFiles" Version="2.8.3" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.3" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.CodeQuality.Analyzers" Version="2.6.3" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.NetCore.Analyzers" Version="2.6.3" PrivateAssets="All" />
-    <PackageReference Include="Text.Analyzers" Version="2.6.3" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.1" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.CodeQuality.Analyzers" Version="2.9.1" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.NetCore.Analyzers" Version="2.9.1" PrivateAssets="All" />
     <PackageReference Include="OpenCover" Version="4.7.922" PrivateAssets="All" />
     <PackageReference Include="ReportGenerator" Version="4.0.11" PrivateAssets="All" />
   </ItemGroup>

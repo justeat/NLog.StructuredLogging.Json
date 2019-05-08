@@ -47,7 +47,7 @@ namespace NLog.StructuredLogging.Json.Tests.Helpers
         [Test]
         public void NullForParamsIsParsed()
         {
-            var input = Array.Empty<object>();
+            var input = new object[] { null };
             var actualParams = ProcessParams(input);
 
             Assert.That(actualParams, Is.Empty);

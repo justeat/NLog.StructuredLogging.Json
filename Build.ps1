@@ -73,7 +73,7 @@ function DotNetTestFullFramework {
         $dotnetPath = (Get-Command "dotnet.exe").Source
     }
 
-    & $dotnetPath test $Project --framework net471
+    & $dotnetPath test $Project --framework net46
   }
 
 function DotNetTestWithCoverage {
@@ -147,7 +147,7 @@ $packageProjects = @(
 Write-Host "Building $($projects.Count) projects..." -ForegroundColor Green
 ForEach ($project in $projects) {
     DotNetBuild $project $Configuration "netstandard2.0"
-    DotNetBuild $project $Configuration "net452"
+    DotNetBuild $project $Configuration "net45"
 }
 
 if ($RunTests -eq $true) {

@@ -5,6 +5,7 @@
 *.orig
 *.cache
 *.sublime-workspace
+*.idea
 .vs
 
 bin
@@ -22,6 +23,7 @@ _NCrunch_*
 nCrunchTemp_*
 *.ncrunchproject
 *.ncrunchsolution
+
 
 #Resharper
 *.csproj.Dotsettings

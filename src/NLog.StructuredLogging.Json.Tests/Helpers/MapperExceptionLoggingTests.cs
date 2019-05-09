@@ -58,7 +58,12 @@ namespace NLog.StructuredLogging.Json.Tests.Helpers
             var result = Mapper.ToDictionary(logEventInfo);
 
             Assert.That(result.ContainsKey("ExceptionStackTrace"), Is.True);
-            Assert.That(result["ExceptionStackTrace"], Does.StartWith("   at NLog.StructuredLogging.Json.Tests.Helpers.MapperExceptionLoggingTests.GenerateExceptionWithStackTrace()"));
+            Assert.That(NormaliseStackTrace(result["ExceptionStackTrace"].ToString()), Does.StartWith("at NLog.StructuredLogging.Json.Tests.Helpers.MapperExceptionLoggingTests.GenerateExceptionWithStackTrace()"));
+
+            string NormaliseStackTrace(string exception)
+            {
+                return exception.TrimStart(' ').Replace(" ()", "()");
+            }
         }
 
         [Test]

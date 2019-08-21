@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using NLog.Config;
 using NLog.StructuredLogging.Json.Helpers;
 using NLog.LayoutRenderers;
@@ -9,7 +9,7 @@ namespace NLog.StructuredLogging.Json
 {
     [LayoutRenderer("hasher")]
     [ThreadAgnostic]
-    [AppDomainFixedOutput]
+    [ThreadSafe]
     public class HasherLayoutRenderer : WrapperLayoutRendererBase
     {
         public Layout Text

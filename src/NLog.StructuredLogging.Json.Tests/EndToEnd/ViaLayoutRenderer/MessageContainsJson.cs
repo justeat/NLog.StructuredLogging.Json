@@ -31,7 +31,7 @@ namespace NLog.StructuredLogging.Json.Tests.EndToEnd.ViaLayoutRenderer
         {
             foreach (var line in Result)
             {
-                Assert.That(line.Length, Is.InRange(550, 1452));
+                Assert.That(line.Length, Is.InRange(550, 1500));
             }
         }
     }

@@ -51,9 +51,12 @@ namespace NLog.StructuredLogging.Json.Helpers
                 result.Add("CallSite", StackHelper.CallSiteName(source.StackTrace));
             }
 
-            HarvestToDictionary(source.Properties, result, "data_");
+            if (source.HasProperties)
+            {
+                HarvestToDictionary(source.Properties, result, "data_");
+            }
 
-            if (source.Exception != null)
+            if (source.Exception?.Data?.Count > 0)
             {
                 HarvestToDictionary(source.Exception.Data, result, "ex_");
             }
